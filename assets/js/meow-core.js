@@ -545,9 +545,6 @@ export async function boot() {
   const btnEvents = $('btn-events');
   if (btnEvents) btnEvents.addEventListener('click', ()=>setPanel(!panelOpen));
 
-  const btnClosePanel = $('btn-close-panel');
-  if (btnClosePanel) btnClosePanel.addEventListener('click', ()=>setPanel(false));
-
   // Filter buttons in panel-head
   const filterAll = $('filter-all');
   const filterToday = $('filter-today');
@@ -800,10 +797,25 @@ export async function boot() {
     searchInput.addEventListener('focus', ()=>{ if(panelOpen) setPanel(false); });
   }
 
-  // Close panel on map touch
+  // Close panel on outside click/touch
+  document.addEventListener('click', e => {
+    const panel = $('events-panel');
+    const btnEvents = $('btn-events');
+    if (panelOpen && panel && !panel.contains(e.target) && btnEvents !== e.target) {
+      setPanel(false);
+    }
+  });
+  document.addEventListener('touchstart', e => {
+    if (panelOpen) {
+      const panel = $('events-panel');
+      const btnEvents = $('btn-events');
+      if (panel && !panel.contains(e.target) && btnEvents !== e.target) {
+        setPanel(false);
+      }
+    }
+  });
   const mapEl = $('map');
   if (mapEl) {
-    mapEl.addEventListener('touchstart', ()=>{ if(panelOpen) setPanel(false); },{passive:true});
     mapEl.addEventListener('touchstart', hideSearchSuggestions, {passive:true});
   }
 

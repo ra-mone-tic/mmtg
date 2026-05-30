@@ -33,7 +33,7 @@ const CFG = {
   BBOX: REGION_BBOX,
 };
 
-const TG = window.Telegram?.WebApp ?? null;
+let TG = null;
 
 // ─── Helpers ───────────────────────────────────────────
 const $  = id => document.getElementById(id);
@@ -156,11 +156,21 @@ function applyTheme(t, updateMap=true) {
 function initAvatar() {
   const btn  = $('btn-avatar');
   const user = TG?.initDataUnsafe?.user ?? null;
-  if (!btn || !user) return;
+  if (!btn) return;
+  if (!user) {
+    console.warn('[MEOW] Нет данных пользователя Telegram');
+    return;
+  }
   if (user.photo_url) {
     const img = new Image();
-    img.onload = () => { img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%'; btn.innerHTML = ''; btn.appendChild(img); };
-    img.onerror = () => setInitials(btn, user);
+    img.onload = () => {
+      btn.innerHTML = '';
+      btn.appendChild(img);
+    };
+    img.onerror = () => {
+      console.warn('[MEOW] Не удалось загрузить фото пользователя:', user.photo_url);
+      setInitials(btn, user);
+    };
     img.src = user.photo_url;
   } else {
     setInitials(btn, user);
@@ -493,6 +503,11 @@ function setPanel(open) {
 
 // ─── Boot sequence ─────────────────────────────────────
 export async function boot() {
+  // Initialize Telegram WebApp first
+  TG = window.Telegram?.WebApp ?? null;
+  TG?.ready();
+  TG?.expand();
+
   // Initialize theme
   theme = initTheme();
   requestAnimationFrame(() => { applyTheme(theme, false); });
@@ -530,10 +545,6 @@ export async function boot() {
 
   // Load events for the nearest date
   await fetchEvents(fmt(currentDate));
-
-  // Initialize Telegram WebApp
-  TG?.ready();
-  TG?.expand();
 
   // ─── Listeners ─────────────────────────────────────────
   const btnTheme = $('btn-theme');

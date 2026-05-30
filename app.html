@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>MEOW!</title>
+<link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css">
+<script src="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════
+   DESIGN TOKENS
+══════════════════════════════════════════════════ */
+:root {
+  --c-canvas:   #e7e5f1;
+  --c-glass:    rgba(249, 247, 255, 0.70);
+  --c-glass-br: rgba(255, 255, 255, 0.58);
+  --c-card:     rgba(255, 255, 255, 0.93);
+  --c-card-br:  #191432;
+  --c-pill:     rgba(18, 14, 44, 0.88);
+  --c-pill-fg:  #ede8ff;
+  --c-soft-br:  rgba(24, 20, 50, 0.09);
+  --c-t1:       #15112e;
+  --c-t2:       #726d88;
+  --c-accent:   #6652bb;
+  --c-accent-d: rgba(102, 82, 187, 0.10);
+  --c-accent-g: rgba(102, 82, 187, 0.22);
+  --c-pin:      #ccc3ec;
+  --c-pin-a:    #6652bb;
+  --c-pin-e:    #15112e;
+  --c-sol-bg:   #15112e;
+  --c-sol-fg:   #ffffff;
+  --c-out-br:   #15112e;
+  --c-out-fg:   #15112e;
+
+  --sh-card:  0 8px 32px rgba(102,82,187,.13), 0 2px 6px rgba(0,0,0,.06);
+  --sh-float: 0 2px 12px rgba(0,0,0,.09), 0 1px 3px rgba(0,0,0,.04);
+  --sh-glow:  0 4px 22px rgba(102,82,187,.26);
+
+  --blur: blur(20px) saturate(1.6);
+  --r-p: 999px; --r-c: 20px; --r-b: 50px;
+  --ph: 14px; --bar-h: 62px;
+  --sai-t: env(safe-area-inset-top,0px);
+  --sai-b: env(safe-area-inset-bottom,0px);
+  --ease-s: cubic-bezier(.34,1.56,.64,1);
+  --ease-o: cubic-bezier(.16,1,.3,1);
+  --ff: 'Manrope', system-ui, sans-serif;
+}
+
+[data-theme="dark"] {
+  --c-canvas:   #0b0b1a;
+  --c-glass:    rgba(17,14,42,.78);
+  --c-glass-br: rgba(118,98,218,.17);
+  --c-card:     rgba(15,12,40,.92);
+  --c-card-br:  rgba(118,98,218,.28);
+  --c-pill:     rgba(22,18,54,.92);
+  --c-pill-fg:  #dbd4ff;
+  --c-soft-br:  rgba(118,98,218,.11);
+  --c-t1:       #ece6ff;
+  --c-t2:       #938eb4;
+  --c-accent:   #9880de;
+  --c-accent-d: rgba(152,128,222,.14);
+  --c-accent-g: rgba(152,128,222,.26);
+  --c-pin:      #6652bb;
+  --c-pin-a:    #b3a6ee;
+  --c-pin-e:    #ece6ff;
+  --c-sol-bg:   #6e5ec8;
+  --c-sol-fg:   #ffffff;
+  --c-out-br:   rgba(152,128,222,.48);
+  --c-out-fg:   #dbd4ff;
+
+  --sh-card:  0 8px 40px rgba(0,0,0,.54), 0 2px 8px rgba(0,0,0,.24);
+  --sh-float: 0 2px 16px rgba(0,0,0,.30);
+  --sh-glow:  0 4px 24px rgba(152,128,222,.28);
+}
+
+/* ══════════════════════════════════════════════════
+   BASE
+══════════════════════════════════════════════════ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--ff);background:var(--c-canvas);color:var(--c-t1);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+button{cursor:pointer;font-family:inherit;border:none;background:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+input{font-family:inherit;border:none;outline:none;background:none;-webkit-tap-highlight-color:transparent}
+svg{display:block;flex-shrink:0}
+
+/* ── Shell ──────────────────────────────────────── */
+#app{position:relative;width:100%;height:100dvh;max-width:428px;margin:0 auto;overflow:hidden}
+
+/* ── Map ────────────────────────────────────────── */
+#map{position:absolute;inset:0;z-index:0}
+.maplibregl-ctrl-logo,.maplibregl-ctrl-attrib,
+.maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right{display:none!important}
+
+/* ── Loading ────────────────────────────────────── */
+#loading{
+  position:absolute;inset:0;z-index:50;
+  background:var(--c-canvas);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+  transition:opacity .4s ease,visibility .4s ease;
+}
+#loading.gone{opacity:0;visibility:hidden;pointer-events:none}
+#loading img{width:48px;height:48px;object-fit:contain;animation:spin-load .8s linear infinite}
+@keyframes spin-load{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;font-weight:600;color:var(--c-t2)}
+
+/* ══════════════════════════════════════════════════
+   TOP BAR — logo | theme-btn | avatar
+══════════════════════════════════════════════════ */
+.top-bar{
+  position:absolute;top:0;left:0;right:0;z-index:20;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--sai-t) + 10px) var(--ph) 8px;
+  background:linear-gradient(180deg,var(--c-canvas) 52%,transparent);
+  pointer-events:none;
+}
+.top-bar>*{pointer-events:auto}
+
+.logo{display:flex;align-items:center;justify-content:center;width:38px;height:38px}
+.logo img{width:38px;height:38px;object-fit:contain;display:block}
+
+.tb-right{display:flex;align-items:center;gap:8px}
+
+.icon-btn{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--c-glass);border:1px solid var(--c-glass-br);
+  color:var(--c-t1);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--sh-float);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  transition:transform .14s var(--ease-s),box-shadow .14s;
+}
+.icon-btn:active{transform:scale(.88)}
+
+.avatar-btn{
+  width:38px;height:38px;border-radius:50%;overflow:hidden;
+  background:var(--c-accent);border:2px solid rgba(255,255,255,.28);
+  color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;letter-spacing:-.2px;
+  box-shadow:var(--sh-glow),var(--sh-float);
+  background-size:cover;background-position:center;
+  transition:transform .14s var(--ease-s);
+  flex-shrink:0;-webkit-tap-highlight-color:transparent;
+}
+.avatar-btn:active{transform:scale(.88)}
+.avatar-btn img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ══════════════════════════════════════════════════
+   FILTER ROW — date-pill | events
+══════════════════════════════════════════════════ */
+.filter-row{
+  position:absolute;z-index:20;
+  top:calc(var(--sai-t) + 62px);
+  left:0;right:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--ph);
+  pointer-events:none;
+}
+.filter-row>*{pointer-events:auto}
+
+.pill{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 16px;border-radius:var(--r-p);
+  font-size:13px;font-weight:700;letter-spacing:.01em;
+  white-space:nowrap;cursor:pointer;
+  box-shadow:var(--sh-float);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  transition:transform .14s var(--ease-s),box-shadow .14s;
+}
+.pill:active{transform:scale(.95)}
+.pill-glass{
+  background:var(--c-glass);color:var(--c-t1);border:1px solid var(--c-glass-br);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+}
+.pill-glass:hover{box-shadow:var(--sh-glow)}
+
+/* ══════════════════════════════════════════════════
+   EVENTS PANEL
+══════════════════════════════════════════════════ */
+.events-panel{
+  position:absolute;z-index:25;
+  top:calc(var(--sai-t) + 112px);
+  right:var(--ph);
+  width:min(244px,calc(100% - 28px));
+  max-height:calc(100dvh - 230px);
+  background:var(--c-glass);border:1px solid var(--c-glass-br);
+  border-radius:var(--r-c);
+  box-shadow:var(--sh-card);
+  overflow:hidden;display:flex;flex-direction:column;
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  opacity:0;transform:translateY(-10px) scale(.97);
+  transform-origin:top right;pointer-events:none;
+  transition:opacity .22s var(--ease-o),transform .22s var(--ease-o);
+}
+.events-panel.open{opacity:1;transform:none;pointer-events:auto}
+.panel-head{
+  display:flex;align-items:center;gap:6px;padding:11px 14px 9px;
+  border-bottom:1px solid var(--c-soft-br);flex-shrink:0;
+  overflow-x:auto;scrollbar-width:none;
+  -ms-overflow-style:none;
+}
+.panel-head::-webkit-scrollbar{display:none}
+.panel-head .pill{font-size:11.5px;padding:6px 14px;flex-shrink:0}
+.events-list{overflow-y:auto;padding:6px;flex:1;scrollbar-width:thin;scrollbar-color:var(--c-accent-d) transparent}
+.events-list::-webkit-scrollbar{width:3px}
+.events-list::-webkit-scrollbar-thumb{background:var(--c-accent-d);border-radius:2px}
+.day-label{padding:5px 8px 3px;font-size:9.5px;font-weight:800;letter-spacing:.10em;text-transform:uppercase;color:var(--c-t2)}
+.event-item{padding:9px 10px 9px 12px;border-radius:12px;border-left:3px solid transparent;cursor:pointer;transition:background .12s,border-color .12s}
+.event-item:hover{background:var(--c-accent-d)}
+.event-item.active{background:var(--c-accent-d);border-left-color:var(--c-accent)}
+.event-item-title{font-size:12.5px;font-weight:700;line-height:1.3}
+.event-item-sub{font-size:11px;color:var(--c-t2);margin-top:2px}
+
+/* ══════════════════════════════════════════════════
+   EVENT CARD
+══════════════════════════════════════════════════ */
+.event-card{
+  position:absolute;z-index:20;
+  left:var(--ph);right:var(--ph);
+  bottom:calc(var(--sai-b) + var(--bar-h) + 12px);
+  background:var(--c-card);border:2.5px solid var(--c-card-br);
+  border-radius:var(--r-c);
+  padding:15px 16px 17px;
+  box-shadow:var(--sh-card);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  opacity:0;transform:translateY(22px);pointer-events:none;
+  transition:opacity .28s var(--ease-o),transform .28s var(--ease-o);
+}
+.event-card.open{opacity:1;transform:translateY(0);pointer-events:auto}
+
+.venue-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:var(--r-p);background:var(--c-accent-d);font-size:11px;font-weight:700;color:var(--c-accent);margin-bottom:10px;max-width:calc(100% - 36px)}
+.venue-tag span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.card-close{position:absolute;top:13px;right:13px;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--c-soft-br);background:var(--c-accent-d);color:var(--c-t2);display:flex;align-items:center;justify-content:center;transition:all .13s}
+.card-close:hover{border-color:var(--c-accent);color:var(--c-accent)}
+
+.card-title{font-size:20px;font-weight:900;line-height:1.18;color:var(--c-t1);margin-bottom:10px;padding-right:30px;letter-spacing:-.3px}
+.card-meta{display:flex;flex-direction:column;gap:5px;margin-bottom:9px}
+.meta-row{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:500;color:var(--c-t2);line-height:1}
+.meta-row svg{color:var(--c-accent)}
+.card-desc{font-size:12.5px;line-height:1.62;color:var(--c-t2);margin-bottom:14px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-actions{display:flex;gap:8px}
+.btn-a,.btn-b{flex:1;height:43px;border-radius:var(--r-b);font-size:13px;font-weight:700;transition:transform .13s var(--ease-s),box-shadow .13s}
+.btn-a{background:var(--c-sol-bg);color:var(--c-sol-fg)}
+.btn-b{background:transparent;color:var(--c-out-fg);border:2px solid var(--c-out-br)}
+.btn-a:hover{box-shadow:var(--sh-glow)}
+.btn-a:active,.btn-b:active{transform:scale(.97)}
+
+/* ══════════════════════════════════════════════════
+   DETAIL MODAL
+══════════════════════════════════════════════════ */
+.event-detail{
+  position:absolute;z-index:40;inset:0;
+  display:flex;flex-direction:column;
+  background:var(--c-canvas);
+  opacity:0;transform:translateY(100%);pointer-events:none;
+  transition:opacity .36s var(--ease-o),transform .36s var(--ease-o);
+}
+.event-detail.open{opacity:1;transform:translateY(0);pointer-events:auto}
+
+.detail-poster{position:relative;width:100%;height:238px;flex-shrink:0;overflow:hidden}
+.detail-poster img{width:100%;height:100%;object-fit:cover;display:block}
+.poster-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.poster-initial{font-size:96px;font-weight:900;color:rgba(255,255,255,.18);line-height:1;user-select:none}
+.poster-fade{position:absolute;bottom:0;left:0;right:0;height:88px;background:linear-gradient(transparent,var(--c-canvas))}
+.poster-badge{
+  position:absolute;top:calc(var(--sai-t) + 12px);right:14px;z-index:2;
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:30px;
+  background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.14);
+  font-size:12px;font-weight:700;color:#fff;
+  backdrop-filter:blur(8px);
+}
+
+.detail-back{
+  position:absolute;top:calc(var(--sai-t) + 12px);left:14px;z-index:2;
+  width:40px;height:40px;border-radius:50%;
+  background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.18);
+  color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(8px);
+  transition:transform .14s var(--ease-s),background .14s;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.detail-back:active{transform:scale(.88)}
+
+.detail-body{
+  flex:1;overflow-y:auto;
+  padding:18px var(--ph) calc(var(--sai-b) + 96px);
+  scrollbar-width:thin;scrollbar-color:var(--c-accent-d) transparent;
+}
+.detail-body::-webkit-scrollbar{width:3px}
+.detail-body::-webkit-scrollbar-thumb{background:var(--c-accent-d);border-radius:2px}
+
+.detail-venue-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:var(--r-p);background:var(--c-accent-d);font-size:11px;font-weight:700;color:var(--c-accent);margin-bottom:12px}
+.detail-title{font-size:24px;font-weight:900;line-height:1.14;letter-spacing:-.4px;color:var(--c-t1);margin-bottom:14px}
+.detail-meta{display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
+.detail-meta .meta-row{font-size:13.5px}
+.detail-desc{font-size:14px;line-height:1.72;color:var(--c-t2)}
+
+.detail-actions{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:16px var(--ph) calc(var(--sai-b) + 16px);
+  background:linear-gradient(0deg,var(--c-canvas) 62%,transparent);
+  display:flex;gap:8px;
+}
+.btn-contacts{
+  flex:1;height:44px;border-radius:var(--r-b);
+  background:var(--c-glass);border:1px solid var(--c-glass-br);
+  color:var(--c-t1);font-size:13px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  backdrop-filter:var(--blur);
+  transition:transform .13s var(--ease-s),box-shadow .13s;
+}
+.btn-contacts:active{transform:scale(.97)}
+.btn-detail-share{
+  flex:1;height:44px;border-radius:var(--r-b);
+  background:var(--c-sol-bg);color:var(--c-sol-fg);
+  font-size:13px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:transform .13s var(--ease-s),box-shadow .13s;
+}
+.btn-detail-share:hover{box-shadow:var(--sh-glow)}
+.btn-detail-share:active{transform:scale(.97)}
+
+/* ══════════════════════════════════════════════════
+   BOTTOM BAR — search
+══════════════════════════════════════════════════ */
+.bottom-bar{
+  position:absolute;z-index:20;left:0;right:0;bottom:0;
+  padding:8px var(--ph) calc(var(--sai-b) + 8px);
+  background:linear-gradient(0deg,var(--c-canvas) 52%,transparent);
+  pointer-events:none;
+}
+.bottom-bar>*{pointer-events:auto}
+.search-wrap{position:relative;display:flex;align-items:center}
+.search-icon{position:absolute;left:15px;color:var(--c-t2);pointer-events:none;z-index:1;transition:color .15s}
+.search-input{
+  width:100%;height:46px;
+  padding:0 16px 0 44px;
+  background:var(--c-glass);border:1px solid var(--c-glass-br);
+  border-radius:var(--r-p);
+  font-size:14px;font-weight:500;color:var(--c-t1);
+  box-shadow:var(--sh-card);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  transition:border-color .18s,box-shadow .18s;
+}
+.search-input::placeholder{color:var(--c-t2)}
+.search-input:focus{border-color:var(--c-accent);box-shadow:0 0 0 3px var(--c-accent-g),var(--sh-float)}
+.search-wrap:focus-within .search-icon{color:var(--c-accent)}
+
+/* ══════════════════════════════════════════════════
+   MAP CONTROLS (+  −  ⊕)
+══════════════════════════════════════════════════ */
+.map-controls{
+  position:absolute;z-index:20;right:var(--ph);
+  display:flex;flex-direction:column;gap:8px;
+  transition:bottom .28s var(--ease-o);
+}
+.map-ctrl{
+  width:44px;height:44px;border-radius:50%;
+  background:var(--c-glass);border:1px solid var(--c-glass-br);
+  color:var(--c-t1);
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:var(--sh-float);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  transition:transform .14s var(--ease-s),box-shadow .14s;
+}
+.map-ctrl:active{transform:scale(.88)}
+.map-ctrl:hover{box-shadow:var(--sh-glow)}
+
+/* ── Custom pin marker ──────────────────────────── */
+.m-pin{
+  width:34px;height:42px;cursor:pointer;
+  transform-origin:bottom center;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.20));
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+  transition:transform .22s var(--ease-s),filter .15s;
+}
+.m-pin:hover{transform:scale(1.14)}
+.m-pin.active{transform:scale(1.28);filter:drop-shadow(0 5px 12px var(--c-accent-g))}
+
+/* ── Calendar Modal ──────────────────────────────── */
+.cal-modal{
+  position:absolute;z-index:60;inset:0;
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .22s ease;
+}
+.cal-modal.open{opacity:1;pointer-events:auto}
+.cal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.42)}
+.cal-sheet{
+  position:relative;width:calc(100% - 28px);max-width:360px;
+  margin:0 auto 20px;padding:18px 20px 20px;
+  background:var(--c-glass);border:1px solid var(--c-glass-br);
+  border-radius:var(--r-c);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  box-shadow:var(--sh-card);
+  transform:translateY(30px);
+  transition:transform .25s var(--ease-o);
+}
+.cal-modal.open .cal-sheet{transform:translateY(0)}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-month{font-size:16px;font-weight:800;color:var(--c-t1)}
+.cal-arrow{width:34px;height:34px;border-radius:50%;background:var(--c-accent-d);color:var(--c-t1);display:flex;align-items:center;justify-content:center;transition:background .13s}
+.cal-arrow:active{background:var(--c-accent-g)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-dw{text-align:center;font-size:10px;font-weight:700;color:var(--c-t2);padding:4px 0;letter-spacing:.03em;text-transform:uppercase}
+.cal-day{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;font-size:13px;font-weight:600;color:var(--c-t1);
+  cursor:pointer;transition:background .12s,color .12s;
+  user-select:none;
+}
+.cal-day:hover{background:var(--c-accent-d)}
+.cal-day.today{background:var(--c-accent-d);color:var(--c-accent);font-weight:800}
+.cal-day.active{background:var(--c-accent);color:#fff;font-weight:800}
+.cal-day.muted{color:var(--c-t2);opacity:.4}
+.cal-day.has-events{font-weight:800}
+.cal-day.has-events::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:var(--c-accent);position:absolute;bottom:3px}
+.cal-day{position:relative}
+
+/* ── Search Suggestions ──────────────────────────── */
+.search-suggestions{
+  position:absolute;z-index:30;
+  left:var(--ph);right:var(--ph);
+  bottom:calc(var(--sai-b) + var(--bar-h) + 8px);
+  max-height:180px;overflow-y:auto;
+  background:var(--c-glass);border:1px solid var(--c-glass-br);
+  border-radius:var(--r-c);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  box-shadow:var(--sh-card);
+  opacity:0;transform:translateY(8px);pointer-events:none;
+  transition:opacity .18s ease,transform .18s var(--ease-o);
+  scrollbar-width:thin;scrollbar-color:var(--c-accent-d) transparent;
+}
+.search-suggestions::-webkit-scrollbar{width:3px}
+.search-suggestions::-webkit-scrollbar-thumb{background:var(--c-accent-d);border-radius:2px}
+.search-suggestions.open{opacity:1;transform:translateY(0);pointer-events:auto}
+.sug-item{padding:10px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--c-soft-br);transition:background .1s}
+.sug-item:last-child{border-bottom:none}
+.sug-item:hover{background:var(--c-accent-d)}
+.sug-icon{width:28px;height:28px;border-radius:50%;background:var(--c-accent-d);color:var(--c-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sug-text{font-size:12.5px;font-weight:600;color:var(--c-t1);line-height:1.2}
+.sug-sub{font-size:10.5px;color:var(--c-t2);margin-top:1px}
+
+/* ── Toast ──────────────────────────────────────── */
+.toast{
+  position:absolute;z-index:80;
+  left:50%;transform:translateX(-50%) translateY(14px);
+  padding:10px 20px;
+  background:var(--c-pill);color:var(--c-pill-fg);
+  border-radius:30px;font-size:13px;font-weight:600;
+  box-shadow:var(--sh-card);white-space:nowrap;
+  opacity:0;pointer-events:none;
+  transition:opacity .25s ease,transform .25s var(--ease-o);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- MAP -->
+<div id="map"></div>
+
+<!-- LOADING -->
+<div id="loading" aria-live="polite">
+  <img src="assets/Group 27.png" alt="Загрузка">
+  <span class="loading-text">Загружаем карту…</span>
+</div>
+
+<!-- ═══════════════════ TOP BAR ═════════════════════ -->
+<header class="top-bar">
+  <span class="logo" aria-label="MEOW!">
+    <img src="assets/logo.png" alt="MEOW!">
+  </span>
+
+  <div class="tb-right">
+    <button class="icon-btn" id="btn-theme" aria-label="Переключить тему">
+      <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+    <button class="avatar-btn" id="btn-avatar" aria-label="Профиль">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ═══════════════════ FILTER ROW ══════════════════ -->
+<div class="filter-row" role="toolbar" aria-label="Фильтры">
+  <button class="pill pill-glass" id="btn-date" aria-label="Дата">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="18" rx="2"/>
+      <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+      <line x1="3" y1="10" x2="21" y2="10"/>
+    </svg>
+    <span id="date-label">—</span>
+  </button>
+  <button class="pill pill-glass" id="btn-events" aria-expanded="false" aria-controls="events-panel">
+    События
+  </button>
+</div>
+
+<!-- ═══════════════════ EVENTS PANEL ════════════════ -->
+<aside id="events-panel" class="events-panel" aria-hidden="true" aria-label="Список событий">
+  <div class="panel-head">
+    <button class="pill pill-glass" id="filter-all">Все</button>
+    <button class="pill pill-glass" id="filter-today">Сегодня</button>
+    <button class="panel-close" id="btn-close-panel" aria-label="Закрыть">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+  <div id="events-list" class="events-list" role="list"></div>
+</aside>
+
+<!-- ═══════════════════ EVENT CARD ══════════════════ -->
+<article id="event-card" class="event-card" aria-hidden="true" aria-label="Карточка события">
+  <div class="venue-tag">
+    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+    </svg>
+    <span id="card-venue">—</span>
+  </div>
+  <button class="card-close" id="btn-close-card" aria-label="Закрыть">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+  <h3 id="card-title" class="card-title">—</h3>
+  <div id="card-meta" class="card-meta"></div>
+  <p id="card-desc" class="card-desc"></p>
+  <div class="card-actions">
+    <button class="btn-a" id="btn-learn-more">Узнать больше</button>
+    <button class="btn-b" id="btn-share">Поделиться</button>
+  </div>
+</article>
+
+<!-- ═══════════════════ DETAIL MODAL ════════════════ -->
+<div id="event-detail" class="event-detail" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="detail-poster" id="detail-poster">
+    <button class="detail-back" id="btn-detail-back" aria-label="Назад">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <div id="poster-inner" class="poster-ph">
+      <span class="poster-initial" id="poster-initial">—</span>
+    </div>
+    <div class="poster-fade"></div>
+    <div class="poster-badge" id="poster-badge">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+      <span id="poster-date">—</span>
+    </div>
+  </div>
+  <div class="detail-body" id="detail-body">
+    <div class="detail-venue-tag">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+      </svg>
+      <span id="detail-venue">—</span>
+    </div>
+    <h2 id="detail-title" class="detail-title">—</h2>
+    <div id="detail-meta" class="detail-meta"></div>
+    <p id="detail-desc" class="detail-desc">—</p>
+  </div>
+  <div class="detail-actions">
+    <button class="btn-contacts" id="btn-contacts">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.1a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.38h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7a2 2 0 0 1 1.72 2.03z"/>
+      </svg>
+      Контакты
+    </button>
+    <button class="btn-detail-share" id="btn-detail-share">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+        <polyline points="16 6 12 2 8 6"/>
+        <line x1="12" y1="2" x2="12" y2="15"/>
+      </svg>
+      Поделиться
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════ BOTTOM BAR ══════════════════ -->
+<div class="bottom-bar">
+  <div class="search-wrap">
+    <svg class="search-icon" width="17" height="17" viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input id="search-input" class="search-input" type="search"
+           placeholder="Поиск событий и мест"
+           autocomplete="off" autocorrect="off" spellcheck="false"
+           inputmode="search" aria-label="Поиск событий и мест">
+  </div>
+</div>
+
+<!-- ═══════════════════ MAP CONTROLS ════════════════ -->
+<div id="map-controls" class="map-controls" role="group" aria-label="Управление картой">
+  <button class="map-ctrl" id="btn-zoom-in" aria-label="Приблизить">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  </button>
+  <button class="map-ctrl" id="btn-zoom-out" aria-label="Отдалить">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+  </button>
+  <button class="map-ctrl" id="btn-locate" aria-label="Моё местоположение">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+    </svg>
+  </button>
+</div>
+
+<!-- ═══════════════════ CALENDAR MODAL ═══════════════════ -->
+<div id="calendar-modal" class="cal-modal" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Календарь">
+  <div class="cal-overlay" id="cal-overlay"></div>
+  <div class="cal-sheet">
+    <div class="cal-head">
+      <button class="cal-arrow" id="cal-prev" aria-label="Предыдущий месяц">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <span class="cal-month" id="cal-month">—</span>
+      <button class="cal-arrow" id="cal-next" aria-label="Следующий месяц">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <div class="cal-grid" id="cal-grid"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SEARCH SUGGESTIONS ══════════════════ -->
+<div id="search-suggestions" class="search-suggestions" aria-hidden="true"></div>
+
+</div><!-- /#app -->
+
+<!-- Import Map for ES modules -->
+<script type="importmap">
+{
+  "imports": {
+    "maplibre-gl": "https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.esm.js"
+  }
+}
+</script>
+
+<!-- Main Application Script (Module) -->
+<script type="module">
+import { boot } from './assets/js/meow-core.js';
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
+</script>
+</body>
+</html>

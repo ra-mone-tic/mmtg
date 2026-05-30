@@ -156,31 +156,30 @@ function applyTheme(t, updateMap=true) {
 }
 
 // ─── Avatar ────────────────────────────────────────────
-function initAvatar() {
-  const btn  = $('btn-avatar');
+function initAvatar(retry = 5) {
+  const btn = $('btn-avatar');
   const webapp = TG();
-  const user = webapp?.initDataUnsafe?.user ?? null;
+  const user = webapp?.initDataUnsafe?.user;
   if (!btn) return;
   if (!user) {
-    console.warn('[MEOW] Нет данных пользователя Telegram');
+    if (retry > 0) setTimeout(() => initAvatar(retry - 1), 250);
     return;
   }
-  if (user.photo_url) {
-    const img = new Image();
-    img.onload = () => {
-      btn.innerHTML = '';
-      btn.appendChild(img);
-    };
-    img.onerror = () => {
-      console.warn('[MEOW] Не удалось загрузить фото пользователя:', user.photo_url);
-      setInitials(btn, user);
-    };
-    img.src = user.photo_url;
-  } else {
+  if (!user.photo_url) {
     setInitials(btn, user);
+    return;
   }
+  const img = new Image();
+  img.referrerPolicy = 'no-referrer';
+  img.onload = () => btn.replaceChildren(img);
+  img.onerror = () => setInitials(btn, user);
+  img.src = `${user.photo_url}${user.photo_url.includes('?') ? '&' : '?'}t=${Date.now()}`;
 }
-function setInitials(btn, user) { if (!user) return; btn.textContent = (user.first_name[0] + (user.last_name?.[0] ?? '')).toUpperCase(); }
+function setInitials(btn, user) {
+  const first = user?.first_name?.[0] ?? '';
+  const last = user?.last_name?.[0] ?? '';
+  btn.textContent = (first + last).toUpperCase() || 'U';
+}
 
 // ─── State ─────────────────────────────────────────────
 let map = null, events = [];
@@ -286,7 +285,19 @@ function onSearch(q) {
   renderList(filtered);
 }
 function onAvatarTap() {
-  console.log('[MEOW] profile');
+  const webapp = TG();
+  const user = webapp?.initDataUnsafe?.user;
+  if (!user) return;
+  const name = [user.first_name, user.last_name].filter(Boolean).join(' ');
+  if (webapp?.showPopup) {
+    webapp.showPopup({
+      title: 'Профиль',
+      message: name || 'Пользователь',
+      buttons: [{ type: 'close', text: 'Закрыть' }]
+    });
+  } else {
+    showToast(name || '👤 Пользователь');
+  }
 }
 
 // ─── Date handling ─────────────────────────────────────

@@ -33,7 +33,9 @@ const CFG = {
   BBOX: REGION_BBOX,
 };
 
-let TG = null;
+// Функция-геттер Telegram WebApp — читает window.Telegram каждый раз
+// Это гарантирует что API будет получен даже если он появился с задержкой
+const TG = () => window.Telegram?.WebApp ?? null;
 
 // ─── Helpers ───────────────────────────────────────────
 const $  = id => document.getElementById(id);
@@ -103,10 +105,11 @@ function legacyCopy(text, cb) {
 
 function shareEvent(ev) {
   const link = CFG.SHARE_BASE + ev.id;
+  const webapp = TG();
   const ok = () => {
-    TG?.HapticFeedback?.notificationOccurred('success');
-    if (TG?.showPopup) {
-      TG.showPopup({
+    webapp?.HapticFeedback?.notificationOccurred('success');
+    if (webapp?.showPopup) {
+      webapp.showPopup({
         title:   'Ссылка скопирована',
         message: `«${ev.title}» готова к отправке`,
         buttons: [{ type:'ok', text:'Отлично!' }]
@@ -155,7 +158,8 @@ function applyTheme(t, updateMap=true) {
 // ─── Avatar ────────────────────────────────────────────
 function initAvatar() {
   const btn  = $('btn-avatar');
-  const user = TG?.initDataUnsafe?.user ?? null;
+  const webapp = TG();
+  const user = webapp?.initDataUnsafe?.user ?? null;
   if (!btn) return;
   if (!user) {
     console.warn('[MEOW] Нет данных пользователя Telegram');
@@ -263,7 +267,7 @@ async function fetchEvents(dateStr) {
 
 // ─── Integration hooks ─────────────────────────────────
 async function onEventContacts(ev) {
-  TG?.HapticFeedback?.impactOccurred('light');
+  TG()?.HapticFeedback?.impactOccurred('light');
   if (ev.contacts && ev.contacts.startsWith('http')) {
     window.open(ev.contacts, '_blank');
   } else {
@@ -422,7 +426,7 @@ function openDetail(id) {
   const detailBody = $('detail-body');
   if (detailBody) detailBody.scrollTop = 0;
 
-  TG?.HapticFeedback?.selectionChanged();
+  TG()?.HapticFeedback?.selectionChanged();
   history.pushState({meowDetail:true},'');
 }
 
@@ -433,7 +437,7 @@ function closeDetail() {
     modal.setAttribute('aria-hidden','true');
   }
   detailId = null;
-  TG?.HapticFeedback?.impactOccurred('light');
+  TG()?.HapticFeedback?.impactOccurred('light');
 }
 
 let swipeY = 0;
@@ -504,9 +508,9 @@ function setPanel(open) {
 // ─── Boot sequence ─────────────────────────────────────
 export async function boot() {
   // Initialize Telegram WebApp first
-  TG = window.Telegram?.WebApp ?? null;
-  TG?.ready();
-  TG?.expand();
+  const webapp = TG();
+  webapp?.ready();
+  webapp?.expand();
 
   // Initialize theme
   theme = initTheme();
@@ -563,12 +567,10 @@ export async function boot() {
 
   function applyPanelFilter() {
     if (panelFilterMode === 'today') {
-      // Показать события на сегодняшнюю дату
       const todayStr = fmt(new Date());
       const filtered = filterByDate(todayStr);
       renderList(filtered);
     } else {
-      // Показать все события от текущей даты и далее, сгруппированные по дням
       const allDates = [...new Set(rawAllEvents.map(e => e.date))]
         .filter(d => parseDate(d) !== null)
         .sort((a, b) => parseDate(a) - parseDate(b));
@@ -576,7 +578,6 @@ export async function boot() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      // Берём даты от сегодня и далее
       const upcoming = allDates.filter(d => {
         const dt = parseDate(d);
         return dt >= today;
@@ -595,7 +596,6 @@ export async function boot() {
     filterAll.addEventListener('click', () => {
       panelFilterMode = 'all';
       applyPanelFilter();
-      // Highlight active filter
       filterAll.classList.add('active');
       if (filterToday) filterToday.classList.remove('active');
     });
@@ -608,7 +608,6 @@ export async function boot() {
       if (filterAll) filterAll.classList.remove('active');
     });
   }
-  // Default: "Все" active
   if (filterAll) filterAll.classList.add('active');
 
   const btnCloseCard = $('btn-close-card');
@@ -617,7 +616,6 @@ export async function boot() {
   const btnDetailBack = $('btn-detail-back');
   if (btnDetailBack) btnDetailBack.addEventListener('click', ()=>{ if(history.state?.meowDetail) history.back(); else closeDetail(); });
 
-  // Date button — открывает календарь
   const btnDate = $('btn-date');
   if (btnDate) {
     btnDate.addEventListener('click', (e) => {
@@ -662,7 +660,6 @@ export async function boot() {
     
     grid.innerHTML = '';
     
-    // Дни недели
     const dw = ['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];
     dw.forEach(d => {
       const el = document.createElement('div');
@@ -671,7 +668,6 @@ export async function boot() {
       grid.appendChild(el);
     });
     
-    // Собираем даты с событиями
     const eventDates = new Set();
     if (rawAllEvents.length) {
       rawAllEvents.forEach(e => {
@@ -679,11 +675,9 @@ export async function boot() {
       });
     }
     
-    // Первый день месяца
     const firstDay = new Date(year, month, 1);
-    const startDow = (firstDay.getDay() + 6) % 7; // ПН=0
+    const startDow = (firstDay.getDay() + 6) % 7;
     
-    // Пустые ячейки до первого дня
     for (let i = 0; i < startDow; i++) {
       const el = document.createElement('div');
       grid.appendChild(el);
@@ -692,7 +686,6 @@ export async function boot() {
     const todayStr = fmt(new Date());
     const activeStr = fmt(currentDate);
     
-    // Дни месяца
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     for (let d = 1; d <= daysInMonth; d++) {
       const dateStr = `${pad(d)}.${pad(month + 1)}.${year}`;
@@ -715,13 +708,11 @@ export async function boot() {
     }
   }
   
-  // Calendar navigation
   const calPrev = $('cal-prev');
   const calNext = $('cal-next');
   if (calPrev) calPrev.addEventListener('click', () => { calViewDate.setMonth(calViewDate.getMonth() - 1); renderCalendar(); });
   if (calNext) calNext.addEventListener('click', () => { calViewDate.setMonth(calViewDate.getMonth() + 1); renderCalendar(); });
   
-  // Close calendar on overlay click
   const calOverlay = $('cal-overlay');
   if (calOverlay) calOverlay.addEventListener('click', closeCalendar);
   
@@ -765,7 +756,6 @@ export async function boot() {
     el.setAttribute('aria-hidden', 'true');
   }
   
-  // Обновляем onSearch — поиск только в подсказках, не трогает боковую панель
   onSearch = function(q) {
     if (!q || q.trim() === '') { hideSearchSuggestions(); return; }
     const query = q.toLowerCase().trim();
@@ -790,7 +780,7 @@ export async function boot() {
   const btnLocate = $('btn-locate');
   if (btnLocate) btnLocate.addEventListener('click', ()=>{
     if (!navigator.geolocation) return;
-    TG?.HapticFeedback?.impactOccurred('medium');
+    TG()?.HapticFeedback?.impactOccurred('medium');
     navigator.geolocation.getCurrentPosition(
       ({coords})=>getMapInstance()?.flyTo({center:[coords.longitude,coords.latitude],zoom:14.5,duration:700}),
       err=>console.warn('[MEOW] geo:',err.message)

@@ -214,7 +214,7 @@ def parse_post(text: str) -> Optional[dict]:
 
     first_line = lines[0]
     date_title_match = re.match(
-        r"^(\d{1,2})\.(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?\s*[|–—\-]\s*(.+)$",
+        r".*?(\d{1,2})\.(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?\s*[|–—\-]\s*(.+)$",
         first_line,
     )
     if not date_title_match:
@@ -377,6 +377,9 @@ def process_single_message(msg: dict, geocache: dict) -> Optional[dict]:
     text = msg.get("text") or msg.get("caption") or ""
     if not text:
         return None
+
+    logger.info(f"Обработка сообщения, первые 300 символов:\n{text[:300]}")
+    logger.info(f"msg keys: {list(msg.keys())}")
 
     parsed = parse_post(text)
     if not parsed:

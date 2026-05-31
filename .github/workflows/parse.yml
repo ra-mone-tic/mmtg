@@ -45,5 +45,7 @@ jobs:
             git add images
           fi
 
-          git diff --cached --quiet || git commit -m "Update events and images"
+          git diff --cached --quiet && echo "No changes to commit" && exit 0
+          git commit -m "Update events and images [$(date +'%d.%m.%Y %H:%M')]"
+          git pull --rebase origin main
           git push

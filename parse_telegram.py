@@ -380,6 +380,7 @@ def process_single_message(msg: dict, geocache: dict) -> Optional[dict]:
 
     parsed = parse_post(text)
     if not parsed:
+        logger.warning(f"Не удалось распарсить пост (первые 500 символов):\n{text[:500]}")
         return None
 
     lat, lon = geocode_address(parsed["location"], geocache)

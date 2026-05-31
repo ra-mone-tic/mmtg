@@ -11,12 +11,10 @@ permissions:
 jobs:
   parse:
     runs-on: ubuntu-latest
-    env:
-      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -45,8 +43,5 @@ jobs:
             git add images
           fi
 
-          git diff --cached --quiet && echo "No changes to commit" && exit 0
-          git commit -m "Update events and images [$(date +'%d.%m.%Y %H:%M')]"
-          git checkout main
-          git pull --rebase origin main
+          git diff --cached --quiet || git commit -m "Update events and images"
           git push

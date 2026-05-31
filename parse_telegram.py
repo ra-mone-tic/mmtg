@@ -419,6 +419,12 @@ def process_single_message(msg: dict, geocache: dict) -> Optional[dict]:
 
 
 def process_media_group(msgs: List[dict], geocache: dict) -> Optional[dict]:
+    logger.info(f"Обработка медиа-группы из {len(msgs)} сообщений")
+    for i, m in enumerate(msgs):
+        logger.info(f"  msg[{i}] keys: {list(m.keys())}")
+        logger.info(f"  msg[{i}] caption: {m.get('caption', '')[:200]}")
+        logger.info(f"  msg[{i}] text: {m.get('text', '')[:200]}")
+
     text_msg = None
     photos: List[dict] = []
 
@@ -431,16 +437,22 @@ def process_media_group(msgs: List[dict], geocache: dict) -> Optional[dict]:
 
     if not text_msg and msgs:
         text_msg = msgs[0]
+        logger.info(f"text_msg not found by caption, fallback to first msg, keys: {list(text_msg.keys())}")
 
     if not text_msg:
+        logger.warning("text_msg is None for media group")
         return None
 
     text = text_msg.get("caption") or text_msg.get("text") or ""
     if not text:
+        logger.warning("text_msg has no caption or text")
         return None
+
+    logger.info(f"Текст медиа-группы (первые 300 символов):\n{text[:300]}")
 
     parsed = parse_post(text)
     if not parsed:
+        logger.warning(f"Не удалось распарсить медиа-группу (первые 500 символов):\n{text[:500]}")
         return None
 
     lat, lon = geocode_address(parsed["location"], geocache)

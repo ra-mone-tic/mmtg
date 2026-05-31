@@ -1,60 +1,41 @@
-name: Parse Telegram & Update Events
+name: Parse Telegram channel
 
 on:
   schedule:
-    # Каждый час
-    - cron: '0 * * * *'
-  workflow_dispatch:  # Ручной запуск
+    - cron: "0 * * * *"   # каждый час
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   parse:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          persist-credentials: false
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install deps
         run: |
           python -m pip install --upgrade pip
-          pip install requests
+          pip install requests urllib3
 
-      - name: Run parse script
+      - name: Run parser
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-        run: python parse_telegram.py
-
-      - name: Commit and push changes
-        env:
-          PAT: ${{ secrets.PAT_TOKEN }}
         run: |
-          git config --global user.name "meowafisha-bot"
-          git config --global user.email "bot@meowafisha.app"
-          
-          # Проверяем, есть ли изменения
-          if git diff --quiet && git diff --staged --quiet; then
-            # Проверяем untracked files
-            if [ -z "$(git status --porcelain)" ]; then
-              echo "No changes to commit"
-              exit 0
-            fi
-          fi
-          
-          git add events.json geocode_cache.json
-          git add -f geocode_cache.json
-          
-          # Если есть что коммитить
-          if ! git diff --staged --quiet; then
-            git commit -m "Auto-update events from Telegram [$(date +'%d.%m.%Y %H:%M')]"
-            git remote set-url origin https://x-access-token:${PAT}@github.com/${{ github.repository }}.git
-            git push origin HEAD:${GITHUB_REF##*/}
-          else
-            echo "No changes to commit"
-          fi
+          python parse_telegram.py
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add events.json geocode_cache.json state.json images
+          git diff --cached --quiet || git commit -m "Update events and images"
+          git push

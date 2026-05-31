@@ -18,7 +18,7 @@ const CFG = {
   MAP_CENTER: REGION_CENTER,
   MAP_ZOOM: REGION_ZOOM,
   FLY_ZOOM: 14.5,
-  FLY_OFFSET: [0, 70],
+  FLY_OFFSET: [0, 140],
   FLY_MS: 540,
   SHARE_BASE: 'https://t.me/your_bot?start=',
   STYLES: {
@@ -401,10 +401,18 @@ function openDetail(id) {
 
   const posterInner = $('poster-inner');
   if (posterInner) {
-    if (ev.imageUrl) {
-      posterInner.innerHTML = `<img src="${ev.imageUrl}" alt="${ev.title}">`;
+    const imageUrl = ev.imageUrl && ev.imageUrl.trim() ? ev.imageUrl : null;
+    if (imageUrl) {
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.alt = ev.title;
+      img.onerror = () => {
+        posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
+      };
+      posterInner.innerHTML = '';
+      posterInner.appendChild(img);
     } else {
-      posterInner.innerHTML = `<span class="poster-initial">${ev.title[0]}</span>`;
+      posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
     }
   }
 

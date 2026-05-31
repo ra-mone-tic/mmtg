@@ -45,7 +45,7 @@ export function setPinActive(id, active) {
   el.classList.toggle('active', active);
 }
 
-export function flyTo(ev, zoom = 14.5, offset = [0, 70], ms = 540) {
+export function flyTo(ev, zoom = 14.5, offset = [0, 140], ms = 540) {
   map.flyTo({center: [ev.lng, ev.lat], zoom, offset, duration: ms, essential: true});
 }
 

@@ -4,7 +4,7 @@ MeowAfisha · parse_telegram.py
 Парсинг постов из Telegram-канала @meowafisha для GitHub Pages.
 
 Что делает:
-- читает новые channel_post через Bot API getUpdates;
+- читает новые channel_post через Bot API getUpdates (POST+JSON);
 - парсит текст поста в структуру события;
 - скачивает фото из Telegram в локальную папку images/;
 - пишет в events.json только относительный путь к картинке;
@@ -65,6 +65,11 @@ KLGD_CITIES = (
     r"правдинск|краснознаменск|озёрск|нестеров|багратионовск|славск|"
     r"полярный|посёлок|пос\.|г\.|п\.)"
 )
+
+# Nominatim rate limiting: не чаще 1 запроса в секунду
+_NOMINATIM_MIN_INTERVAL = 1.1  # seconds
+_last_nominatim_call: float = 0.0
+
 
 # ─── Session with retries ───────────────────────────────
 def make_session() -> requests.Session:
@@ -153,11 +158,121 @@ def save_state(state: dict) -> None:
 
 
 # ─── Geocoding ──────────────────────────────────────────
+def _build_geocode_queries(address: str) -> List[str]:
+    """
+    Строит несколько вариантов запроса для Nominatim — от полного к упрощённому.
+
+    Проблема: посты содержат адреса вида «Название заведения, Улица, Номер»
+    (например, «Шум, Пионерский пляж, Портовая 1»). Nominatim не умеет
+    разбирать название заведения и возвращает пустой результат.
+
+    Стратегии (применяются по очереди до первого успеха):
+      1. Полный адрес как есть
+      2. Без первой части (убираем название заведения)
+      3. Только последняя часть (улица + номер)
+      4. Две последние части
+      5. Улица + номер + город, извлечённый из средних частей
+    """
+    addr = address.strip().rstrip(".")
+    parts = [p.strip() for p in addr.split(",") if p.strip()]
+
+    def with_city(s: str) -> str:
+        """Добавляет «Калининград» если нет городского ориентира."""
+        if not re.search(KLGD_CITIES, s, re.I):
+            return f"{s}, Калининград"
+        return s
+
+    seen: set = set()
+    result: List[str] = []
+
+    def add(s: str) -> None:
+        q = with_city(s.strip())
+        if q and q not in seen:
+            seen.add(q)
+            result.append(q)
+
+    # 1. Полный адрес
+    add(addr)
+
+    if len(parts) >= 2:
+        # 2. Без первой части (название заведения)
+        add(", ".join(parts[1:]))
+        # 3. Только улица + номер (последняя часть)
+        add(parts[-1])
+
+    if len(parts) >= 3:
+        # 4. Две последние части
+        add(", ".join(parts[-2:]))
+
+    # 5. Улица + город, если город упомянут в средних частях адреса
+    #    Пример: «Шум, Пионерский пляж, Портовая 1»
+    #    → ищем «пионерский» в «Пионерский пляж», строим «Портовая 1, пионерский»
+    for part in parts[:-1]:
+        m = re.search(KLGD_CITIES, part, re.I)
+        if m:
+            add(f"{parts[-1]}, {m.group(1)}")
+            break
+
+    return result
+
+
+def _nominatim_request(query: str) -> Optional[Tuple[float, float]]:
+    """Один HTTP-запрос к Nominatim. Возвращает (lat, lon) или None."""
+    global _last_nominatim_call
+
+    # Rate limiting
+    elapsed = time.monotonic() - _last_nominatim_call
+    if elapsed < _NOMINATIM_MIN_INTERVAL:
+        time.sleep(_NOMINATIM_MIN_INTERVAL - elapsed)
+    _last_nominatim_call = time.monotonic()
+
+    try:
+        url = "https://nominatim.openstreetmap.org/search"
+        headers = {"User-Agent": "MeowAfishaBot/1.0 (github actions)"}
+        params = {
+            "q": query,
+            "format": "json",
+            "limit": 1,
+            "countrycodes": "RU",
+            "viewbox": (
+                f"{KLGD_BBOX['min_lon']},{KLGD_BBOX['max_lat']},"
+                f"{KLGD_BBOX['max_lon']},{KLGD_BBOX['min_lat']}"
+            ),
+            "bounded": 0,
+        }
+        resp = session.get(url, params=params, headers=headers, timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data:
+                lat = float(data[0]["lat"])
+                lon = float(data[0]["lon"])
+                if is_in_klgd(lat, lon):
+                    return lat, lon
+                logger.debug(f"[NOMINATIM] Вне КО: {query!r} ({lat:.4f}, {lon:.4f})")
+            else:
+                logger.debug(f"[NOMINATIM] Нет результата: {query!r}")
+        elif resp.status_code == 429:
+            logger.error("[NOMINATIM] Rate limit 429 — ждём 5 секунд...")
+            time.sleep(5)
+        else:
+            logger.warning(f"[NOMINATIM] HTTP {resp.status_code}: {query!r}")
+    except Exception as e:
+        logger.error(f"[NOMINATIM] Ошибка для {query!r}: {e}")
+
+    return None
+
+
 def geocode_address(address: str, cache: dict) -> Tuple[Optional[float], Optional[float]]:
+    """
+    Геокодирует адрес через Nominatim с rate limiting и многошаговой
+    нормализацией. Пробует несколько вариантов запроса последовательно.
+    """
     addr = (address or "").strip()
     if not addr:
         return None, None
 
+    # Проверяем кэш (промахи [None, None] не сохраняются на диск,
+    # так что на следующем запуске адрес будет запрошен снова)
     if addr in cache:
         coords = cache[addr]
         if (
@@ -168,34 +283,21 @@ def geocode_address(address: str, cache: dict) -> Tuple[Optional[float], Optiona
         ):
             logger.info(f"[CACHE] HIT: {addr}")
             return float(coords[0]), float(coords[1])
+        logger.debug(f"[CACHE] Промах (в этом запуске уже пробовали): {addr!r}")
+        return None, None
 
-    query = addr
-    if not re.search(KLGD_CITIES, addr, re.I):
-        query = f"{addr}, Калининград"
+    queries = _build_geocode_queries(addr)
+    logger.debug(f"[NOMINATIM] Варианты запроса для {addr!r}: {queries}")
 
-    try:
-        url = "https://nominatim.openstreetmap.org/search"
-        headers = {"User-Agent": "MeowAfishaBot/1.0 (github actions)"}
-        params = {"q": query, "format": "json", "limit": 1, "countrycodes": "RU"}
-        resp = session.get(url, params=params, headers=headers, timeout=10)
-        if resp.status_code == 200:
-            data = resp.json()
-            if data:
-                lat = float(data[0]["lat"])
-                lon = float(data[0]["lon"])
-                if is_in_klgd(lat, lon):
-                    cache[addr] = [lat, lon]
-                    logger.info(f"[NOMINATIM] OK: {addr} -> {lat:.6f}, {lon:.6f}")
-                    time.sleep(1.1)  # rate limiting: max 1 req/s
-                    return lat, lon
-                logger.warning(f"[NOMINATIM] Вне КО: {addr} ({lat:.4f}, {lon:.4f})")
-            else:
-                logger.warning(f"[NOMINATIM] Нет результата: {addr}")
-        else:
-            logger.warning(f"[NOMINATIM] HTTP {resp.status_code}: {addr}")
-    except Exception as e:
-        logger.error(f"[NOMINATIM] Ошибка: {e}")
+    for query in queries:
+        result = _nominatim_request(query)
+        if result:
+            lat, lon = result
+            cache[addr] = [lat, lon]
+            logger.info(f"[NOMINATIM] OK: {addr!r}  (запрос: {query!r})  → {lat:.6f}, {lon:.6f}")
+            return lat, lon
 
+    logger.warning(f"[NOMINATIM] Все варианты не дали результата для: {addr!r}")
     cache[addr] = [None, None]
     return None, None
 
@@ -216,12 +318,14 @@ def parse_post(text: str) -> Optional[dict]:
         return None
 
     first_line = lines[0]
+
+    # FIX: re.search вместо re.match — надёжнее с эмодзи/символами перед датой
     date_title_match = re.search(
         r"(\d{1,2})\.(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?\s*[|–—\-]\s*(.+)$",
         first_line,
     )
     if not date_title_match:
-        logger.debug(f"Не удалось распарсить первую строку: {first_line}")
+        logger.debug(f"Не удалось распарсить первую строку: {first_line!r}")
         return None
 
     day = int(date_title_match.group(1))
@@ -245,7 +349,7 @@ def parse_post(text: str) -> Optional[dict]:
 
     addr_match = re.search(r"📍\s*(.+)", text)
     if not addr_match:
-        logger.debug(f"Нет адреса (📍) в посте: {title}")
+        logger.debug(f"Нет адреса (📍) в посте: {title!r}")
         return None
     address = addr_match.group(1).strip().rstrip(".")
 
@@ -269,7 +373,8 @@ def parse_post(text: str) -> Optional[dict]:
 
     if not title or not date_str or not address:
         logger.debug(
-            f"Пропущен: нет обязательных полей (title={title}, date={date_str}, address={address})"
+            f"Пропущен: нет обязательных полей "
+            f"(title={title!r}, date={date_str!r}, address={address!r})"
         )
         return None
 
@@ -288,21 +393,30 @@ def parse_post(text: str) -> Optional[dict]:
 
 # ─── Telegram API ───────────────────────────────────────
 def get_channel_messages(offset: int = None, limit: int = 50) -> List[dict]:
-    """Получить channel_post через Bot API."""
+    """
+    Получить channel_post через Bot API.
+
+    ВАЖНО: используем POST + JSON-тело, а не GET + query params.
+    При передаче через params= библиотека requests сериализует список
+    ["channel_post"] как ?allowed_updates=channel_post (строку), а не как
+    JSON-массив. Telegram в таком случае игнорирует параметр и возвращает
+    дефолтные типы обновлений, в которые channel_post НЕ входит.
+    """
     if not TELEGRAM_BOT_TOKEN:
         logger.error("TELEGRAM_BOT_TOKEN не задан!")
         return []
 
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates"
-    payload = {
-        "timeout": 0,  # для GitHub Actions polling не нужен
+    payload: Dict[str, Any] = {
+        "timeout": 0,
         "limit": limit,
-        "allowed_updates": ["channel_post"],
+        "allowed_updates": ["channel_post"],  # передаётся как JSON-массив
     }
     if offset:
         payload["offset"] = offset
 
     try:
+        # FIX: POST + json= вместо GET + params=
         resp = session.post(url, json=payload, timeout=15)
         if resp.status_code == 200:
             data = resp.json()
@@ -312,12 +426,13 @@ def get_channel_messages(offset: int = None, limit: int = 50) -> List[dict]:
                     msg = update.get("channel_post") or update.get("message") or {}
                     chat = msg.get("chat", {})
                     if chat.get("username", "").lower() == CHANNEL_USERNAME.lstrip("@").lower():
+                        # FIX: не мутируем оригинальный dict из API-ответа
                         msg = {**msg, "update_id": update["update_id"]}
                         messages.append(msg)
                 return messages
             logger.error(f"Telegram API error: {data}")
         else:
-            logger.error(f"Telegram API HTTP {resp.status_code}")
+            logger.error(f"Telegram API HTTP {resp.status_code}: {resp.text[:200]}")
     except Exception as e:
         logger.error(f"Telegram API request failed: {e}")
 
@@ -334,7 +449,10 @@ def get_file_url(file_id: str) -> Optional[str]:
         if resp.status_code == 200:
             data = resp.json()
             if data.get("ok") and data.get("result", {}).get("file_path"):
-                return f"https://api.telegram.org/file/bot{TELEGRAM_BOT_TOKEN}/{data['result']['file_path']}"
+                return (
+                    f"https://api.telegram.org/file/bot{TELEGRAM_BOT_TOKEN}"
+                    f"/{data['result']['file_path']}"
+                )
     except Exception as e:
         logger.warning(f"Failed to get file URL: {e}")
     return None
@@ -356,8 +474,12 @@ def download_image(url: str, dest: Path) -> bool:
 
 # ─── Event ID ───────────────────────────────────────────
 def make_event_id(date: str, title: str, location: str) -> str:
+    """
+    FIX: используем hashlib вместо самодельного DJB2.
+    hashlib.md5 — стабильный, платформонезависимый, без переполнений.
+    """
     source = f"{date}|{title}|{location}"
-    return hashlib.md5(source.encode()).hexdigest()[:8]
+    return hashlib.md5(source.encode("utf-8")).hexdigest()[:12]
 
 
 # ─── Storage ───────────────────────────────────────────
@@ -373,13 +495,24 @@ def save_events(events: List[dict]) -> None:
 
 
 # ─── Processing ─────────────────────────────────────────
+def _attach_image(ev: dict, msg: dict) -> None:
+    """Скачивает фото из сообщения и добавляет imageUrl в событие."""
+    if "photo" not in msg or not isinstance(msg["photo"], list) or not msg["photo"]:
+        return
+    best_photo = max(msg["photo"], key=lambda p: p.get("file_size", 0))
+    file_url = get_file_url(best_photo["file_id"])
+    if file_url:
+        img_path = IMAGES_DIR / f"{ev['id']}.jpg"
+        if download_image(file_url, img_path):
+            ev["imageUrl"] = f"images/{img_path.name}"
+
+
 def process_single_message(msg: dict, geocache: dict) -> Optional[dict]:
     text = msg.get("text") or msg.get("caption") or ""
     if not text:
         return None
 
-    logger.info(f"Обработка сообщения, первые 300 символов:\n{text[:300]}")
-    logger.info(f"msg keys: {list(msg.keys())}")
+    logger.info(f"Обработка сообщения msg_id={msg.get('message_id')}, первые 300 символов:\n{text[:300]}")
 
     parsed = parse_post(text)
     if not parsed:
@@ -388,7 +521,7 @@ def process_single_message(msg: dict, geocache: dict) -> Optional[dict]:
 
     lat, lon = geocode_address(parsed["location"], geocache)
     if lat is None:
-        logger.warning(f"Не удалось геокодировать: {parsed['location']}, пропускаем")
+        logger.warning(f"Не удалось геокодировать адрес: {parsed['location']!r} — событие пропущено")
         return None
 
     ev = {
@@ -405,14 +538,7 @@ def process_single_message(msg: dict, geocache: dict) -> Optional[dict]:
         "lat": lat,
         "lon": lon,
     }
-
-    if "photo" in msg and isinstance(msg["photo"], list) and msg["photo"]:
-        best_photo = max(msg["photo"], key=lambda p: p.get("file_size", 0))
-        file_url = get_file_url(best_photo["file_id"])
-        if file_url:
-            img_path = IMAGES_DIR / f"{ev['id']}.jpg"
-            if download_image(file_url, img_path):
-                ev["imageUrl"] = f"images/{img_path.name}"
+    _attach_image(ev, msg)
 
     logger.info(f"Обработано: {ev['title']} ({ev['date']}) @ {parsed['address']}")
     return ev
@@ -445,6 +571,7 @@ def process_media_group(msgs: List[dict], geocache: dict) -> Optional[dict]:
 
     lat, lon = geocode_address(parsed["location"], geocache)
     if lat is None:
+        logger.warning(f"Не удалось геокодировать адрес (медиагруппа): {parsed['location']!r} — пропускаем")
         return None
 
     ev = {
@@ -462,6 +589,7 @@ def process_media_group(msgs: List[dict], geocache: dict) -> Optional[dict]:
         "lon": lon,
     }
 
+    # Берём лучшее фото из всех сообщений группы
     best_photo = None
     best_size = 0
     for pmsg in photos:
@@ -482,7 +610,11 @@ def process_media_group(msgs: List[dict], geocache: dict) -> Optional[dict]:
     return ev
 
 
-def process_messages(messages: List[dict], existing_events: List[dict], geocache: dict) -> Tuple[List[dict], int, int]:
+def process_messages(
+    messages: List[dict],
+    existing_events: List[dict],
+    geocache: dict,
+) -> Tuple[List[dict], int, int]:
     events_by_id = {e.get("id"): e for e in existing_events if e.get("id")}
 
     media_groups: Dict[str, List[dict]] = {}
@@ -503,7 +635,6 @@ def process_messages(messages: List[dict], existing_events: List[dict], geocache
         if ev:
             ev_id = ev["id"]
             if ev_id in events_by_id:
-                # сохраняем уже скачанную картинку, если новая не пришла
                 old_image = events_by_id[ev_id].get("imageUrl")
                 events_by_id[ev_id].update(ev)
                 if old_image and not events_by_id[ev_id].get("imageUrl"):
@@ -545,9 +676,17 @@ def main() -> None:
     geocache = load_geocache()
     state = load_state()
 
-    logger.info(f"Существующих событий: {len(existing)}, кэш: {len(geocache)}, last_update_id: {state.get('last_update_id', 0)}")
+    logger.info(
+        f"Существующих событий: {len(existing)}, "
+        f"кэш: {len(geocache)}, "
+        f"last_update_id: {state.get('last_update_id', 0)}"
+    )
 
-    offset = int(state.get("last_update_id", 0)) + 1 if state.get("last_update_id", 0) else None
+    offset = (
+        int(state.get("last_update_id", 0)) + 1
+        if state.get("last_update_id", 0)
+        else None
+    )
     messages = get_channel_messages(offset=offset)
 
     if not messages:

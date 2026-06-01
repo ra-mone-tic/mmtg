@@ -318,12 +318,12 @@ function onAvatarTap() {
 }
 
 // ─── Date handling ─────────────────────────────────────
-function onDateChange(dateStr) {
+async function onDateChange(dateStr) {
   const dateLabel = $('date-label');
   if (dateLabel) dateLabel.textContent = dateStr;
   const [day, month, year] = dateStr.split('.').map(Number);
   currentDate = new Date(year, month - 1, day);
-  fetchEvents(dateStr);
+  await fetchEvents(dateStr);
 }
 
 // ─── Map ───────────────────────────────────────────────
@@ -515,7 +515,20 @@ function renderList(eventList) {
       item.setAttribute('data-id',ev.id);
       item.setAttribute('tabindex','0');
       item.innerHTML=`<div class="event-item-title">${ev.title}</div><div class="event-item-sub">${ev.venue} · ${ev.time}</div>`;
-      const go=()=>{flyTo(ev);openCard(ev.id);setPanel(false);};
+      const go = () => {
+        if (ev.date !== fmt(currentDate)) {
+          closeCard();
+          onDateChange(ev.date).then(() => {
+            flyTo(ev);
+            openCard(ev.id);
+            setPanel(false);
+          });
+        } else {
+          flyTo(ev);
+          openCard(ev.id);
+          setPanel(false);
+        }
+      };
       item.addEventListener('click',go);
       item.addEventListener('keydown',e=>{if(e.key==='Enter')go();});
       list.appendChild(item);
@@ -733,10 +746,10 @@ export async function boot() {
       if (dateStr === activeStr) el.classList.add('active');
       if (eventDates.has(dateStr)) el.classList.add('has-events');
       
-      el.addEventListener('click', () => {
+      el.addEventListener('click', async () => {
         const [day, m, y] = dateStr.split('.').map(Number);
         currentDate = new Date(y, m - 1, day);
-        onDateChange(dateStr);
+        await onDateChange(dateStr);
         closeCalendar();
       });
       
@@ -772,10 +785,19 @@ export async function boot() {
       </div>
     `).join('');
     el.querySelectorAll('.sug-item').forEach(item => {
-      item.addEventListener('click', () => {
+      item.addEventListener('click', async () => {
         const id = item.getAttribute('data-id');
-        const ev = events.find(e => e.id === id);
-        if (ev) { flyTo(ev); openCard(id); }
+        // Ищем событие во всех данных, а не только в текущей дате
+        const allNormalized = rawAllEvents.map(normalizeEvent);
+        const ev = allNormalized.find(e => e.id === id);
+        if (ev) {
+          if (ev.date !== fmt(currentDate)) {
+            closeCard();
+            await onDateChange(ev.date);
+          }
+          flyTo(ev);
+          openCard(id);
+        }
         hideSearchSuggestions();
         const inp = $('search-input');
         if (inp) inp.value = '';

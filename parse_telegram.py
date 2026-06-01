@@ -17,11 +17,13 @@ MeowAfisha · parse_telegram.py
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
 import re
 import sys
+import time
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -184,6 +186,7 @@ def geocode_address(address: str, cache: dict) -> Tuple[Optional[float], Optiona
                 if is_in_klgd(lat, lon):
                     cache[addr] = [lat, lon]
                     logger.info(f"[NOMINATIM] OK: {addr} -> {lat:.6f}, {lon:.6f}")
+                    time.sleep(1.1)  # rate limiting: max 1 req/s
                     return lat, lon
                 logger.warning(f"[NOMINATIM] Вне КО: {addr} ({lat:.4f}, {lon:.4f})")
             else:
@@ -213,8 +216,8 @@ def parse_post(text: str) -> Optional[dict]:
         return None
 
     first_line = lines[0]
-    date_title_match = re.match(
-        r".*?(\d{1,2})\.(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?\s*[|–—\-]\s*(.+)$",
+    date_title_match = re.search(
+        r"(\d{1,2})\.(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?\s*[|–—\-]\s*(.+)$",
         first_line,
     )
     if not date_title_match:
@@ -240,7 +243,7 @@ def parse_post(text: str) -> Optional[dict]:
     if hour is not None and minute is not None:
         time_str = f"{int(hour):02d}:{int(minute):02d}"
 
-    addr_match = re.search(r"📍\s*(.+?)(?:\n|$)", text)
+    addr_match = re.search(r"📍\s*(.+)", text)
     if not addr_match:
         logger.debug(f"Нет адреса (📍) в посте: {title}")
         return None
@@ -291,16 +294,16 @@ def get_channel_messages(offset: int = None, limit: int = 50) -> List[dict]:
         return []
 
     url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/getUpdates"
-    params = {
+    payload = {
         "timeout": 0,  # для GitHub Actions polling не нужен
         "limit": limit,
         "allowed_updates": ["channel_post"],
     }
     if offset:
-        params["offset"] = offset
+        payload["offset"] = offset
 
     try:
-        resp = session.get(url, params=params, timeout=15)
+        resp = session.post(url, json=payload, timeout=15)
         if resp.status_code == 200:
             data = resp.json()
             if data.get("ok"):
@@ -309,7 +312,7 @@ def get_channel_messages(offset: int = None, limit: int = 50) -> List[dict]:
                     msg = update.get("channel_post") or update.get("message") or {}
                     chat = msg.get("chat", {})
                     if chat.get("username", "").lower() == CHANNEL_USERNAME.lstrip("@").lower():
-                        msg["update_id"] = update["update_id"]
+                        msg = {**msg, "update_id": update["update_id"]}
                         messages.append(msg)
                 return messages
             logger.error(f"Telegram API error: {data}")
@@ -354,10 +357,7 @@ def download_image(url: str, dest: Path) -> bool:
 # ─── Event ID ───────────────────────────────────────────
 def make_event_id(date: str, title: str, location: str) -> str:
     source = f"{date}|{title}|{location}"
-    h = 5381
-    for c in source:
-        h = ((h << 5) + h) + ord(c)
-    return f"{h & 0x7FFFFFFF:08x}"
+    return hashlib.md5(source.encode()).hexdigest()[:8]
 
 
 # ─── Storage ───────────────────────────────────────────

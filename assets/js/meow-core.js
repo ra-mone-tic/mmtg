@@ -191,10 +191,27 @@ let currentDate = new Date();
 // ─── Data Loading ──────────────────────────────────────
 let rawAllEvents = [];
 
+/**
+ * Приводит дату к единому формату DD.MM.YYYY (с ведущими нулями).
+ */
+function normalizeDate(str) {
+  if (!str) return str;
+  const parts = str.split('.');
+  if (parts.length !== 3) return str;
+  const [d, m, y] = parts.map(Number);
+  if (!d || !m || !y) return str;
+  return `${pad(d)}.${pad(m)}.${y}`;
+}
+
 async function loadAllEvents() {
   try {
     const resp = await fetch('events.json');
-    rawAllEvents = await resp.json();
+    const data = await resp.json();
+    // Нормализуем даты у всех событий
+    rawAllEvents = data.map(e => ({
+      ...e,
+      date: normalizeDate(e.date)
+    }));
     return rawAllEvents;
   } catch (e) {
     console.error('Ошибка загрузки событий:', e);
@@ -206,8 +223,8 @@ function normalizeEvent(e) {
   return {
     id: e.id,
     title: e.title,
-    venue: e.location || e.venue || '',
-    address: e.location || '',
+    venue: e.location || e.venue || e.address || '',
+    address: e.location || e.address || '',
     date: e.date,
     time: e.time || '',
     desc: e.full_description || e.short_description || '',

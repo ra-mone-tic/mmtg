@@ -263,18 +263,10 @@ svg{display:block;flex-shrink:0}
 .event-detail.open{opacity:1;transform:translateY(0);pointer-events:auto}
 
 .detail-poster{position:relative;width:100%;height:238px;flex-shrink:0;overflow:hidden}
-.detail-poster img{width:100%;height:100%;object-fit:cover;display:block}
+.detail-poster img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
 .poster-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
 .poster-initial{font-size:96px;font-weight:900;color:rgba(255,255,255,.18);line-height:1;user-select:none}
 .poster-fade{position:absolute;bottom:0;left:0;right:0;height:88px;background:linear-gradient(transparent,var(--c-canvas))}
-.poster-badge{
-  position:absolute;top:calc(var(--sai-t) + 12px);right:14px;z-index:2;
-  display:inline-flex;align-items:center;gap:6px;
-  padding:5px 12px;border-radius:30px;
-  background:rgba(0,0,0,.38);border:1px solid rgba(255,255,255,.14);
-  font-size:12px;font-weight:700;color:#fff;
-  backdrop-filter:blur(8px);
-}
 
 .detail-back{
   position:absolute;top:calc(var(--sai-t) + 12px);left:14px;z-index:2;
@@ -383,6 +375,13 @@ svg{display:block;flex-shrink:0}
 }
 .m-pin:hover{transform:scale(1.14)}
 .m-pin.active{transform:scale(1.28);filter:drop-shadow(0 5px 12px var(--c-accent-g))}
+
+/* ── User location marker ──────────────────────── */
+.m-user{width:28px;height:28px;cursor:default;pointer-events:none;z-index:1}
+.m-user svg{animation:user-pulse 2s ease-in-out infinite}
+@keyframes user-pulse{0%,100%{filter:drop-shadow(0 0 4px rgba(59,130,246,.4))}50%{filter:drop-shadow(0 0 12px rgba(59,130,246,.7))}}
+.m-user circle:first-child{animation:user-ring 2s ease-in-out infinite}
+@keyframes user-ring{0%,100%{r:13;opacity:1}50%{r:16;opacity:.5}}
 
 /* ── Calendar Modal ──────────────────────────────── */
 .cal-modal{
@@ -558,15 +557,6 @@ svg{display:block;flex-shrink:0}
       <span class="poster-initial" id="poster-initial">—</span>
     </div>
     <div class="poster-fade"></div>
-    <div class="poster-badge" id="poster-badge">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <rect x="3" y="4" width="18" height="18" rx="2"/>
-        <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-        <line x1="3" y1="10" x2="21" y2="10"/>
-      </svg>
-      <span id="poster-date">—</span>
-    </div>
   </div>
   <div class="detail-body" id="detail-body">
     <div class="detail-venue-tag">

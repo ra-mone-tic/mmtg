@@ -6,7 +6,9 @@ import {
   clearMarkers,
   setPinActive,
   flyTo,
-  getMapInstance
+  getMapInstance,
+  addUserMarker,
+  clearUserMarker
 } from './map-core.js';
 
 // ─── Config ────────────────────────────────────────────
@@ -18,7 +20,7 @@ const CFG = {
   MAP_CENTER: REGION_CENTER,
   MAP_ZOOM: REGION_ZOOM,
   FLY_ZOOM: 14.5,
-  FLY_OFFSET: [0, 140],
+  FLY_OFFSET: [0, 240],
   FLY_MS: 540,
   SHARE_BASE: 'https://t.me/your_bot?start=',
   STYLES: {
@@ -433,9 +435,6 @@ function openDetail(id) {
     }
   }
 
-  const posterDate = $('poster-date');
-  if (posterDate) posterDate.textContent = ev.date;
-
   const detailVenue = $('detail-venue');
   if (detailVenue) detailVenue.textContent = ev.venue;
 
@@ -607,7 +606,11 @@ export async function boot() {
   if (btnAvatar) btnAvatar.addEventListener('click', onAvatarTap);
 
   const btnEvents = $('btn-events');
-  if (btnEvents) btnEvents.addEventListener('click', ()=>setPanel(!panelOpen));
+  if (btnEvents) btnEvents.addEventListener('click', ()=>{
+    const willOpen = !panelOpen;
+    setPanel(willOpen);
+    if (willOpen) applyPanelFilter();
+  });
 
   // Filter buttons in panel-head
   const filterAll = $('filter-all');
@@ -641,6 +644,11 @@ export async function boot() {
     }
   }
 
+  // Определяем режим по умолчанию: если есть события на сегодня — "Сегодня", иначе "Все"
+  const todayStr = fmt(new Date());
+  const hasTodayEvents = filterByDate(todayStr).length > 0;
+  panelFilterMode = hasTodayEvents ? 'today' : 'all';
+
   if (filterAll) {
     filterAll.addEventListener('click', () => {
       panelFilterMode = 'all';
@@ -657,7 +665,11 @@ export async function boot() {
       if (filterAll) filterAll.classList.remove('active');
     });
   }
-  if (filterAll) filterAll.classList.add('active');
+  if (hasTodayEvents && filterToday) {
+    filterToday.classList.add('active');
+  } else if (filterAll) {
+    filterAll.classList.add('active');
+  }
 
   const btnCloseCard = $('btn-close-card');
   if (btnCloseCard) btnCloseCard.addEventListener('click', closeCard);
@@ -840,7 +852,10 @@ export async function boot() {
     if (!navigator.geolocation) return;
     TG()?.HapticFeedback?.impactOccurred('medium');
     navigator.geolocation.getCurrentPosition(
-      ({coords})=>getMapInstance()?.flyTo({center:[coords.longitude,coords.latitude],zoom:14.5,duration:700}),
+      ({coords})=>{
+        addUserMarker(coords.longitude, coords.latitude);
+        getMapInstance()?.flyTo({center:[coords.longitude,coords.latitude],zoom:14.5,duration:700});
+      },
       err=>console.warn('[MEOW] geo:',err.message)
     );
   });
@@ -853,7 +868,11 @@ export async function boot() {
       clearTimeout(searchT);
       searchT=setTimeout(()=>onSearch(e.target.value.trim()),300);
     });
-    searchInput.addEventListener('focus', ()=>{ if(panelOpen) setPanel(false); });
+    searchInput.addEventListener('focus', ()=>{
+      if (panelOpen) setPanel(false);
+      closeCard();
+      closeCalendar();
+    });
   }
 
   // Close panel on outside click/touch
@@ -881,9 +900,6 @@ export async function boot() {
   // Hide suggestions on blur
   if (searchInput) {
     searchInput.addEventListener('blur', () => setTimeout(hideSearchSuggestions, 200));
-    searchInput.addEventListener('focus', () => {
-      if (searchInput.value.trim()) onSearch(searchInput.value.trim());
-    });
   }
 
   // Prevent event propagation from panels

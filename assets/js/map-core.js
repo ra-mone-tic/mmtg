@@ -3,6 +3,7 @@
 
 let map = null;
 let markers = [];
+let userMarker = null;
 
 export function getMapInstance() {
   return map;
@@ -11,6 +12,25 @@ export function getMapInstance() {
 export function clearMarkers() {
   markers.forEach(m => m.ml.remove());
   markers = [];
+}
+
+export function addUserMarker(lng, lat) {
+  clearUserMarker();
+  const el = document.createElement('div');
+  el.className = 'm-user';
+  el.innerHTML = `<svg width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="14" cy="14" r="13" fill="rgba(59,130,246,.18)" stroke="rgba(59,130,246,.38)" stroke-width="2"/>
+    <circle cx="14" cy="14" r="7" fill="#3b82f6" stroke="#fff" stroke-width="2.5"/>
+  </svg>`;
+  userMarker = new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([lng, lat]).addTo(map);
+  return true;
+}
+
+export function clearUserMarker() {
+  if (userMarker) {
+    userMarker.remove();
+    userMarker = null;
+  }
 }
 
 export function addMarkers(events, onMarkerClick) {
@@ -45,7 +65,7 @@ export function setPinActive(id, active) {
   el.classList.toggle('active', active);
 }
 
-export function flyTo(ev, zoom = 14.5, offset = [0, 140], ms = 540) {
+export function flyTo(ev, zoom = 14.5, offset = [0, -40], ms = 540) {
   map.flyTo({center: [ev.lng, ev.lat], zoom, offset, duration: ms, essential: true});
 }
 

@@ -960,15 +960,54 @@ export async function boot() {
 
   const btnLocate = $('btn-locate');
   if (btnLocate) btnLocate.addEventListener('click', ()=>{
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      showToast('Геолокация недоступна');
+      return;
+    }
     TG()?.HapticFeedback?.impactOccurred('medium');
+    
+    // Высокоточный режим с оптимальными параметрами
+    const geoOptions = {
+      enableHighAccuracy: true,
+      timeout: 15000,      // 15 сек — достаточно для получения точного координат
+      maximumAge: 0        // Не кэшируем — всегда свежие координаты
+    };
+    
     navigator.geolocation.getCurrentPosition(
-      ({coords})=>{
-        addUserMarker(coords.longitude, coords.latitude);
-        getMapInstance()?.flyTo({center:[coords.longitude,coords.latitude],zoom:14.5,duration:700});
+      ({coords}) => {
+        const { latitude, longitude, accuracy } = coords;
+        
+        // Логируем точность для отладки
+        if (accuracy > 50) {
+          console.warn(`[MEOW] Низкая точность геолокации: ${accuracy}м`);
+        }
+        
+        // Проверяем, что координаты в разумных границах (Калининград)
+        if (latitude < 54.0 || latitude > 55.6 || longitude < 19.3 || longitude > 23.1) {
+          showToast('⚠️ Координаты вне региона. Проверьте GPS.');
+          console.warn(`[MEOW] Координаты вне КО: ${latitude}, ${longitude}`);
+          return;
+        }
+        
+        addUserMarker(longitude, latitude);
+        getMapInstance()?.flyTo({
+          center: [longitude, latitude],
+          zoom: 15.5,  // Чуть выше зума для лучшей видимости
+          duration: 700
+        });
+        showToast(`📍 Точность: ${Math.round(accuracy)}м`);
       },
-      err=>console.warn('[MEOW] geo:',err.message),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      (err) => {
+        let message = '❌ Не удалось получить координаты';
+        switch(err.code) {
+          case 1: message = '❌ Доступ к геолокации запрещен'; break;
+          case 2: message = '❌ Источник геолокации недоступен'; break;
+          case 3: message = '⏱️ Timeout при получении координат'; break;
+        }
+        showToast(message);
+        console.warn(`[MEOW] Geo error (${err.code}): ${err.message}`);
+      },
+      geoOptions
     );
   });
 

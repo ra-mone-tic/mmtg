@@ -149,19 +149,6 @@ svg{display:block;flex-shrink:0}
 .avatar-btn:active{transform:scale(.88)}
 .avatar-btn img{width:100%;height:100%;object-fit:cover;display:block}
 
-/* ══════════════════════════════════════════════════
-   FILTER ROW — date-pill | events
-══════════════════════════════════════════════════ */
-.filter-row{
-  position:absolute;z-index:20;
-  top:calc(var(--sai-t) + 62px);
-  left:0;right:0;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:0 var(--ph);
-  pointer-events:none;
-}
-.filter-row>*{pointer-events:auto}
-
 .pill{
   display:inline-flex;align-items:center;gap:7px;
   padding:9px 16px;border-radius:var(--r-p);
@@ -177,6 +164,62 @@ svg{display:block;flex-shrink:0}
   backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
 }
 .pill-glass:hover{box-shadow:var(--sh-glow)}
+
+/* ══════════════════════════════════════════════════
+   FILTER ROW — date-pill | events
+══════════════════════════════════════════════════ */
+.filter-row{
+  position:absolute;z-index:20;
+  top:calc(var(--sai-t) + 62px);
+  left:0;right:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 var(--ph);
+  pointer-events:none;
+}
+.filter-row>*{pointer-events:auto}
+
+/* ══════════════════════════════════════════════════
+   POSTER CAROUSEL (компактная карусель)
+══════════════════════════════════════════════════ */
+.poster-carousel{
+  position:absolute;z-index:18;left:0;right:0;
+  top:calc(var(--sai-t) + 112px);
+  height:156px;pointer-events:auto;
+  padding:8px var(--ph);box-sizing:border-box;
+  overflow:hidden;background:transparent;
+}
+.poster-track{
+  display:flex;gap:10px;overflow-x:auto;overflow-y:hidden;
+  height:100%;scrollbar-width:none;-ms-overflow-style:none;
+  padding:0;margin:0;
+}
+.poster-track::-webkit-scrollbar{display:none}
+.poster-card{
+  flex:0 0 132px;height:100%;border-radius:14px;overflow:hidden;
+  position:relative;cursor:pointer;box-shadow:var(--sh-float);
+  background:var(--c-glass);border:1px solid var(--c-glass-br);
+  display:flex;flex-direction:column;transition:transform .15s var(--ease-s),box-shadow .15s;
+}
+.poster-card:active{transform:scale(.96)}
+.poster-card:hover{box-shadow:var(--sh-glow)}
+.poster-card img{
+  width:100%;height:100%;object-fit:cover;object-position:center;
+  display:block;flex:1;
+}
+.poster-overlay{
+  position:absolute;left:0;right:0;bottom:0;
+  padding:8px;background:linear-gradient(to top,rgba(0,0,0,.72),rgba(0,0,0,.42),transparent);
+  color:#fff;display:flex;flex-direction:column;justify-content:flex-end;
+  min-height:56px;
+}
+.poster-title{
+  font-weight:800;font-size:11px;line-height:1.2;
+  overflow:hidden;text-overflow:ellipsis;display:-webkit-box;
+  -webkit-line-clamp:2;line-clamp:2;-webkit-box-orient:vertical;
+}
+.poster-date{
+  font-size:10px;opacity:.85;margin-top:3px;font-weight:600;
+}
 
 /* ══════════════════════════════════════════════════
    EVENTS PANEL
@@ -515,6 +558,11 @@ svg{display:block;flex-shrink:0}
   <button class="pill pill-glass" id="btn-events" aria-expanded="false" aria-controls="events-panel">
     События
   </button>
+</div>
+
+<!-- POSTER CAROUSEL -->
+<div id="poster-carousel" class="poster-carousel" aria-hidden="false">
+  <div id="poster-track" class="poster-track" role="list"></div>
 </div>
 
 <!-- ═══════════════════ EVENTS PANEL ════════════════ -->

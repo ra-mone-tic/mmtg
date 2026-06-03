@@ -303,16 +303,87 @@ async function fetchEvents(dateStr) {
   }
   if (getMapInstance()?.loaded()) renderMarkers();
   renderList();
+  renderCarousel();
 }
+
+  // ─── Poster carousel ─────────────────────────────────
+  function renderCarousel() {
+    const track = $('poster-track');
+    if (!track) return;
+    track.innerHTML = '';
+    if (!rawAllEvents || !rawAllEvents.length) return;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const normalized = rawAllEvents.map(normalizeEvent);
+    const upcoming = normalized
+      .filter(e => {
+        const d = parseDate(e.date);
+        return d && d >= today;
+      })
+      .sort((a,b)=>parseDate(a.date)-parseDate(b.date));
+    if (!upcoming.length) return;
+    upcoming.slice(0, 12).forEach(ev => {
+      const card = document.createElement('div');
+      card.className = 'poster-card';
+      card.setAttribute('role','button');
+      card.setAttribute('data-id', ev.id);
+      card.setAttribute('tabindex', '0');
+      
+      if (ev.imageUrl) {
+        const img = document.createElement('img');
+        img.src = ev.imageUrl;
+        img.alt = ev.title || '';
+        img.loading = 'lazy';
+        img.onerror = () => {
+          card.style.background = posterGrad(ev.id);
+        };
+        card.appendChild(img);
+      } else {
+        card.style.background = posterGrad(ev.id);
+      }
+      
+      const ov = document.createElement('div');
+      ov.className = 'poster-overlay';
+      ov.innerHTML = `<div class="poster-title">${ev.title}</div><div class="poster-date">${ev.date}</div>`;
+      card.appendChild(ov);
+      
+      const go = async () => {
+        if (ev.date !== fmt(currentDate)) {
+          await onDateChange(ev.date);
+        }
+        flyTo(ev);
+        openCard(ev.id);
+        setPanel(false);
+      };
+      
+      card.addEventListener('click', go);
+      card.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+      track.appendChild(card);
+    });
+  }
 
 // ─── Integration hooks ─────────────────────────────────
 async function onEventContacts(ev) {
   TG()?.HapticFeedback?.impactOccurred('light');
-  if (ev.contacts && ev.contacts.startsWith('http')) {
-    window.open(ev.contacts, '_blank');
-  } else {
-    showToast('Контакты недоступны');
-  }
+  if (!ev.contacts) { showToast('Контакты недоступны'); return; }
+  const c = ev.contacts.trim();
+  try {
+    if (c.startsWith('http') || c.startsWith('https')) {
+      window.open(c, '_blank');
+    } else if (c.startsWith('t.me') || c.startsWith('telegram.me')) {
+      window.open('https://' + c, '_blank');
+    } else if (c.startsWith('tg://')) {
+      window.open(c, '_blank');
+    } else if (c.startsWith('@')) {
+      window.open('https://t.me/' + c.slice(1), '_blank');
+    } else {
+      // If it's a bare path like t.me/whatever without scheme
+      if (/^t\.me\//i.test(c) || /^telegram\.me\//i.test(c)) {
+        window.open('https://' + c, '_blank');
+      } else {
+        showToast('Контакты: ' + c);
+      }
+    }
+  } catch (e) { showToast('Не удалось открыть контакт'); }
 }
 function onSearch(q) {
   if (!q || q.trim() === '') { renderList(); return; }
@@ -450,6 +521,7 @@ function openDetail(id) {
         const img = document.createElement('img');
         img.src = imageUrl;
         img.alt = ev.title;
+        img.loading = 'lazy';
         img.onerror = () => {
           posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
         };
@@ -723,7 +795,8 @@ export async function boot() {
   let calViewDate = new Date();
   
   function openCalendar() {
-    calViewDate = new Date(currentDate);
+    // По умолчанию показываем текущую дату при открытии календаря
+    calViewDate = new Date();
     renderCalendar();
     const modal = $('calendar-modal');
     if (modal) {
@@ -734,82 +807,82 @@ export async function boot() {
   }
   
   function closeCalendar() {
-    const modal = $('calendar-modal');
-    if (modal) {
-      modal.classList.remove('open');
-      modal.setAttribute('aria-hidden', 'true');
-    }
-  }
-  
-  function renderCalendar() {
-    const grid = $('cal-grid');
-    const monthEl = $('cal-month');
-    if (!grid || !monthEl) return;
-    
-    const year = calViewDate.getFullYear();
-    const month = calViewDate.getMonth();
-    
-    const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь',
-                        'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-    monthEl.textContent = `${monthNames[month]} ${year}`;
-    
-    grid.innerHTML = '';
-    
-    const dw = ['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];
-    dw.forEach(d => {
-      const el = document.createElement('div');
-      el.className = 'cal-dw';
-      el.textContent = d;
-      grid.appendChild(el);
-    });
-    
-    const eventDates = new Set();
-    if (rawAllEvents.length) {
-      rawAllEvents.forEach(e => {
-        if (e.date) eventDates.add(e.date);
-      });
-    }
-    
-    const firstDay = new Date(year, month, 1);
-    const startDow = (firstDay.getDay() + 6) % 7;
-    
-    for (let i = 0; i < startDow; i++) {
-      const el = document.createElement('div');
-      grid.appendChild(el);
-    }
-    
-    const todayStr = fmt(new Date());
-    const activeStr = fmt(currentDate);
-    
-    const daysInMonth = new Date(year, month + 1, 0).getDate();
-    for (let d = 1; d <= daysInMonth; d++) {
-      const dateStr = `${pad(d)}.${pad(month + 1)}.${year}`;
-      const el = document.createElement('div');
-      el.className = 'cal-day';
-      el.textContent = d;
-      
-      if (dateStr === todayStr) el.classList.add('today');
-      if (dateStr === activeStr) el.classList.add('active');
-      if (eventDates.has(dateStr)) el.classList.add('has-events');
-      
-      el.addEventListener('click', async () => {
-        const [day, m, y] = dateStr.split('.').map(Number);
-        currentDate = new Date(y, m - 1, day);
-        await onDateChange(dateStr);
-        closeCalendar();
-      });
-      
-      grid.appendChild(el);
-    }
-  }
-  
-  const calPrev = $('cal-prev');
-  const calNext = $('cal-next');
-  if (calPrev) calPrev.addEventListener('click', () => { calViewDate.setMonth(calViewDate.getMonth() - 1); renderCalendar(); });
-  if (calNext) calNext.addEventListener('click', () => { calViewDate.setMonth(calViewDate.getMonth() + 1); renderCalendar(); });
-  
-  const calOverlay = $('cal-overlay');
-  if (calOverlay) calOverlay.addEventListener('click', closeCalendar);
+     const modal = $('calendar-modal');
+     if (modal) {
+       modal.classList.remove('open');
+       modal.setAttribute('aria-hidden', 'true');
+     }
+   }
+   
+   function renderCalendar() {
+     const grid = $('cal-grid');
+     const monthEl = $('cal-month');
+     if (!grid || !monthEl) return;
+     
+     const year = calViewDate.getFullYear();
+     const month = calViewDate.getMonth();
+     
+     const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь',
+                         'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+     monthEl.textContent = `${monthNames[month]} ${year}`;
+     
+     grid.innerHTML = '';
+     
+     const dw = ['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];
+     dw.forEach(d => {
+       const el = document.createElement('div');
+       el.className = 'cal-dw';
+       el.textContent = d;
+       grid.appendChild(el);
+     });
+     
+     const eventDates = new Set();
+     if (rawAllEvents.length) {
+       rawAllEvents.forEach(e => {
+         if (e.date) eventDates.add(e.date);
+       });
+     }
+     
+     const firstDay = new Date(year, month, 1);
+     const startDow = (firstDay.getDay() + 6) % 7;
+     
+     for (let i = 0; i < startDow; i++) {
+       const el = document.createElement('div');
+       grid.appendChild(el);
+     }
+     
+     const todayStr = fmt(new Date());
+     const activeStr = fmt(currentDate);
+     
+     const daysInMonth = new Date(year, month + 1, 0).getDate();
+     for (let d = 1; d <= daysInMonth; d++) {
+       const dateStr = `${pad(d)}.${pad(month + 1)}.${year}`;
+       const el = document.createElement('div');
+       el.className = 'cal-day';
+       el.textContent = d;
+       
+       if (dateStr === todayStr) el.classList.add('today');
+       if (dateStr === activeStr) el.classList.add('active');
+       if (eventDates.has(dateStr)) el.classList.add('has-events');
+       
+       el.addEventListener('click', async () => {
+         const [day, m, y] = dateStr.split('.').map(Number);
+         currentDate = new Date(y, m - 1, day);
+         await onDateChange(dateStr);
+         closeCalendar();
+       });
+       
+       grid.appendChild(el);
+     }
+   }
+   
+   const calPrev = $('cal-prev');
+   const calNext = $('cal-next');
+   if (calPrev) calPrev.addEventListener('click', () => { calViewDate.setMonth(calViewDate.getMonth() - 1); renderCalendar(); });
+   if (calNext) calNext.addEventListener('click', () => { calViewDate.setMonth(calViewDate.getMonth() + 1); renderCalendar(); });
+   
+   const calOverlay = $('cal-overlay');
+   if (calOverlay) calOverlay.addEventListener('click', closeCalendar);
   
   // ─── Search suggestions ────────────────────────────────
   function showSearchSuggestions(results) {

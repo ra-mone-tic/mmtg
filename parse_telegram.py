@@ -363,10 +363,22 @@ def parse_post(text: str) -> Optional[dict]:
 
     full_description = "\n".join(desc_lines).strip()
 
+    # Попытка извлечь контакты / ссылку: http(s), tg://, t.me, telegram.me, @username
     contacts = ""
-    contacts_match = re.search(r"➡️\s*(?:More info|Подробнее|.+?)?\s*(https?://\S+)", text)
-    if contacts_match:
-        contacts = contacts_match.group(1).strip()
+    # Ищем явные ссылки http/https и tg://
+    m = re.search(r"(https?://\S+|tg://\S+)", text)
+    if m:
+        contacts = m.group(1).strip()
+    else:
+        # Ищем ссылки вида t.me/xxx или telegram.me/xxx без схемы
+        m2 = re.search(r"\b(?:t\.me|telegram\.me)/([\w\d_\-]+)\b", text, re.I)
+        if m2:
+            contacts = f"https://t.me/{m2.group(1)}"
+        else:
+            # Ищем @username
+            m3 = re.search(r"@([A-Za-z0-9_]{3,32})", text)
+            if m3:
+                contacts = "@" + m3.group(1)
 
     # Парсинг ключевых слов для тегов
     keywords = ["Концерт", "Вечеринка", "Фестиваль", "Выставка", "Лекция", "Спектакль", "Кинопоказ"]
@@ -715,10 +727,36 @@ def main() -> None:
         state["last_update_id"] = max_update_id
 
     all_events, added, updated = process_messages(messages, existing, geocache)
+    
+    # Удаляем файлы афиш для прошедших мероприятий (событиям с датой <= вчера)
+    def clean_old_posters(events_list: List[dict]) -> bool:
+        changed = False
+        today = datetime.now().date()
+        threshold = today - timedelta(days=2)  # удаляем афиши для событий, состоявшихся не позднее позавчера
+        for ev in events_list:
+            d = parse_date(ev.get("date", ""))
+            if not d:
+                continue
+            if d.date() <= threshold:
+                img = ev.get("imageUrl")
+                if img:
+                    img_path = BASE_DIR / img
+                    try:
+                        if img_path.exists():
+                            img_path.unlink()
+                            logger.info(f"Удалена афиша: {img_path}")
+                    except Exception as e:
+                        logger.warning(f"Не удалось удалить {img_path}: {e}")
+                    # Убираем ссылку на изображение из записи
+                    ev.pop("imageUrl", None)
+                    changed = True
+        return changed
 
-    if added > 0 or updated > 0:
+    cleaned = clean_old_posters(all_events)
+
+    if added > 0 or updated > 0 or cleaned:
         save_events(all_events)
-        logger.info(f"События обновлены: +{added}, ~{updated}")
+        logger.info(f"События обновлены: +{added}, ~{updated}{' (афиши очищены)' if cleaned else ''}")
     else:
         logger.info("Изменений нет")
 

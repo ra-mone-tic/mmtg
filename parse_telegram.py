@@ -343,9 +343,21 @@ def parse_post(text: str) -> Optional[dict]:
 
     date_str = f"{day:02d}.{month:02d}.{current_year}"
 
+    # Обработка времени: сначала из первой строки, затем ищем в описании
     time_str = ""
     if hour is not None and minute is not None:
         time_str = f"{int(hour):02d}:{int(minute):02d}"
+    else:
+        # Ищем время в формате "в xx:xx" или просто "xx:xx" в описании
+        time_match = re.search(r'в\s+(\d{1,2}):(\d{2})', text, re.IGNORECASE)
+        if not time_match:
+            # Ищем первое сочетание цифр xx:xx без префикса
+            time_match = re.search(r'\b(\d{1,2}):(\d{2})\b', text)
+        if time_match:
+            h = int(time_match.group(1))
+            m = int(time_match.group(2))
+            if 0 <= h <= 23 and 0 <= m <= 59:
+                time_str = f"{h:02d}:{m:02d}"
 
     addr_match = re.search(r"📍\s*(.+)", text)
     if not addr_match:
@@ -381,11 +393,16 @@ def parse_post(text: str) -> Optional[dict]:
                 contacts = "@" + m3.group(1)
 
     # Парсинг ключевых слов для тегов
-    keywords = ["Концерт", "Вечеринка", "Фестиваль", "Выставка", "Лекция", "Спектакль", "Кинопоказ"]
+    keywords = ["Концерт", "Вечеринка", "Фестиваль", "Выставка", "Лекция", "Спектакль", "Кинопоказ", "Йога"]
     found_tags = []
     for kw in keywords:
         if re.search(rf"\b{kw}\b", text, re.IGNORECASE):
             found_tags.append(kw)
+    
+    # Проверяем на бесплатный вход
+    if re.search(r'\b(вход\s+свободный|вход\s+бесплатный|бесплатный\s+вход|свободный\s+вход|вход\s+free|бесплатно)\b', text, re.IGNORECASE):
+        if "Бесплатно" not in found_tags:
+            found_tags.append("Бесплатно")
     
     # Добавляем хэштеги, исключая системные (meow...)
     hashtags = re.findall(r"#(\w+)", text)

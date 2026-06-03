@@ -74,13 +74,15 @@ const CAL_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" st
 const CLK_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
 
 function metaHTML(ev) {
+  const dateDisplay = ev.date === fmt(new Date()) ? 'Сегодня' : ev.date;
   return `<div class="meta-row">${PIN_ICONS}${ev.address}</div>
-          <div class="meta-row">${CAL_ICON}${ev.date}</div>
+          <div class="meta-row">${CAL_ICON}${dateDisplay}</div>
           <div class="meta-row">${CLK_ICON}${ev.time}</div>`;
 }
 
 function detailMetaHTML(ev) {
-  return `<div class="meta-row">${CAL_ICON}${ev.date}</div>
+  const dateDisplay = ev.date === fmt(new Date()) ? 'Сегодня' : ev.date;
+  return `<div class="meta-row">${CAL_ICON}${dateDisplay}</div>
           <div class="meta-row">${CLK_ICON}${ev.time}</div>`;
 }
 
@@ -676,12 +678,20 @@ export async function boot() {
   // Load all events first to find nearest date
   await loadAllEvents();
 
-  // Find nearest date with events
-  const nearestDate = findNearestDate();
-  if (nearestDate) {
-    currentDate = new Date();
-    const [day, month, year] = nearestDate.split('.').map(Number);
-    currentDate = new Date(year, month - 1, day);
+  // Set current date to today (default)
+  currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+
+  // Check if there are events today; if not, find nearest future date
+  const todayStr = fmt(currentDate);
+  const hasTodayEvents = filterByDate(todayStr).length > 0;
+  
+  if (!hasTodayEvents) {
+    const nearestDate = findNearestDate();
+    if (nearestDate) {
+      const [day, month, year] = nearestDate.split('.').map(Number);
+      currentDate = new Date(year, month - 1, day);
+    }
   }
 
   // Set initial date label
@@ -751,9 +761,9 @@ export async function boot() {
   }
 
   // Определяем режим по умолчанию: если есть события на сегодня — "Сегодня", иначе "Все"
-  const todayStr = fmt(new Date());
-  const hasTodayEvents = filterByDate(todayStr).length > 0;
-  panelFilterMode = hasTodayEvents ? 'today' : 'all';
+  const initTodayStr = fmt(new Date());
+  const initHasTodayEvents = filterByDate(initTodayStr).length > 0;
+  panelFilterMode = initHasTodayEvents ? 'today' : 'all';
 
   if (filterAll) {
     filterAll.addEventListener('click', () => {
@@ -771,7 +781,7 @@ export async function boot() {
       if (filterAll) filterAll.classList.remove('active');
     });
   }
-  if (hasTodayEvents && filterToday) {
+  if (initHasTodayEvents && filterToday) {
     filterToday.classList.add('active');
   } else if (filterAll) {
     filterAll.classList.add('active');

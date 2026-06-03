@@ -368,8 +368,21 @@ def parse_post(text: str) -> Optional[dict]:
     if contacts_match:
         contacts = contacts_match.group(1).strip()
 
+    # Парсинг ключевых слов для тегов
+    keywords = ["Концерт", "Вечеринка", "Фестиваль", "Выставка", "Лекция", "Спектакль", "Кинопоказ"]
+    found_tags = []
+    for kw in keywords:
+        if re.search(rf"\b{kw}\b", text, re.IGNORECASE):
+            found_tags.append(kw)
+    
+    # Добавляем хэштеги, исключая системные (meow...)
     hashtags = re.findall(r"#(\w+)", text)
-    tags = ", ".join(h for h in hashtags if h.lower() != "meowafisha")
+    for h in hashtags:
+        if not h.lower().startswith("meow"):
+            if not any(t.lower() == h.lower() for t in found_tags):
+                found_tags.append(h)
+                
+    tags = found_tags
 
     if not title or not date_str or not address:
         logger.debug(

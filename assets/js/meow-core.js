@@ -79,6 +79,27 @@ function metaHTML(ev) {
           <div class="meta-row">${CLK_ICON}${ev.time}</div>`;
 }
 
+function detailMetaHTML(ev) {
+  return `<div class="meta-row">${CAL_ICON}${ev.date}</div>
+          <div class="meta-row">${CLK_ICON}${ev.time}</div>`;
+}
+
+function renderTags(tags, containerId) {
+  const container = $(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  if (!tags) return;
+  const arr = Array.isArray(tags) ? tags : String(tags).split(',').map(s => s.trim()).filter(Boolean);
+  if (!arr.length) return;
+  
+  arr.forEach(tag => {
+    const span = document.createElement('span');
+    span.className = 'tag-pill';
+    span.textContent = tag;
+    container.appendChild(span);
+  });
+}
+
 // ─── Toast ─────────────────────────────────────────────
 let toastT;
 function showToast(msg, pos) {
@@ -233,7 +254,8 @@ function normalizeEvent(e) {
     imageUrl: e.imageUrl || null,
     lng: e.lon,
     lat: e.lat,
-    contacts: e.contacts || ''
+    contacts: e.contacts || '',
+    tags: e.tags || []
   };
 }
 
@@ -362,7 +384,8 @@ function openCard(id) {
   if (cardVenue) cardVenue.textContent = ev.venue;
   if (cardTitle) cardTitle.textContent = ev.title;
   if (cardDesc) cardDesc.textContent  = ev.desc;
-  if (cardMeta) cardMeta.innerHTML    = metaHTML(ev);
+  if (cardMeta) cardMeta.innerHTML    = detailMetaHTML(ev);
+  renderTags(ev.tags, 'card-tags');
 
   const btnLearnMore = $('btn-learn-more');
   const btnShare = $('btn-share');
@@ -422,16 +445,22 @@ function openDetail(id) {
   if (posterInner) {
     const imageUrl = ev.imageUrl && ev.imageUrl.trim() ? ev.imageUrl : null;
     if (imageUrl) {
-      const img = document.createElement('img');
-      img.src = imageUrl;
-      img.alt = ev.title;
-      img.onerror = () => {
-        posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
-      };
-      posterInner.innerHTML = '';
-      posterInner.appendChild(img);
+      // Если изображение уже существует, не пересоздаём
+      if (!posterInner.querySelector('img')) {
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = ev.title;
+        img.onerror = () => {
+          posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
+        };
+        posterInner.innerHTML = '';
+        posterInner.appendChild(img);
+      }
     } else {
-      posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
+      // Только если нет изображения и нет уже placeholder
+      if (!posterInner.querySelector('span.poster-initial')) {
+        posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
+      }
     }
   }
 
@@ -442,7 +471,9 @@ function openDetail(id) {
   if (detailTitle) detailTitle.textContent = ev.title;
 
   const detailMeta = $('detail-meta');
-  if (detailMeta) detailMeta.innerHTML = metaHTML(ev).replace(/13px/g,'13.5px');
+  if (detailMeta) detailMeta.innerHTML = detailMetaHTML(ev).replace(/13px/g,'13.5px');
+
+  renderTags(ev.tags, 'detail-tags');
 
   const detailDesc = $('detail-desc');
   if (detailDesc) detailDesc.textContent = ev.desc;
@@ -513,7 +544,10 @@ function renderList(eventList) {
       item.setAttribute('role','listitem');
       item.setAttribute('data-id',ev.id);
       item.setAttribute('tabindex','0');
-      item.innerHTML=`<div class="event-item-title">${ev.title}</div><div class="event-item-sub">${ev.venue} · ${ev.time}</div>`;
+      const tagStr = ev.tags && ev.tags.length
+        ? ' · ' + (Array.isArray(ev.tags) ? ev.tags : String(ev.tags).split(',')).map(s => s.trim()).filter(Boolean).slice(0, 2).join(', ')
+        : '';
+      item.innerHTML=`<div class="event-item-title">${ev.title}</div><div class="event-item-sub">${ev.venue}${tagStr}</div>`;
       const go = () => {
         if (ev.date !== fmt(currentDate)) {
           closeCard();
@@ -856,7 +890,8 @@ export async function boot() {
         addUserMarker(coords.longitude, coords.latitude);
         getMapInstance()?.flyTo({center:[coords.longitude,coords.latitude],zoom:14.5,duration:700});
       },
-      err=>console.warn('[MEOW] geo:',err.message)
+      err=>console.warn('[MEOW] geo:',err.message),
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   });
 
@@ -907,6 +942,16 @@ export async function boot() {
     const el = $(id);
     if (el) el.addEventListener('click', e=>e.stopPropagation());
   });
+
+  // Poster toggle (один раз, без накопления обработчиков)
+  const detailPoster = $('detail-poster');
+  if (detailPoster) {
+    detailPoster.addEventListener('click', (e) => {
+      if (e.target.closest('.detail-back')) return;
+      detailPoster.classList.toggle('expanded');
+      TG()?.HapticFeedback?.impactOccurred('light');
+    });
+  }
 
   console.log('[MEOW] Application initialized');
 }

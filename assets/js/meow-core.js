@@ -517,24 +517,18 @@ function openDetail(id) {
   const posterInner = $('poster-inner');
   if (posterInner) {
     const imageUrl = ev.imageUrl && ev.imageUrl.trim() ? ev.imageUrl : null;
+    posterInner.innerHTML = '';
     if (imageUrl) {
-      // Если изображение уже существует, не пересоздаём
-      if (!posterInner.querySelector('img')) {
-        const img = document.createElement('img');
-        img.src = imageUrl;
-        img.alt = ev.title;
-        img.loading = 'lazy';
-        img.onerror = () => {
-          posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
-        };
-        posterInner.innerHTML = '';
-        posterInner.appendChild(img);
-      }
-    } else {
-      // Только если нет изображения и нет уже placeholder
-      if (!posterInner.querySelector('span.poster-initial')) {
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.alt = ev.title;
+      img.loading = 'lazy';
+      img.onerror = () => {
         posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
-      }
+      };
+      posterInner.appendChild(img);
+    } else {
+      posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
     }
   }
 

@@ -228,12 +228,14 @@ function setInitials(btn, user) {
   btn.textContent = (first + last).toUpperCase() || 'U';
 }
 
-// ─── State ─────────────────────────────────────────────
-let map = null, events = [];
-let allEvents = [];
-let activeId = null, detailId = null;
-let panelOpen = false, theme = 'dark';
-let currentDate = new Date();
+  // ─── State ─────────────────────────────────────────────
+  let map = null, events = [];
+  let allEvents = [];
+  let activeId = null, detailId = null;
+  let panelOpen = false, theme = 'dark';
+  let currentDate = new Date();
+  let carouselScrollPos = 0; // сохраняем позицию скролла карусели
+  let carouselVisible = true; // видимость карусели
 
 // ─── Data Loading ──────────────────────────────────────
 let rawAllEvents = [];
@@ -330,7 +332,7 @@ async function fetchEvents(dateStr) {
   }
   if (getMapInstance()?.loaded()) renderMarkers();
   renderList();
-  renderCarousel();
+  // Карусель независима от даты — рендерим один раз при старте
 }
 
   // ─── Poster carousel with infinite scroll ─────────────────────────────────
@@ -381,11 +383,17 @@ async function fetchEvents(dateStr) {
         img.alt = ev.title || '';
         img.loading = 'lazy';
         img.onerror = () => {
-          card.style.background = posterGrad(ev.id);
+          img.src = 'assets/Group 27.png';
+          img.onerror = null; // предотвращаем бесконечный цикл
         };
         card.appendChild(img);
       } else {
-        card.style.background = posterGrad(ev.id);
+        // Используем placeholder из Group 27.png
+        const img = document.createElement('img');
+        img.src = 'assets/Group 27.png';
+        img.alt = ev.title || '';
+        img.loading = 'lazy';
+        card.appendChild(img);
       }
       
       const ov = document.createElement('div');
@@ -394,6 +402,10 @@ async function fetchEvents(dateStr) {
       card.appendChild(ov);
       
       const go = async () => {
+        // Сохраняем позицию скролла карусели перед переходом
+        const track = $('poster-track');
+        if (track) carouselScrollPos = track.scrollLeft;
+        
         if (ev.date !== fmt(currentDate)) {
           await onDateChange(ev.date);
         }
@@ -405,6 +417,13 @@ async function fetchEvents(dateStr) {
       card.addEventListener('click', go);
       card.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
       track.appendChild(card);
+    }
+    
+    // Восстанавливаем позицию скролла карусели
+    if (carouselScrollPos > 0) {
+      requestAnimationFrame(() => {
+        track.scrollLeft = carouselScrollPos;
+      });
     }
     
     // Обновляем observer
@@ -795,6 +814,9 @@ export async function boot() {
   // Load events for the nearest date
   await fetchEvents(fmt(currentDate));
 
+  // ─── Render carousel (один раз при старте) ──────────
+  renderCarousel();
+
   // ─── Deep linking: ?event=ID ───────────────────────────
   const urlParams = new URLSearchParams(window.location.search);
   const eventId = urlParams.get('event');
@@ -1172,6 +1194,20 @@ export async function boot() {
     detailPoster.addEventListener('click', (e) => {
       if (e.target.closest('.detail-back')) return;
       detailPoster.classList.toggle('expanded');
+      TG()?.HapticFeedback?.impactOccurred('light');
+    });
+  }
+
+  // Carousel toggle button
+  const btnCarouselToggle = $('btn-carousel-toggle');
+  const posterCarousel = $('poster-carousel');
+  if (btnCarouselToggle && posterCarousel) {
+    btnCarouselToggle.addEventListener('click', () => {
+      carouselVisible = !carouselVisible;
+      posterCarousel.classList.toggle('hidden', !carouselVisible);
+      btnCarouselToggle.classList.toggle('collapsed', !carouselVisible);
+      btnCarouselToggle.setAttribute('aria-expanded', String(carouselVisible));
+      btnCarouselToggle.setAttribute('aria-label', carouselVisible ? 'Скрыть карусель' : 'Показать карусель');
       TG()?.HapticFeedback?.impactOccurred('light');
     });
   }

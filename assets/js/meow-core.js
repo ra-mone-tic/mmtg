@@ -22,7 +22,7 @@ const CFG = {
   FLY_ZOOM: 14.5,
   FLY_OFFSET: [0, 240],
   FLY_MS: 540,
-  SHARE_BASE: 'https://t.me/your_bot?start=',
+  SHARE_BASE: window.location.origin + window.location.pathname.replace(/\/+$/, '') + '?event=',
   STYLES: {
     dark:  'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
     light: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
@@ -117,7 +117,44 @@ function showToast(msg, pos) {
   }));
 }
 
-// ─── Share ─────────────────────────────────────────────
+// ─── Share (native Telegram WebApp) ────────────────────
+function buildShareUrl(ev) {
+  // Формируем полную веб-ссылку на событие
+  const baseUrl = CFG.SHARE_BASE + ev.id;
+  const text = encodeURIComponent(`${ev.title}\n${ev.date}${ev.time ? ' ' + ev.time : ''}\n${ev.address}`);
+  // Используем нативный t.me/share для красивого превью в Telegram
+  return `https://t.me/share/url?url=${encodeURIComponent(baseUrl)}&text=${text}`;
+}
+
+function shareEvent(ev) {
+  const webapp = TG();
+  const shareUrl = buildShareUrl(ev);
+  
+  const ok = () => {
+    webapp?.HapticFeedback?.notificationOccurred('success');
+    if (webapp?.showPopup) {
+      webapp.showPopup({
+        title:   'Ссылка готова',
+        message: `«${ev.title}» — можно отправить в чат`,
+        buttons: [{ type:'ok', text:'Отлично!' }]
+      });
+    } else {
+      showToast('🔗 Готово к отправке!');
+    }
+  };
+  
+  // Нативный шаринг в Telegram WebApp
+  if (webapp?.openTelegramLink) {
+    webapp.openTelegramLink(shareUrl);
+    ok();
+  } else if (navigator.clipboard?.writeText) {
+    // Фоллбек: копируем в буфер обмена
+    navigator.clipboard.writeText(shareUrl).then(ok).catch(() => legacyCopy(shareUrl, ok));
+  } else {
+    legacyCopy(shareUrl, ok);
+  }
+}
+
 function legacyCopy(text, cb) {
   const ta = Object.assign(document.createElement('textarea'), {
     value: text, readOnly: true,
@@ -126,28 +163,6 @@ function legacyCopy(text, cb) {
   document.body.appendChild(ta); ta.select();
   try { document.execCommand('copy'); cb(); } catch(e) {}
   ta.remove();
-}
-
-function shareEvent(ev) {
-  const link = CFG.SHARE_BASE + ev.id;
-  const webapp = TG();
-  const ok = () => {
-    webapp?.HapticFeedback?.notificationOccurred('success');
-    if (webapp?.showPopup) {
-      webapp.showPopup({
-        title:   'Ссылка скопирована',
-        message: `«${ev.title}» готова к отправке`,
-        buttons: [{ type:'ok', text:'Отлично!' }]
-      });
-    } else {
-      showToast('🔗 Ссылка скопирована!');
-    }
-  };
-  if (navigator.clipboard?.writeText) {
-    navigator.clipboard.writeText(link).then(ok).catch(() => legacyCopy(link, ok));
-  } else {
-    legacyCopy(link, ok);
-  }
 }
 
 // ─── Theme ─────────────────────────────────────────────
@@ -215,6 +230,8 @@ let currentDate = new Date();
 
 // ─── Data Loading ──────────────────────────────────────
 let rawAllEvents = [];
+let carouselLoadedCount = 12; // начальное количество загруженных карточек
+let carouselObserver = null;
 
 /**
  * Приводит дату к единому формату DD.MM.YYYY (с ведущими нулями).
@@ -308,22 +325,42 @@ async function fetchEvents(dateStr) {
   renderCarousel();
 }
 
-  // ─── Poster carousel ─────────────────────────────────
+  // ─── Poster carousel with infinite scroll ─────────────────────────────────
   function renderCarousel() {
     const track = $('poster-track');
     if (!track) return;
-    track.innerHTML = '';
     if (!rawAllEvents || !rawAllEvents.length) return;
+    
+    // Сброс при смене даты/фильтра
+    carouselLoadedCount = 12;
+    
     const today = new Date(); today.setHours(0,0,0,0);
     const normalized = rawAllEvents.map(normalizeEvent);
-    const upcoming = normalized
+    window._allUpcoming = normalized
       .filter(e => {
         const d = parseDate(e.date);
         return d && d >= today;
       })
       .sort((a,b)=>parseDate(a.date)-parseDate(b.date));
-    if (!upcoming.length) return;
-    upcoming.slice(0, 12).forEach(ev => {
+    
+    if (!window._allUpcoming.length) return;
+    track.innerHTML = '';
+    
+    // Рендерим первые N карточек
+    renderCarouselBatch();
+    
+    // Настраиваем IntersectionObserver для догрузки
+    setupCarouselLazyLoad();
+  }
+
+  function renderCarouselBatch() {
+    const track = $('poster-track');
+    if (!track) return;
+    const upcoming = window._allUpcoming || [];
+    const end = Math.min(carouselLoadedCount, upcoming.length);
+    
+    for (let i = track.children.length; i < end; i++) {
+      const ev = upcoming[i];
       const card = document.createElement('div');
       card.className = 'poster-card';
       card.setAttribute('role','button');
@@ -360,7 +397,49 @@ async function fetchEvents(dateStr) {
       card.addEventListener('click', go);
       card.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
       track.appendChild(card);
+    }
+    
+    // Обновляем observer
+    updateCarouselObserver();
+  }
+
+  function setupCarouselLazyLoad() {
+    const track = $('poster-track');
+    if (!track) return;
+    
+    // Удаляем старый observer если был
+    if (carouselObserver) {
+      carouselObserver.disconnect();
+    }
+    
+    carouselObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const upcoming = window._allUpcoming || [];
+          if (carouselLoadedCount < upcoming.length) {
+            carouselLoadedCount += 8; // догружаем по 8 карточек
+            renderCarouselBatch();
+          }
+        }
+      });
+    }, {
+      root: track,
+      rootMargin: '100px', // начинаем загружать за 100px до конца
+      threshold: 0
     });
+    
+    updateCarouselObserver();
+  }
+
+  function updateCarouselObserver() {
+    const track = $('poster-track');
+    if (!track || !carouselObserver) return;
+    
+    // Наблюдаем за последней карточкой
+    const lastCard = track.lastElementChild;
+    if (lastCard) {
+      carouselObserver.observe(lastCard);
+    }
   }
 
 // ─── Integration hooks ─────────────────────────────────
@@ -827,7 +906,7 @@ export async function boot() {
      const month = calViewDate.getMonth();
      
      const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь',
-                         'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+                          'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
      monthEl.textContent = `${monthNames[month]} ${year}`;
      
      grid.innerHTML = '';
@@ -887,7 +966,7 @@ export async function boot() {
    
    const calOverlay = $('cal-overlay');
    if (calOverlay) calOverlay.addEventListener('click', closeCalendar);
-  
+   
   // ─── Search suggestions ────────────────────────────────
   function showSearchSuggestions(results) {
     const el = $('search-suggestions');

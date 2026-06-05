@@ -303,12 +303,14 @@ def geocode_address(address: str, cache: dict) -> Tuple[Optional[float], Optiona
 
 
 # ─── Parsing ────────────────────────────────────────────
-def parse_post(text: str) -> Optional[dict]:
+def parse_post(text: str, entities: Optional[List[dict]] = None) -> Optional[dict]:
     """
     Формат поста:
     30.05 | Название
     ...
     📍Адрес
+    
+    entities: опционально, список entities из Telegram (msg['entities'] или msg['caption_entities'])
     """
     if not text or not text.strip():
         return None
@@ -376,21 +378,46 @@ def parse_post(text: str) -> Optional[dict]:
     full_description = "\n".join(desc_lines).strip()
 
     # Попытка извлечь контакты / ссылку: http(s), tg://, t.me, telegram.me, @username
+    # А также извлекаем ссылки из Telegram entities (гиперссылки в сообщении)
     contacts = ""
-    # Ищем явные ссылки http/https и tg://
-    m = re.search(r"(https?://\S+|tg://\S+)", text)
-    if m:
-        contacts = m.group(1).strip()
-    else:
-        # Ищем ссылки вида t.me/xxx или telegram.me/xxx без схемы
-        m2 = re.search(r"\b(?:t\.me|telegram\.me)/([\w\d_\-]+)\b", text, re.I)
-        if m2:
-            contacts = f"https://t.me/{m2.group(1)}"
+    
+    # 1. СНАЧАЛА проверяем entities из Telegram (приоритет — это точные ссылки из гиперссылок)
+    if entities:
+        for ent in entities:
+            ent_type = ent.get('type')
+            if ent_type == 'text_link' and ent.get('url'):
+                # text_link — это гиперссылка вида [текст](url)
+                contacts = ent['url'].strip()
+                logger.debug(f"[CONTACTS] Из entities (text_link): {contacts}")
+                break
+            elif ent_type == 'url':
+                # url — это автоматически распознанная ссылка в тексте
+                # Извлекаем её из текста по offset/length
+                offset = ent.get('offset', 0)
+                length = ent.get('length', 0)
+                if offset >= 0 and length > 0 and offset + length <= len(text):
+                    extracted = text[offset:offset+length].strip()
+                    if extracted:
+                        contacts = extracted
+                        logger.debug(f"[CONTACTS] Из entities (url): {contacts}")
+                        break
+    
+    # 2. Если в entities ссылки не найдены — ищем в тексте (фоллбек)
+    if not contacts:
+        # Ищем явные ссылки http/https и tg:// в тексте
+        m = re.search(r"(https?://\S+|tg://\S+)", text)
+        if m:
+            contacts = m.group(1).strip()
         else:
-            # Ищем @username
-            m3 = re.search(r"@([A-Za-z0-9_]{3,32})", text)
-            if m3:
-                contacts = "@" + m3.group(1)
+            # 3. Ищем ссылки вида t.me/xxx или telegram.me/xxx без схемы
+            m2 = re.search(r"\b(?:t\.me|telegram\.me)/([\w\d_\-]+)\b", text, re.I)
+            if m2:
+                contacts = f"https://t.me/{m2.group(1)}"
+            else:
+                # 4. Ищем @username
+                m3 = re.search(r"@([A-Za-z0-9_]{3,32})", text)
+                if m3:
+                    contacts = "@" + m3.group(1)
 
     # Парсинг ключевых слов для тегов
     keywords = ["Концерт", "Вечеринка", "Фестиваль", "Выставка", "Лекция", "Спектакль", "Кинопоказ", "Йога"]
@@ -554,9 +581,12 @@ def process_single_message(msg: dict, geocache: dict) -> Optional[dict]:
     if not text:
         return None
 
+    # Собираем entities из сообщения (для извлечения ссылок из гиперссылок)
+    entities = msg.get("entities") or msg.get("caption_entities") or []
+    
     logger.info(f"Обработка сообщения msg_id={msg.get('message_id')}, первые 300 символов:\n{text[:300]}")
 
-    parsed = parse_post(text)
+    parsed = parse_post(text, entities)
     if not parsed:
         logger.warning(f"Не удалось распарсить пост (первые 500 символов):\n{text[:500]}")
         return None
@@ -607,7 +637,10 @@ def process_media_group(msgs: List[dict], geocache: dict) -> Optional[dict]:
     if not text:
         return None
 
-    parsed = parse_post(text)
+    # Собираем entities из сообщения с текстом (caption_entities или entities)
+    entities = text_msg.get("caption_entities") or text_msg.get("entities") or []
+    
+    parsed = parse_post(text, entities)
     if not parsed:
         return None
 

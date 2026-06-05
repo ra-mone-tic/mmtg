@@ -745,11 +745,11 @@ def main() -> None:
 
     all_events, added, updated = process_messages(messages, existing, geocache)
     
-    # Удаляем файлы афиш для прошедших мероприятий (событиям с датой <= вчера)
+    # Удаляем файлы афиш для прошедших мероприятий 
     def clean_old_posters(events_list: List[dict]) -> bool:
         changed = False
         today = datetime.now().date()
-        threshold = today - timedelta(days=2)  # удаляем афиши для событий, состоявшихся не позднее позавчера
+        threshold = today - timedelta(days=7)  # удаляем афиши для событий, состоявшихся не позднее недели назад
         for ev in events_list:
             d = parse_date(ev.get("date", ""))
             if not d:

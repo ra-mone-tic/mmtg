@@ -119,10 +119,17 @@ function showToast(msg, pos) {
 
 // ─── Share (native Telegram WebApp) ────────────────────
 function buildShareUrl(ev) {
-  // Формируем полную веб-ссылку на событие
+  // Приоритет: нативная ссылка на пост в канале
+  // Открывается прямо в Telegram Mini App / приложении
+  if (ev.tg_message_id) {
+    const nativeUrl = `https://t.me/meowafisha/${ev.tg_message_id}`;
+    const text = encodeURIComponent(`${ev.title}\n${ev.date}${ev.time ? ' ' + ev.time : ''}\n${ev.address}`);
+    return `https://t.me/share/url?url=${encodeURIComponent(nativeUrl)}&text=${text}`;
+  }
+  
+  // Фоллбек: веб-ссылка с deep linking
   const baseUrl = CFG.SHARE_BASE + ev.id;
   const text = encodeURIComponent(`${ev.title}\n${ev.date}${ev.time ? ' ' + ev.time : ''}\n${ev.address}`);
-  // Используем нативный t.me/share для красивого превью в Telegram
   return `https://t.me/share/url?url=${encodeURIComponent(baseUrl)}&text=${text}`;
 }
 
@@ -274,7 +281,8 @@ function normalizeEvent(e) {
     lng: e.lon,
     lat: e.lat,
     contacts: e.contacts || '',
-    tags: e.tags || []
+    tags: e.tags || [],
+    tg_message_id: e.tg_message_id || null
   };
 }
 
@@ -786,6 +794,26 @@ export async function boot() {
 
   // Load events for the nearest date
   await fetchEvents(fmt(currentDate));
+
+  // ─── Deep linking: ?event=ID ───────────────────────────
+  const urlParams = new URLSearchParams(window.location.search);
+  const eventId = urlParams.get('event');
+  if (eventId) {
+    // Ищем событие во всех загруженных данных
+    const allNormalized = rawAllEvents.map(normalizeEvent);
+    const ev = allNormalized.find(e => e.id === eventId);
+    if (ev) {
+      // Переключаем дату если нужно
+      if (ev.date !== fmt(currentDate)) {
+        await onDateChange(ev.date);
+      }
+      // Небольшая задержка чтобы карта и маркеры успели загрузиться
+      setTimeout(() => {
+        flyTo(ev);
+        openCard(ev.id);
+      }, 100);
+    }
+  }
 
   // ─── Listeners ─────────────────────────────────────────
   const btnTheme = $('btn-theme');

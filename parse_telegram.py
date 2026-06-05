@@ -609,6 +609,7 @@ def process_single_message(msg: dict, geocache: dict) -> Optional[dict]:
         "contacts": parsed["contacts"],
         "lat": lat,
         "lon": lon,
+        "tg_message_id": msg.get("message_id"),
     }
     _attach_image(ev, msg)
 
@@ -662,6 +663,7 @@ def process_media_group(msgs: List[dict], geocache: dict) -> Optional[dict]:
         "contacts": parsed["contacts"],
         "lat": lat,
         "lon": lon,
+        "tg_message_id": text_msg.get("message_id"),
     }
 
     # Берём лучшее фото из всех сообщений группы

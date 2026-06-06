@@ -31,6 +31,7 @@ export function normalizeEvent(e) {
     date          : e.date,
     time          : e.time || '',
     desc          : e.full_description || e.short_description || '',
+    blocks        : Array.isArray(e.description_blocks) ? e.description_blocks : null,
     imageUrl      : e.imageUrl || null,
     lng           : e.lon,
     lat           : e.lat,
@@ -45,6 +46,17 @@ export function normalizeEvent(e) {
 export function filterByDate(dateStr) {
   return state.rawAllEvents
     .filter(e => e.date === dateStr)
+    .map(normalizeEvent);
+}
+
+/**
+ * Возвращает все события для списка дат (или всех, если список пуст).
+ */
+export function filterByDates(dateList) {
+  if (!dateList || !dateList.length) return [];
+  const set = new Set(dateList);
+  return state.rawAllEvents
+    .filter(e => set.has(e.date))
     .map(normalizeEvent);
 }
 

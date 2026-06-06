@@ -503,6 +503,28 @@ svg{display:block;flex-shrink:0}
 .cal-day.has-events{font-weight:800}
 .cal-day.has-events::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:var(--c-accent);position:absolute;bottom:3px}
 .cal-day{position:relative}
+/* Мультивыбор: обводка кружка */
+.cal-day.multi-selected{background:transparent;color:var(--c-accent);font-weight:800;box-shadow:inset 0 0 0 2px var(--c-accent)}
+.cal-day.multi-selected:hover{background:var(--c-accent-d)}
+
+/* Футер календаря с кнопками */
+.cal-footer{
+  display:flex;gap:8px;margin-top:14px;padding-top:12px;
+  border-top:1px solid var(--c-soft-br);
+}
+.cal-btn{
+  flex:1;height:40px;border-radius:var(--r-b);
+  font-size:12.5px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  transition:transform .13s var(--ease-s),opacity .13s,background .13s,border-color .13s,box-shadow .13s;
+  font-family:inherit;cursor:pointer;
+}
+.cal-btn.btn-outline{background:transparent;color:var(--c-out-fg);border:2px solid var(--c-out-br)}
+.cal-btn.btn-solid{background:var(--c-sol-bg);color:var(--c-sol-fg);border:2px solid var(--c-sol-bg)}
+.cal-btn:hover{box-shadow:var(--sh-glow)}
+.cal-btn:active{transform:scale(.97)}
+.cal-btn[disabled]{opacity:.45;pointer-events:none;box-shadow:none}
+.cal-btn.is-ready{box-shadow:var(--sh-glow)}
 
 /* ── Search Suggestions ──────────────────────────── */
 .search-suggestions{
@@ -732,6 +754,10 @@ svg{display:block;flex-shrink:0}
       </button>
     </div>
     <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-footer">
+      <button class="cal-btn btn-outline" id="cal-today">Сегодня</button>
+      <button class="cal-btn btn-outline" id="cal-multi">Выбрать несколько</button>
+    </div>
   </div>
 </div>
 

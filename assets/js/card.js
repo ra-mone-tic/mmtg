@@ -1,7 +1,7 @@
-// ─── Event Card ──────────────────────────────────────
-import { $, metaHTML, renderTags } from './helpers.js';
+// \u2500\u2500\u2500 Event Card \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+import { $, metaHTML, renderTags, blocksHTML } from './helpers.js';
 import { state } from './state.js';
-import { setPinActive } from './map-core.js';
+import { clearPinsActive, setPinActive } from './map-core.js';
 import { shareEvent } from './share.js';
 import { syncActive } from './events-list.js';
 
@@ -10,18 +10,19 @@ let _onOpenDetail = null;
 export function initCard({ onOpenDetail }) {
   _onOpenDetail = onOpenDetail;
 
-  // ResizeObserver — пересчитываем позицию контролов при изменении высоты карточки
+  // ResizeObserver \u2014 \u043f\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u044b\u0432\u0430\u0435\u043c \u043f\u043e\u0437\u0438\u0446\u0438\u044e \u043a\u043e\u043d\u0442\u0440\u043e\u043b\u043e\u0432 \u043f\u0440\u0438 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0438 \u0432\u044b\u0441\u043e\u0442\u044b \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0438
   const card = $('event-card');
   if (card) new ResizeObserver(() => { if (state.activeId) shiftControls(true); }).observe(card);
 }
 
-// ── Открытие/закрытие карточки ───────────────────────
+// \u2500\u2500 \u041e\u0442\u043a\u0440\u044b\u0442\u0438\u0435/\u0437\u0430\u043a\u0440\u044b\u0442\u0438\u0435 \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0438 \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
 
 export function openCard(id) {
   const ev = state.events.find(e => e.id === id);
   if (!ev) return;
 
-  if (state.activeId && state.activeId !== id) setPinActive(state.activeId, false);
+  // Сбрасываем выделение со всех маркеров и подсвечиваем выбранный
+  clearPinsActive();
   state.activeId = id;
   setPinActive(id, true);
 
@@ -32,8 +33,8 @@ export function openCard(id) {
 
   if (elVenue) elVenue.textContent = ev.venue;
   if (elTitle) elTitle.textContent = ev.title;
-  if (elDesc)  elDesc.textContent  = ev.desc;
-  // Для карточки не показываем адрес (он уже в venue-tag)
+  if (elDesc)  elDesc.innerHTML    = blocksHTML(ev);
+  // \u0414\u043b\u044f \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0438 \u043d\u0435 \u043f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u043c \u0430\u0434\u0440\u0435\u0441 (\u043e\u043d \u0443\u0436\u0435 \u0432 venue-tag)
   if (elMeta)  elMeta.innerHTML    = metaHTML(ev, false);
   renderTags(ev.tags, 'card-tags');
 
@@ -50,7 +51,9 @@ export function openCard(id) {
 
 export function closeCard() {
   if (!state.activeId) return;
-  setPinActive(state.activeId, false);
+  // НЕ сбрасываем выделение маркера при закрытии карточки.
+  // Выделение снимается только при выборе другого маркера (в openCard)
+  // или при выборе дат в календаре (в openCalendar).
   state.activeId = null;
 
   const card = $('event-card');
@@ -59,7 +62,7 @@ export function closeCard() {
   syncActive(null);
 }
 
-// ── Смещение кнопок карты при открытой карточке ──────
+// \u2500\u2500 \u0421\u043c\u0435\u0449\u0435\u043d\u0438\u0435 \u043a\u043d\u043e\u043f\u043e\u043a \u043a\u0430\u0440\u0442\u044b \u043f\u0440\u0438 \u043e\u0442\u043a\u0440\u044b\u0442\u043e\u0439 \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0435 \u2500\u2500\u2500\u2500
 
 function _ctrlBase() {
   return ($('bottom-bar')?.offsetHeight ?? 62) + 12;

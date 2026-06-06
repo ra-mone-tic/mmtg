@@ -23,12 +23,12 @@ import { state }                                    from './state.js';
 import { showToast }                                from './toast.js';
 import { initTheme, applyTheme }                    from './theme.js';
 import { initAvatar }                               from './avatar.js';
-import { loadAllEvents, filterByDate, findNearestDate, normalizeEvent } from './data.js';
+import { loadAllEvents, filterByDate, filterByDates, findNearestDate, normalizeEvent } from './data.js';
 import { initCarousel, renderCarousel }             from './carousel.js';
 import { initEventsList, renderList, setPanel, applyPanelFilter } from './events-list.js';
 import { initCard, openCard, closeCard, shiftControls } from './card.js';
 import { openDetail, closeDetail }                  from './detail.js';
-import { initCalendar, openCalendar, closeCalendar } from './calendar.js';
+import { initCalendar, openCalendar, closeCalendar, setMultiApplyHandler } from './calendar.js';
 import { initSearch, handleSearch, hideSuggestions } from './search.js';
 
 // ─── Внутренние хелперы ──────────────────────────────
@@ -38,7 +38,26 @@ async function onDateChange(dateStr) {
   if (dateLabel) dateLabel.textContent = dateStr;
   const [day, month, year] = dateStr.split('.').map(Number);
   state.currentDate = new Date(year, month - 1, day);
+  // Сброс мультивыбора при одиночном выборе даты
+  state.multiSelect = false;
+  state.selectedDates = [];
   await fetchEvents(dateStr);
+}
+
+/**
+ * Применяет множественный выбор дат (из календаря).
+ * Загружает все события на выбранные даты на карту.
+ */
+async function applyMultiDates(dates) {
+  try {
+    state.events = filterByDates(dates);
+    state.allEvents = state.events;
+  } catch (e) {
+    state.events = [];
+    console.error('[MEOW]', e);
+  }
+  if (getMapInstance()?.loaded()) renderMarkers(state.events);
+  renderList(state.events);
 }
 
 async function fetchEvents(dateStr) {
@@ -99,6 +118,7 @@ export async function boot() {
   initCarousel({ onOpenCard: openCard, onSetPanel: setPanel, onDateChange });
   initEventsList({ onOpenCard: openCard, onDateChange });
   initCalendar({ onDateChange });
+  setMultiApplyHandler(applyMultiDates);
   initSearch({ onOpenCard: openCard, onDateChange });
 
   // Карта
@@ -202,9 +222,21 @@ export async function boot() {
     if ($('event-detail')?.classList.contains('open')) closeDetail();
   });
 
+  // Свайп вниз для закрытия карточки мероприятия
+  let cardSwipeStartY = 0;
+  const cardEl = $('event-card');
+  if (cardEl) {
+    cardEl.addEventListener('touchstart', e => { cardSwipeStartY = e.touches[0].clientY; }, { passive: true });
+    cardEl.addEventListener('touchend',   e => {
+      if (e.changedTouches[0].clientY - cardSwipeStartY > 72) closeCard();
+    }, { passive: true });
+  }
+
   // Зум на постер в детальном экране
+  // Разворачиваем только если у мероприятия есть картинка
   $('detail-poster')?.addEventListener('click', e => {
     if (e.target.closest('.detail-back')) return;
+    if (!state.detailHasImage) return;
     $('detail-poster').classList.toggle('expanded');
     TG()?.HapticFeedback?.impactOccurred('light');
   });

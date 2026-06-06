@@ -58,6 +58,13 @@ export function addMarkers(events, onMarkerClick) {
   }
 }
 
+export function clearPinsActive() {
+  document.querySelectorAll('.m-pin').forEach(el => {
+    el.classList.remove('active');
+    el.innerHTML = pinSVG(false);
+  });
+}
+
 export function setPinActive(id, active) {
   const el = document.querySelector(`.m-pin[data-id="${id}"]`);
   if (!el) return;

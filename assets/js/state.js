@@ -16,9 +16,14 @@ export const state = {
   // UI
   activeId       : null, // id активного маркера/карточки
   detailId       : null, // id открытого детального экрана
+  detailHasImage : true, // есть ли картинка у открытого детального экрана
   panelOpen      : false,
   theme          : 'dark',
   currentDate    : new Date(),
+
+  // Календарь — мультивыбор
+  multiSelect    : false,         // включён ли режим мультивыбора
+  selectedDates  : [],            // массив строк 'dd.mm.yyyy' (если мультивыбор)
 
   // Карусель
   carouselScrollPos   : 0,

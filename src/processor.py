@@ -35,19 +35,20 @@ def _build_event_dict(parsed: dict, msg_id: Optional[int], lat: float, lon: floa
     устраняет дублирование кода.
     """
     return {
-        "id"              : make_event_id(parsed["date"], parsed["title"], parsed["location"]),
-        "date"            : parsed["date"],
-        "title"           : parsed["title"],
-        "location"        : parsed["address"],
-        "address"         : parsed["address"],
-        "time"            : parsed["time"],
-        "tags"            : parsed["tags"],
+        "id"               : make_event_id(parsed["date"], parsed["title"], parsed["location"]),
+        "date"             : parsed["date"],
+        "title"            : parsed["title"],
+        "location"         : parsed["address"],
+        "address"          : parsed["address"],
+        "time"             : parsed["time"],
+        "tags"             : parsed["tags"],
         "short_description": parsed["short_description"],
-        "full_description": parsed["full_description"],
-        "contacts"        : parsed["contacts"],
-        "lat"             : lat,
-        "lon"             : lon,
-        "tg_message_id"   : msg_id,
+        "full_description" : parsed["full_description"],
+        "description_blocks": parsed.get("description_blocks", []),
+        "contacts"         : parsed["contacts"],
+        "lat"              : lat,
+        "lon"              : lon,
+        "tg_message_id"    : msg_id,
     }
 
 

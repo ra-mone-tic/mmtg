@@ -30,17 +30,28 @@ def parse_post(
     if not text or not text.strip():
         return None
 
-    lines = [l.strip() for l in text.strip().split("\n") if l.strip()]
-    if not lines:
+    # ── Разбиваем текст на параграфы, сохраняя структуру ───
+    # Параграфы отделяются пустой строкой. Внутри параграфа —
+    # обычные переносы строк (стих / список / перенос фразы).
+    raw_blocks = re.split(r"\n\s*\n", text.strip())
+    blocks: List[List[str]] = []
+    for b in raw_blocks:
+        lines = [ln.strip() for ln in b.split("\n") if ln.strip()]
+        if lines:
+            blocks.append(lines)
+    if not blocks:
+        return None
+    first_lines = blocks[0]
+    if not first_lines:
         return None
 
     # ── Дата и заголовок ────────────────────────────
     m = re.search(
         r"(\d{1,2})\.(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?\s*[|–—\-]\s*(.+)$",
-        lines[0],
+        first_lines[0],
     )
     if not m:
-        logger.debug(f"Не удалось распарсить первую строку: {lines[0]!r}")
+        logger.debug(f"Не удалось распарсить первую строку: {first_lines[0]!r}")
         return None
 
     day, month = int(m.group(1)), int(m.group(2))
@@ -73,12 +84,22 @@ def parse_post(
     address = addr_m.group(1).strip().rstrip(".")
 
     # ── Описание ─────────────────────────────────────
-    desc_lines = []
-    for line in lines[1:]:
-        if line.startswith("📍") or line.startswith("➡️") or line.startswith("#"):
-            break
-        desc_lines.append(line)
-    full_description = "\n".join(desc_lines).strip()
+    # Сохраняем структуру параграфов: пропускаем первый блок (там заголовок),
+    # а также блоки/строки, начинающиеся с маркеров адреса/ссылки/тегов.
+    description_blocks: List[List[str]] = []
+    for blk in blocks[1:]:
+        clean_lines: List[str] = []
+        for line in blk:
+            if line.startswith("📍") or line.startswith("➡️") or line.startswith("#"):
+                break
+            clean_lines.append(line)
+        if clean_lines:
+            description_blocks.append(clean_lines)
+
+    # Для обратной совместимости — плоская строка, где параграфы разделены \n\n.
+    full_description = "\n\n".join(
+        "\n".join(blk) for blk in description_blocks
+    ).strip()
 
     # ── Контакты ─────────────────────────────────────
     contacts = _extract_contacts(text, entities)
@@ -87,15 +108,16 @@ def parse_post(
     tags = _extract_tags(text)
 
     return {
-        "title"            : title,
-        "date"             : date_str,
-        "time"             : time_str,
-        "location"         : address,
-        "address"          : address,
-        "full_description" : full_description,
-        "short_description": full_description[:200] if full_description else "",
-        "contacts"         : contacts,
-        "tags"             : tags,
+        "title"             : title,
+        "date"              : date_str,
+        "time"              : time_str,
+        "location"          : address,
+        "address"           : address,
+        "full_description"  : full_description,
+        "short_description" : full_description[:200] if full_description else "",
+        "description_blocks": description_blocks,
+        "contacts"          : contacts,
+        "tags"              : tags,
     }
 
 

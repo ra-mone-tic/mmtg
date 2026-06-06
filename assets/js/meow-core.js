@@ -630,11 +630,17 @@ function openDetail(id) {
       img.alt = ev.title;
       img.loading = 'lazy';
       img.onerror = () => {
-        posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
+        // Заглушка — логотип (как в карусели)
+        posterInner.innerHTML = `<img src="assets/Group 27.png" alt="${ev.title || ''}" style="width:40%;height:40%;object-fit:contain;margin:auto;display:block;">`;
+      };
+      img.onload = () => {
+        posterInner.innerHTML = '';
+        posterInner.appendChild(img);
       };
       posterInner.appendChild(img);
     } else {
-      posterInner.innerHTML = `<span class="poster-initial">${ev.title?.[0] || '🎭'}</span>`;
+      // Заглушка — логотип (как в карусели)
+      posterInner.innerHTML = `<img src="assets/Group 27.png" alt="${ev.title || ''}" style="width:40%;height:40%;object-fit:contain;margin:auto;display:block;">`;
     }
   }
 

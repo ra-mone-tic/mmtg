@@ -1,1222 +1,298 @@
-/* Meow core module — contains main app logic exported as boot() */
+/**
+ * MeowAfisha · meow-core.js
+ *
+ * Точка входа приложения: функция boot() инициализирует все модули
+ * и подвязывает обработчики событий.
+ *
+ * Бизнес-логика вынесена в модули:
+ *   config.js · helpers.js · state.js · toast.js
+ *   theme.js  · avatar.js  · share.js  · data.js
+ *   carousel.js · events-list.js · card.js · detail.js
+ *   calendar.js · search.js · map-core.js
+ */
 
 import {
   initMap as mapInit,
-  addMarkers,
-  clearMarkers,
-  setPinActive,
-  flyTo,
-  getMapInstance,
-  addUserMarker,
-  clearUserMarker
+  addMarkers, clearMarkers, setPinActive,
+  flyTo, getMapInstance, addUserMarker,
 } from './map-core.js';
 
-// ─── Config ────────────────────────────────────────────
-const REGION_BBOX = [19.30, 54.00, 23.10, 55.60];
-const REGION_CENTER = [20.50, 54.71];
-const REGION_ZOOM = 11.5;
+import { CFG }                                       from './config.js';
+import { $, fmt, TG }                               from './helpers.js';
+import { state }                                    from './state.js';
+import { showToast }                                from './toast.js';
+import { initTheme, applyTheme }                    from './theme.js';
+import { initAvatar }                               from './avatar.js';
+import { loadAllEvents, filterByDate, findNearestDate, normalizeEvent } from './data.js';
+import { initCarousel, renderCarousel }             from './carousel.js';
+import { initEventsList, renderList, setPanel, applyPanelFilter } from './events-list.js';
+import { initCard, openCard, closeCard, shiftControls } from './card.js';
+import { openDetail, closeDetail }                  from './detail.js';
+import { initCalendar, openCalendar, closeCalendar } from './calendar.js';
+import { initSearch, handleSearch, hideSuggestions } from './search.js';
 
-const CFG = {
-  MAP_CENTER: REGION_CENTER,
-  MAP_ZOOM: REGION_ZOOM,
-  FLY_ZOOM: 14.5,
-  FLY_OFFSET: [0, 240],
-  FLY_MS: 540,
-  SHARE_BASE: window.location.origin + window.location.pathname.replace(/\/+$/, '') + '?event=',
-  STYLES: {
-    dark:  'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-    light: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
-  },
-  POSTER_GRADS: [
-    ['#6652bb','#a87ef0'],['#b84f70','#ee80aa'],
-    ['#5070bc','#7ca8f2'],['#4898b8','#74ccee'],
-    ['#6ab048','#96e270'],['#b87a40','#eaaa60'],
-  ],
-  BBOX: REGION_BBOX,
-};
+// ─── Внутренние хелперы ──────────────────────────────
 
-// Функция-геттер Telegram WebApp — читает window.Telegram каждый раз
-// Это гарантирует что API будет получен даже если он появился с задержкой
-const TG = () => window.Telegram?.WebApp ?? null;
-
-// ─── Helpers ───────────────────────────────────────────
-const $  = id => document.getElementById(id);
-const qs = s  => document.querySelector(s);
-const pad = n => String(n).padStart(2,'0');
-const fmt = d => `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()}`;
-let dayNames = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
-
-function dayName(str) {
-  const [d,m,y] = str.split('.').map(Number);
-  const date = new Date(y,m-1,d);
-  
-  // Сегодня
-  const today = new Date();
-  today.setHours(0,0,0,0);
-  if (+date === +today) return 'Сегодня';
-  
-  // Завтра
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  if (+date === +tomorrow) return 'Завтра';
-  
-  return dayNames[date.getDay()];
-}
-
-function posterGrad(id) {
-  const g = CFG.POSTER_GRADS;
-  const [a,b] = g[id.charCodeAt(id.length-1) % g.length];
-  return `linear-gradient(135deg,${a},${b})`;
-}
-
-const PIN_ICONS = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>`;
-const CAL_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`;
-const CLK_ICON = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
-
-function metaHTML(ev) {
-  const dateDisplay = ev.date === fmt(new Date()) ? 'Сегодня' : ev.date;
-  return `<div class="meta-row">${PIN_ICONS}${ev.address}</div>
-          <div class="meta-row">${CAL_ICON}${dateDisplay}</div>
-          <div class="meta-row">${CLK_ICON}${ev.time}</div>`;
-}
-
-function detailMetaHTML(ev) {
-  const dateDisplay = ev.date === fmt(new Date()) ? 'Сегодня' : ev.date;
-  return `<div class="meta-row">${CAL_ICON}${dateDisplay}</div>
-          <div class="meta-row">${CLK_ICON}${ev.time}</div>`;
-}
-
-function renderTags(tags, containerId) {
-  const container = $(containerId);
-  if (!container) return;
-  container.innerHTML = '';
-  if (!tags) return;
-  const arr = Array.isArray(tags) ? tags : String(tags).split(',').map(s => s.trim()).filter(Boolean);
-  if (!arr.length) return;
-  
-  arr.forEach(tag => {
-    const span = document.createElement('span');
-    span.className = 'tag-pill';
-    span.textContent = tag;
-    container.appendChild(span);
-  });
-}
-
-// ─── Toast ─────────────────────────────────────────────
-let toastT;
-function showToast(msg, pos) {
-  let el = qs('.toast');
-  if (!el) { el = document.createElement('div'); el.className='toast'; $('app').appendChild(el); }
-  el.textContent = msg;
-  el.style.bottom = (pos ?? (($('bottom-bar')?.offsetHeight ?? 62) + 20)) + 'px';
-  clearTimeout(toastT);
-  el.classList.remove('show');
-  requestAnimationFrame(() => requestAnimationFrame(() => {
-    el.classList.add('show');
-    toastT = setTimeout(() => el.classList.remove('show'), 2600);
-  }));
-}
-
-// ─── Share (native Telegram WebApp) ────────────────────
-function buildShareUrl(ev) {
-  // Приоритет: нативная ссылка на пост в канале
-  // Открывается прямо в Telegram Mini App / приложении
-  if (ev.tg_message_id) {
-    const nativeUrl = `https://t.me/meowafisha/${ev.tg_message_id}`;
-    const text = encodeURIComponent(`${ev.title}\n${ev.date}${ev.time ? ' ' + ev.time : ''}\n${ev.address}`);
-    return `https://t.me/share/url?url=${encodeURIComponent(nativeUrl)}&text=${text}`;
-  }
-  
-  // Фоллбек: веб-ссылка с deep linking
-  const baseUrl = CFG.SHARE_BASE + ev.id;
-  const text = encodeURIComponent(`${ev.title}\n${ev.date}${ev.time ? ' ' + ev.time : ''}\n${ev.address}`);
-  return `https://t.me/share/url?url=${encodeURIComponent(baseUrl)}&text=${text}`;
-}
-
-function shareEvent(ev) {
-  const webapp = TG();
-  const shareUrl = buildShareUrl(ev);
-  
-  const ok = () => {
-    webapp?.HapticFeedback?.notificationOccurred('success');
-    if (webapp?.showPopup) {
-      webapp.showPopup({
-        title:   'Ссылка готова',
-        message: `«${ev.title}» — можно отправить в чат`,
-        buttons: [{ type:'ok', text:'Отлично!' }]
-      });
-    } else {
-      showToast('🔗 Готово к отправке!');
-    }
-  };
-  
-  // Нативный шаринг в Telegram WebApp
-  if (webapp?.openTelegramLink) {
-    webapp.openTelegramLink(shareUrl);
-    ok();
-  } else if (navigator.clipboard?.writeText) {
-    // Фоллбек: копируем в буфер обмена
-    navigator.clipboard.writeText(shareUrl).then(ok).catch(() => legacyCopy(shareUrl, ok));
-  } else {
-    legacyCopy(shareUrl, ok);
-  }
-}
-
-function legacyCopy(text, cb) {
-  const ta = Object.assign(document.createElement('textarea'), {
-    value: text, readOnly: true,
-    style: 'position:fixed;left:-9999px;opacity:0'
-  });
-  document.body.appendChild(ta); ta.select();
-  try { document.execCommand('copy'); cb(); } catch(e) {}
-  ta.remove();
-}
-
-// ─── Theme ─────────────────────────────────────────────
-function initTheme() {
-  const saved = localStorage.getItem('meow-theme');
-  const defaultTheme = 'dark';
-  applyTheme(saved || defaultTheme, false);
-  return saved || defaultTheme;
-}
-
-function applyTheme(t, updateMap=true) {
-  document.documentElement.setAttribute('data-theme', t);
-  localStorage.setItem('meow-theme', t);
-  const ico = $('theme-icon');
-  if (ico) {
-    if (t === 'dark') {
-      ico.innerHTML = `<circle cx="12" cy="12" r="5"/>
-        <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
-        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-        <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
-        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>`;
-    } else {
-      ico.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>`;
-    }
-  }
-  if (updateMap && getMapInstance()) {
-    getMapInstance().once('style.load', renderMarkers);
-    getMapInstance().setStyle(CFG.STYLES[t]);
-  }
-  return t;
-}
-
-// ─── Avatar ────────────────────────────────────────────
-function initAvatar(retry = 5) {
-  const btn = $('btn-avatar');
-  const webapp = TG();
-  const user = webapp?.initDataUnsafe?.user;
-  if (!btn) return;
-  if (!user) {
-    if (retry > 0) setTimeout(() => initAvatar(retry - 1), 250);
-    return;
-  }
-  if (!user.photo_url) {
-    setInitials(btn, user);
-    return;
-  }
-  const img = new Image();
-  img.referrerPolicy = 'no-referrer';
-  img.onload = () => btn.replaceChildren(img);
-  img.onerror = () => setInitials(btn, user);
-  img.src = `${user.photo_url}${user.photo_url.includes('?') ? '&' : '?'}t=${Date.now()}`;
-}
-function setInitials(btn, user) {
-  const first = user?.first_name?.[0] ?? '';
-  const last = user?.last_name?.[0] ?? '';
-  btn.textContent = (first + last).toUpperCase() || 'U';
-}
-
-  // ─── State ─────────────────────────────────────────────
-  let map = null, events = [];
-  let allEvents = [];
-  let activeId = null, detailId = null;
-  let panelOpen = false, theme = 'dark';
-  let currentDate = new Date();
-  let carouselScrollPos = 0; // сохраняем позицию скролла карусели
-  let carouselVisible = true; // видимость карусели
-
-// ─── Data Loading ──────────────────────────────────────
-let rawAllEvents = [];
-let carouselLoadedCount = 12; // начальное количество загруженных карточек
-let carouselObserver = null;
-
-/**
- * Приводит дату к единому формату DD.MM.YYYY (с ведущими нулями).
- */
-function normalizeDate(str) {
-  if (!str) return str;
-  const parts = str.split('.');
-  if (parts.length !== 3) return str;
-  const [d, m, y] = parts.map(Number);
-  if (!d || !m || !y) return str;
-  return `${pad(d)}.${pad(m)}.${y}`;
-}
-
-async function loadAllEvents() {
-  try {
-    const resp = await fetch('events.json');
-    const data = await resp.json();
-    // Нормализуем даты у всех событий
-    rawAllEvents = data.map(e => ({
-      ...e,
-      date: normalizeDate(e.date)
-    }));
-    return rawAllEvents;
-  } catch (e) {
-    console.error('Ошибка загрузки событий:', e);
-    return [];
-  }
-}
-
-function normalizeEvent(e) {
-  return {
-    id: e.id,
-    title: e.title,
-    venue: e.location || e.venue || e.address || '',
-    address: e.location || e.address || '',
-    date: e.date,
-    time: e.time || '',
-    desc: e.full_description || e.short_description || '',
-    imageUrl: e.imageUrl || null,
-    lng: e.lon,
-    lat: e.lat,
-    contacts: e.contacts || '',
-    tags: e.tags || [],
-    tg_message_id: e.tg_message_id || null
-  };
-}
-
-function filterByDate(dateStr) {
-  return rawAllEvents
-    .filter(e => e.date === dateStr)
-    .map(normalizeEvent);
-}
-
-function parseDate(str) {
-  const [d, m, y] = str.split('.').map(Number);
-  if (!y) return null;
-  return new Date(y, m - 1, d);
-}
-
-function findNearestDate() {
-  if (!rawAllEvents.length) return null;
-  
-  // Сортируем даты как объекты Date
-  const dates = [...new Set(rawAllEvents.map(e => e.date))]
-    .filter(d => parseDate(d) !== null)
-    .sort((a, b) => parseDate(a) - parseDate(b));
-  
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
-  // Ищем ближайшую будущую или сегодняшнюю дату
-  for (const d of dates) {
-    const eventDate = parseDate(d);
-    if (eventDate >= today) return d;
-  }
-  
-  // Если будущих нет, берём последнюю (самую позднюю)
-  return dates[dates.length - 1] || null;
-}
-
-// ─── Data ──────────────────────────────────────────────
-async function fetchEvents(dateStr) {
-  try {
-    events = filterByDate(dateStr);
-    allEvents = events;
-  } catch(e) {
-    events=[];
-    console.error('[MEOW]',e);
-  }
-  if (getMapInstance()?.loaded()) renderMarkers();
-  renderList();
-  // Карусель независима от даты — рендерим один раз при старте
-}
-
-  // ─── Poster carousel with infinite scroll ─────────────────────────────────
-  function renderCarousel() {
-    const track = $('poster-track');
-    if (!track) return;
-    if (!rawAllEvents || !rawAllEvents.length) return;
-    
-    // Сброс при смене даты/фильтра
-    carouselLoadedCount = 12;
-    
-    const today = new Date(); today.setHours(0,0,0,0);
-    const normalized = rawAllEvents.map(normalizeEvent);
-    window._allUpcoming = normalized
-      .filter(e => {
-        const d = parseDate(e.date);
-        return d && d >= today;
-      })
-      .sort((a,b)=>parseDate(a.date)-parseDate(b.date));
-    
-    if (!window._allUpcoming.length) return;
-    track.innerHTML = '';
-    
-    // Рендерим первые N карточек
-    renderCarouselBatch();
-    
-    // Настраиваем IntersectionObserver для догрузки
-    setupCarouselLazyLoad();
-  }
-
-  function renderCarouselBatch() {
-    const track = $('poster-track');
-    if (!track) return;
-    const upcoming = window._allUpcoming || [];
-    const end = Math.min(carouselLoadedCount, upcoming.length);
-    
-    for (let i = track.children.length; i < end; i++) {
-      const ev = upcoming[i];
-      const card = document.createElement('div');
-      card.className = 'poster-card';
-      card.setAttribute('role','button');
-      card.setAttribute('data-id', ev.id);
-      card.setAttribute('tabindex', '0');
-      
-      if (ev.imageUrl) {
-        const img = document.createElement('img');
-        img.src = ev.imageUrl;
-        img.alt = ev.title || '';
-        img.loading = 'lazy';
-        img.onerror = () => {
-          img.src = 'assets/Group 27.png';
-          img.onerror = null; // предотвращаем бесконечный цикл
-        };
-        card.appendChild(img);
-      } else {
-        // Используем placeholder из Group 27.png
-        const img = document.createElement('img');
-        img.src = 'assets/Group 27.png';
-        img.alt = ev.title || '';
-        img.loading = 'lazy';
-        card.appendChild(img);
-      }
-      
-      const ov = document.createElement('div');
-      ov.className = 'poster-overlay';
-      ov.innerHTML = `<div class="poster-title">${ev.title}</div><div class="poster-date">${ev.date}</div>`;
-      card.appendChild(ov);
-      
-      const go = async () => {
-        // Сохраняем позицию скролла карусели перед переходом
-        const track = $('poster-track');
-        if (track) carouselScrollPos = track.scrollLeft;
-        
-        if (ev.date !== fmt(currentDate)) {
-          await onDateChange(ev.date);
-        }
-        flyTo(ev);
-        openCard(ev.id);
-        setPanel(false);
-      };
-      
-      card.addEventListener('click', go);
-      card.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
-      track.appendChild(card);
-    }
-    
-    // Восстанавливаем позицию скролла карусели
-    if (carouselScrollPos > 0) {
-      requestAnimationFrame(() => {
-        track.scrollLeft = carouselScrollPos;
-      });
-    }
-    
-    // Обновляем observer
-    updateCarouselObserver();
-  }
-
-  function setupCarouselLazyLoad() {
-    const track = $('poster-track');
-    if (!track) return;
-    
-    // Удаляем старый observer если был
-    if (carouselObserver) {
-      carouselObserver.disconnect();
-    }
-    
-    carouselObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const upcoming = window._allUpcoming || [];
-          if (carouselLoadedCount < upcoming.length) {
-            carouselLoadedCount += 8; // догружаем по 8 карточек
-            renderCarouselBatch();
-          }
-        }
-      });
-    }, {
-      root: track,
-      rootMargin: '100px', // начинаем загружать за 100px до конца
-      threshold: 0
-    });
-    
-    updateCarouselObserver();
-  }
-
-  function updateCarouselObserver() {
-    const track = $('poster-track');
-    if (!track || !carouselObserver) return;
-    
-    // Наблюдаем за последней карточкой
-    const lastCard = track.lastElementChild;
-    if (lastCard) {
-      carouselObserver.observe(lastCard);
-    }
-  }
-
-// ─── Integration hooks ─────────────────────────────────
-async function onEventContacts(ev) {
-  TG()?.HapticFeedback?.impactOccurred('light');
-  if (!ev.contacts) { showToast('Контакты недоступны'); return; }
-  const c = ev.contacts.trim();
-  try {
-    if (c.startsWith('http') || c.startsWith('https')) {
-      window.open(c, '_blank');
-    } else if (c.startsWith('t.me') || c.startsWith('telegram.me')) {
-      window.open('https://' + c, '_blank');
-    } else if (c.startsWith('tg://')) {
-      window.open(c, '_blank');
-    } else if (c.startsWith('@')) {
-      window.open('https://t.me/' + c.slice(1), '_blank');
-    } else {
-      // If it's a bare path like t.me/whatever without scheme
-      if (/^t\.me\//i.test(c) || /^telegram\.me\//i.test(c)) {
-        window.open('https://' + c, '_blank');
-      } else {
-        showToast('Контакты: ' + c);
-      }
-    }
-  } catch (e) { showToast('Не удалось открыть контакт'); }
-}
-function onSearch(q) {
-  if (!q || q.trim() === '') { renderList(); return; }
-  const query = q.toLowerCase().trim();
-  const filtered = events.filter(ev =>
-    ev.title.toLowerCase().includes(query) ||
-    ev.venue.toLowerCase().includes(query) ||
-    ev.address.toLowerCase().includes(query) ||
-    ev.desc.toLowerCase().includes(query)
-  );
-  renderList(filtered);
-}
-function onAvatarTap() {
-  const webapp = TG();
-  const user = webapp?.initDataUnsafe?.user;
-  if (!user) return;
-  const name = [user.first_name, user.last_name].filter(Boolean).join(' ');
-  if (webapp?.showPopup) {
-    webapp.showPopup({
-      title: 'Профиль',
-      message: name || 'Пользователь',
-      buttons: [{ type: 'close', text: 'Закрыть' }]
-    });
-  } else {
-    showToast(name || '👤 Пользователь');
-  }
-}
-
-// ─── Date handling ─────────────────────────────────────
 async function onDateChange(dateStr) {
   const dateLabel = $('date-label');
   if (dateLabel) dateLabel.textContent = dateStr;
   const [day, month, year] = dateStr.split('.').map(Number);
-  currentDate = new Date(year, month - 1, day);
+  state.currentDate = new Date(year, month - 1, day);
   await fetchEvents(dateStr);
 }
 
-// ─── Map ───────────────────────────────────────────────
-function handleMapReady() {
-  const loading = $('loading');
-  if (loading) loading.classList.add('gone');
-  renderMarkers();
+async function fetchEvents(dateStr) {
+  try {
+    state.events = filterByDate(dateStr);
+    state.allEvents = state.events;
+  } catch (e) {
+    state.events = [];
+    console.error('[MEOW]', e);
+  }
+  if (getMapInstance()?.loaded()) renderMarkers();
+  renderList();
 }
-function handleMapClick() {
-  closeCard();
-}
+
 function renderMarkers(eventList) {
-  const eventsToRender = eventList || events;
   clearMarkers();
-  addMarkers(eventsToRender, ev => {
+  addMarkers(eventList ?? state.events, ev => {
     openCard(ev.id);
     flyTo(ev);
   });
-  if (activeId) setPinActive(activeId, true);
+  if (state.activeId) setPinActive(state.activeId, true);
 }
 
-// ─── Card & Detail ─────────────────────────────────────
-function openCard(id) {
-  const ev = events.find(e=>e.id===id);
-  if (!ev) return;
-  if (activeId && activeId!==id) setPinActive(activeId, false);
-  activeId = id; setPinActive(id, true);
+// ─── Boot ────────────────────────────────────────────
 
-  const cardVenue = $('card-venue');
-  const cardTitle = $('card-title');
-  const cardDesc = $('card-desc');
-  const cardMeta = $('card-meta');
-
-  if (cardVenue) cardVenue.textContent = ev.venue;
-  if (cardTitle) cardTitle.textContent = ev.title;
-  if (cardDesc) cardDesc.textContent  = ev.desc;
-  if (cardMeta) cardMeta.innerHTML    = detailMetaHTML(ev);
-  renderTags(ev.tags, 'card-tags');
-
-  const btnLearnMore = $('btn-learn-more');
-  const btnShare = $('btn-share');
-  if (btnLearnMore) btnLearnMore.onclick = () => openDetail(id);
-  if (btnShare) btnShare.onclick = () => shareEvent(ev);
-
-  const card = $('event-card');
-  if (card) {
-    card.classList.add('open');
-    card.setAttribute('aria-hidden','false');
-  }
-  shiftControls(true);
-  syncActive(id);
-}
-
-function closeCard() {
-  if (!activeId) return;
-  setPinActive(activeId, false);
-  activeId = null;
-  const card = $('event-card');
-  if (card) {
-    card.classList.remove('open');
-    card.setAttribute('aria-hidden','true');
-  }
-  shiftControls(false);
-  syncActive(null);
-}
-
-function ctrlBase() {
-  return ($('bottom-bar')?.offsetHeight ?? 62) + 12;
-}
-
-function shiftControls(cardOpen) {
-  const ctrl = $('map-controls');
-  if (!ctrl) return;
-  if (cardOpen) {
-    const cardHeight = $('event-card')?.offsetHeight ?? 0;
-    ctrl.style.bottom = (ctrlBase() + cardHeight + 12) + 'px';
-  } else {
-    ctrl.style.bottom = ctrlBase() + 'px';
-  }
-}
-
-if ($('event-card')) {
-  new ResizeObserver(()=>{ if (activeId) shiftControls(true); }).observe($('event-card'));
-}
-
-function openDetail(id) {
-  const ev = events.find(e=>e.id===id);
-  if (!ev) return;
-  detailId = id;
-
-  const poster = $('detail-poster');
-  if (poster) poster.style.background = posterGrad(ev.id);
-
-  const posterInner = $('poster-inner');
-  if (posterInner) {
-    const imageUrl = ev.imageUrl && ev.imageUrl.trim() ? ev.imageUrl : null;
-    posterInner.innerHTML = '';
-    if (imageUrl) {
-      const img = document.createElement('img');
-      img.src = imageUrl;
-      img.alt = ev.title;
-      img.loading = 'lazy';
-      img.onerror = () => {
-        // Заглушка — логотип (как в карусели)
-        posterInner.innerHTML = `<img src="assets/Group 27.png" alt="${ev.title || ''}" style="width:40%;height:40%;object-fit:contain;margin:auto;display:block;">`;
-      };
-      img.onload = () => {
-        posterInner.innerHTML = '';
-        posterInner.appendChild(img);
-      };
-      posterInner.appendChild(img);
-    } else {
-      // Заглушка — логотип (как в карусели)
-      posterInner.innerHTML = `<img src="assets/Group 27.png" alt="${ev.title || ''}" style="width:40%;height:40%;object-fit:contain;margin:auto;display:block;">`;
-    }
-  }
-
-  const detailVenue = $('detail-venue');
-  if (detailVenue) detailVenue.textContent = ev.venue;
-
-  const detailTitle = $('detail-title');
-  if (detailTitle) detailTitle.textContent = ev.title;
-
-  const detailMeta = $('detail-meta');
-  if (detailMeta) detailMeta.innerHTML = detailMetaHTML(ev).replace(/13px/g,'13.5px');
-
-  renderTags(ev.tags, 'detail-tags');
-
-  const detailDesc = $('detail-desc');
-  if (detailDesc) detailDesc.textContent = ev.desc;
-
-  const btnContacts = $('btn-contacts');
-  const btnDetailShare = $('btn-detail-share');
-  if (btnContacts) btnContacts.onclick = () => onEventContacts(ev);
-  if (btnDetailShare) btnDetailShare.onclick = () => shareEvent(ev);
-
-  const modal = $('event-detail');
-  if (modal) {
-    modal.classList.add('open');
-    modal.setAttribute('aria-hidden','false');
-  }
-
-  const detailBody = $('detail-body');
-  if (detailBody) detailBody.scrollTop = 0;
-
-  TG()?.HapticFeedback?.selectionChanged();
-  history.pushState({meowDetail:true},'');
-}
-
-function closeDetail() {
-  const modal = $('event-detail');
-  if (modal) {
-    modal.classList.remove('open');
-    modal.setAttribute('aria-hidden','true');
-  }
-  detailId = null;
-  TG()?.HapticFeedback?.impactOccurred('light');
-}
-
-let swipeY = 0;
-const detailEl = $('event-detail');
-if (detailEl) {
-  detailEl.addEventListener('touchstart', e=>{swipeY=e.touches[0].clientY;},{passive:true});
-  detailEl.addEventListener('touchend', e=>{
-    const detailBody = $('detail-body');
-    if (detailBody && detailBody.scrollTop===0 && e.changedTouches[0].clientY-swipeY>72) closeDetail();
-  },{passive:true});
-}
-
-window.addEventListener('popstate', ()=>{
-  const modal = $('event-detail');
-  if (modal && modal.classList.contains('open')) closeDetail();
-});
-
-// ─── Events list ───────────────────────────────────────
-function renderList(eventList) {
-  const list = $('events-list');
-  if (!list) return;
-  list.innerHTML='';
-
-  const eventsToRender = eventList || events;
-
-  if (!eventsToRender.length) {
-    list.innerHTML='<p style="padding:16px;text-align:center;font-size:13px;color:var(--c-t2)">Событий нет</p>';
-    return;
-  }
-
-  const groups = eventsToRender.reduce((a,e)=>{ (a[e.date]??=[]).push(e); return a; },{});
-  for (const [date,evs] of Object.entries(groups)) {
-    const lbl = Object.assign(document.createElement('div'),{className:'day-label',textContent:dayName(date).toUpperCase()});
-    list.appendChild(lbl);
-    evs.forEach(ev=>{
-      const item = document.createElement('div');
-      item.className='event-item'+(ev.id===activeId?' active':'');
-      item.setAttribute('role','listitem');
-      item.setAttribute('data-id',ev.id);
-      item.setAttribute('tabindex','0');
-      const tagStr = ev.tags && ev.tags.length
-        ? ' · ' + (Array.isArray(ev.tags) ? ev.tags : String(ev.tags).split(',')).map(s => s.trim()).filter(Boolean).slice(0, 2).join(', ')
-        : '';
-      item.innerHTML=`<div class="event-item-title">${ev.title}</div><div class="event-item-sub">${ev.venue}${tagStr}</div>`;
-      const go = () => {
-        if (ev.date !== fmt(currentDate)) {
-          closeCard();
-          onDateChange(ev.date).then(() => {
-            flyTo(ev);
-            openCard(ev.id);
-            setPanel(false);
-          });
-        } else {
-          flyTo(ev);
-          openCard(ev.id);
-          setPanel(false);
-        }
-      };
-      item.addEventListener('click',go);
-      item.addEventListener('keydown',e=>{if(e.key==='Enter')go();});
-      list.appendChild(item);
-    });
-  }
-}
-
-function syncActive(id) {
-  document.querySelectorAll('.event-item').forEach(el=>el.classList.toggle('active',el.getAttribute('data-id')===id));
-}
-
-function setPanel(open) {
-  panelOpen = open;
-  const panel = $('events-panel');
-  const btnEvents = $('btn-events');
-  if (panel) {
-    panel.classList.toggle('open', open);
-    panel.setAttribute('aria-hidden', String(!open));
-  }
-  if (btnEvents) {
-    btnEvents.classList.toggle('active', open);
-    btnEvents.setAttribute('aria-expanded', String(open));
-  }
-}
-
-// ─── Boot sequence ─────────────────────────────────────
 export async function boot() {
-  // Initialize Telegram WebApp first
+  // Telegram WebApp
   const webapp = TG();
   webapp?.ready();
   webapp?.expand();
 
-  // Initialize theme
-  theme = initTheme();
-  requestAnimationFrame(() => { applyTheme(theme, false); });
+  // Тема
+  state.theme = initTheme();
+  requestAnimationFrame(() => applyTheme(state.theme, false));
 
-  // Initialize avatar
+  // Аватар
   initAvatar();
 
-  // Load all events first to find nearest date
+  // Данные
   await loadAllEvents();
 
-  // Set current date to today (default)
-  currentDate = new Date();
-  currentDate.setHours(0, 0, 0, 0);
-
-  // Check if there are events today; if not, find nearest future date
-  const todayStr = fmt(currentDate);
-  const hasTodayEvents = filterByDate(todayStr).length > 0;
-  
-  if (!hasTodayEvents) {
-    const nearestDate = findNearestDate();
-    if (nearestDate) {
-      const [day, month, year] = nearestDate.split('.').map(Number);
-      currentDate = new Date(year, month - 1, day);
+  // Стартовая дата: сегодня или ближайшая с событиями
+  state.currentDate = new Date(); state.currentDate.setHours(0, 0, 0, 0);
+  const todayStr = fmt(state.currentDate);
+  if (!filterByDate(todayStr).length) {
+    const nearest = findNearestDate();
+    if (nearest) {
+      const [d, m, y] = nearest.split('.').map(Number);
+      state.currentDate = new Date(y, m - 1, d);
     }
   }
 
-  // Set initial date label
   const dateLabel = $('date-label');
-  if (dateLabel) dateLabel.textContent = fmt(currentDate);
+  if (dateLabel) dateLabel.textContent = fmt(state.currentDate);
 
-  // Initialize map
+  // Инициализация модулей с callbacks
+  initCard({ onOpenDetail: openDetail });
+  initCarousel({ onOpenCard: openCard, onSetPanel: setPanel, onDateChange });
+  initEventsList({ onOpenCard: openCard, onDateChange });
+  initCalendar({ onDateChange });
+  initSearch({ onOpenCard: openCard, onDateChange });
+
+  // Карта
   mapInit({
-    theme,
-    center: CFG.MAP_CENTER,
-    zoom: CFG.MAP_ZOOM,
-    bbox: CFG.BBOX,
-    onMapReady: handleMapReady,
-    onMapClick: handleMapClick
+    theme     : state.theme,
+    center    : CFG.MAP_CENTER,
+    zoom      : CFG.MAP_ZOOM,
+    bbox      : CFG.BBOX,
+    onMapReady: () => { $('loading')?.classList.add('gone'); renderMarkers(); },
+    onMapClick: () => closeCard(),
   });
 
-  // Adjust controls position
-  requestAnimationFrame(()=>requestAnimationFrame(()=>shiftControls(false)));
+  requestAnimationFrame(() => requestAnimationFrame(() => shiftControls(false)));
 
-  // Load events for the nearest date
-  await fetchEvents(fmt(currentDate));
+  // Загружаем события стартовой даты
+  await fetchEvents(fmt(state.currentDate));
 
-  // ─── Render carousel (один раз при старте) ──────────
+  // Карусель
   renderCarousel();
 
-  // ─── Deep linking: ?event=ID ───────────────────────────
-  const urlParams = new URLSearchParams(window.location.search);
-  const eventId = urlParams.get('event');
+  // ── Deep linking: ?event=ID ──────────────────────────
+  const eventId = new URLSearchParams(window.location.search).get('event');
   if (eventId) {
-    // Ищем событие во всех загруженных данных
-    const allNormalized = rawAllEvents.map(normalizeEvent);
-    const ev = allNormalized.find(e => e.id === eventId);
+    const ev = state.rawAllEvents.map(normalizeEvent).find(e => e.id === eventId);
     if (ev) {
-      // Переключаем дату если нужно
-      if (ev.date !== fmt(currentDate)) {
-        await onDateChange(ev.date);
-      }
-      // Небольшая задержка чтобы карта и маркеры успели загрузиться
-      setTimeout(() => {
-        flyTo(ev);
-        openCard(ev.id);
-      }, 100);
+      if (ev.date !== fmt(state.currentDate)) await onDateChange(ev.date);
+      setTimeout(() => { flyTo(ev); openCard(ev.id); }, 100);
     }
   }
 
-  // ─── Listeners ─────────────────────────────────────────
-  const btnTheme = $('btn-theme');
-  if (btnTheme) btnTheme.addEventListener('click', ()=>{ theme = applyTheme(theme==='light'?'dark':'light'); });
+  // ── Listeners ────────────────────────────────────────
 
-  const btnAvatar = $('btn-avatar');
-  if (btnAvatar) btnAvatar.addEventListener('click', onAvatarTap);
-
-  const btnEvents = $('btn-events');
-  if (btnEvents) btnEvents.addEventListener('click', ()=>{
-    const willOpen = !panelOpen;
-    setPanel(willOpen);
-    if (willOpen) applyPanelFilter();
-  });
-
-  // Filter buttons in panel-head
-  const filterAll = $('filter-all');
-  const filterToday = $('filter-today');
-  let panelFilterMode = 'all'; // 'all' | 'today'
-
-  function applyPanelFilter() {
-    if (panelFilterMode === 'today') {
-      const todayStr = fmt(new Date());
-      const filtered = filterByDate(todayStr);
-      renderList(filtered);
-    } else {
-      const allDates = [...new Set(rawAllEvents.map(e => e.date))]
-        .filter(d => parseDate(d) !== null)
-        .sort((a, b) => parseDate(a) - parseDate(b));
-
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-
-      const upcoming = allDates.filter(d => {
-        const dt = parseDate(d);
-        return dt >= today;
-      });
-
-      let result = [];
-      upcoming.forEach(d => {
-        const dayEvents = filterByDate(d);
-        result = result.concat(dayEvents);
-      });
-      renderList(result);
-    }
-  }
-
-  // Определяем режим по умолчанию: если есть события на сегодня — "Сегодня", иначе "Все"
-  const initTodayStr = fmt(new Date());
-  const initHasTodayEvents = filterByDate(initTodayStr).length > 0;
-  panelFilterMode = initHasTodayEvents ? 'today' : 'all';
-
-  if (filterAll) {
-    filterAll.addEventListener('click', () => {
-      panelFilterMode = 'all';
-      applyPanelFilter();
-      filterAll.classList.add('active');
-      if (filterToday) filterToday.classList.remove('active');
-    });
-  }
-  if (filterToday) {
-    filterToday.addEventListener('click', () => {
-      panelFilterMode = 'today';
-      applyPanelFilter();
-      filterToday.classList.add('active');
-      if (filterAll) filterAll.classList.remove('active');
-    });
-  }
-  if (initHasTodayEvents && filterToday) {
-    filterToday.classList.add('active');
-  } else if (filterAll) {
-    filterAll.classList.add('active');
-  }
-
-  const btnCloseCard = $('btn-close-card');
-  if (btnCloseCard) btnCloseCard.addEventListener('click', closeCard);
-
-  const btnDetailBack = $('btn-detail-back');
-  if (btnDetailBack) btnDetailBack.addEventListener('click', ()=>{ if(history.state?.meowDetail) history.back(); else closeDetail(); });
-
-  const btnDate = $('btn-date');
-  if (btnDate) {
-    btnDate.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openCalendar();
-    });
-  }
-
-  // ─── Calendar ─────────────────────────────────────────
-  let calViewDate = new Date();
-  
-  function openCalendar() {
-    // По умолчанию показываем текущую дату при открытии календаря
-    calViewDate = new Date();
-    renderCalendar();
-    const modal = $('calendar-modal');
-    if (modal) {
-      modal.classList.add('open');
-      modal.setAttribute('aria-hidden', 'false');
-    }
-    setPanel(false);
-  }
-  
-  function closeCalendar() {
-     const modal = $('calendar-modal');
-     if (modal) {
-       modal.classList.remove('open');
-       modal.setAttribute('aria-hidden', 'true');
-     }
-   }
-   
-   function renderCalendar() {
-     const grid = $('cal-grid');
-     const monthEl = $('cal-month');
-     if (!grid || !monthEl) return;
-     
-     const year = calViewDate.getFullYear();
-     const month = calViewDate.getMonth();
-     
-     const monthNames = ['Январь','Февраль','Март','Апрель','Май','Июнь',
-                          'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-     monthEl.textContent = `${monthNames[month]} ${year}`;
-     
-     grid.innerHTML = '';
-     
-     const dw = ['ПН','ВТ','СР','ЧТ','ПТ','СБ','ВС'];
-     dw.forEach(d => {
-       const el = document.createElement('div');
-       el.className = 'cal-dw';
-       el.textContent = d;
-       grid.appendChild(el);
-     });
-     
-     const eventDates = new Set();
-     if (rawAllEvents.length) {
-       rawAllEvents.forEach(e => {
-         if (e.date) eventDates.add(e.date);
-       });
-     }
-     
-     const firstDay = new Date(year, month, 1);
-     const startDow = (firstDay.getDay() + 6) % 7;
-     
-     for (let i = 0; i < startDow; i++) {
-       const el = document.createElement('div');
-       grid.appendChild(el);
-     }
-     
-     const todayStr = fmt(new Date());
-     const activeStr = fmt(currentDate);
-     
-     const daysInMonth = new Date(year, month + 1, 0).getDate();
-     for (let d = 1; d <= daysInMonth; d++) {
-       const dateStr = `${pad(d)}.${pad(month + 1)}.${year}`;
-       const el = document.createElement('div');
-       el.className = 'cal-day';
-       el.textContent = d;
-       
-       if (dateStr === todayStr) el.classList.add('today');
-       if (dateStr === activeStr) el.classList.add('active');
-       if (eventDates.has(dateStr)) el.classList.add('has-events');
-       
-       el.addEventListener('click', async () => {
-         const [day, m, y] = dateStr.split('.').map(Number);
-         currentDate = new Date(y, m - 1, day);
-         await onDateChange(dateStr);
-         closeCalendar();
-       });
-       
-       grid.appendChild(el);
-     }
-   }
-   
-   const calPrev = $('cal-prev');
-   const calNext = $('cal-next');
-   if (calPrev) calPrev.addEventListener('click', () => { calViewDate.setMonth(calViewDate.getMonth() - 1); renderCalendar(); });
-   if (calNext) calNext.addEventListener('click', () => { calViewDate.setMonth(calViewDate.getMonth() + 1); renderCalendar(); });
-   
-   const calOverlay = $('cal-overlay');
-   if (calOverlay) calOverlay.addEventListener('click', closeCalendar);
-   
-  // ─── Search suggestions ────────────────────────────────
-  function showSearchSuggestions(results) {
-    const el = $('search-suggestions');
-    if (!el) return;
-    if (!results || !results.length) {
-      hideSearchSuggestions();
-      return;
-    }
-    el.innerHTML = results.slice(0, 5).map(ev => `
-      <div class="sug-item" data-id="${ev.id}">
-        <div class="sug-icon">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-        </div>
-        <div>
-          <div class="sug-text">${ev.title}</div>
-          <div class="sug-sub">${ev.venue} · ${ev.time || ev.date}</div>
-        </div>
-      </div>
-    `).join('');
-    el.querySelectorAll('.sug-item').forEach(item => {
-      item.addEventListener('click', async () => {
-        const id = item.getAttribute('data-id');
-        // Ищем событие во всех данных, а не только в текущей дате
-        const allNormalized = rawAllEvents.map(normalizeEvent);
-        const ev = allNormalized.find(e => e.id === id);
-        if (ev) {
-          if (ev.date !== fmt(currentDate)) {
-            closeCard();
-            await onDateChange(ev.date);
-          }
-          flyTo(ev);
-          openCard(id);
-        }
-        hideSearchSuggestions();
-        const inp = $('search-input');
-        if (inp) inp.value = '';
-      });
-    });
-    el.classList.add('open');
-    el.setAttribute('aria-hidden', 'false');
-  }
-  
-  function hideSearchSuggestions() {
-    const el = $('search-suggestions');
-    if (!el) return;
-    el.classList.remove('open');
-    el.setAttribute('aria-hidden', 'true');
-  }
-  
-  onSearch = function(q) {
-    if (!q || q.trim() === '') { hideSearchSuggestions(); return; }
-    const query = q.toLowerCase().trim();
-    const results = rawAllEvents
-      .map(normalizeEvent)
-      .filter(ev =>
-        ev.title.toLowerCase().includes(query) ||
-        ev.venue.toLowerCase().includes(query) ||
-        ev.address.toLowerCase().includes(query) ||
-        ev.desc.toLowerCase().includes(query)
-      );
-    showSearchSuggestions(results);
-  };
-  
-  // Map controls
-  const btnZoomIn = $('btn-zoom-in');
-  if (btnZoomIn) btnZoomIn.addEventListener('click', ()=>getMapInstance()?.zoomIn({duration:270}));
-
-  const btnZoomOut = $('btn-zoom-out');
-  if (btnZoomOut) btnZoomOut.addEventListener('click', ()=>getMapInstance()?.zoomOut({duration:270}));
-
-  const btnLocate = $('btn-locate');
-  if (btnLocate) btnLocate.addEventListener('click', ()=>{
-    if (!navigator.geolocation) {
-      showToast('Геолокация недоступна');
-      return;
-    }
-    TG()?.HapticFeedback?.impactOccurred('medium');
-    
-    // Высокоточный режим с оптимальными параметрами
-    const geoOptions = {
-      enableHighAccuracy: true,
-      timeout: 15000,      // 15 сек — достаточно для получения точного координат
-      maximumAge: 0        // Не кэшируем — всегда свежие координаты
-    };
-    
-    navigator.geolocation.getCurrentPosition(
-      ({coords}) => {
-        const { latitude, longitude, accuracy } = coords;
-        
-        // Логируем точность для отладки
-        if (accuracy > 50) {
-          console.warn(`[MEOW] Низкая точность геолокации: ${accuracy}м`);
-        }
-        
-        // Проверяем, что координаты в разумных границах (Калининград)
-        if (latitude < 54.0 || latitude > 55.6 || longitude < 19.3 || longitude > 23.1) {
-          showToast('⚠️ Координаты вне региона. Проверьте GPS.');
-          console.warn(`[MEOW] Координаты вне КО: ${latitude}, ${longitude}`);
-          return;
-        }
-        
-        addUserMarker(longitude, latitude);
-        getMapInstance()?.flyTo({
-          center: [longitude, latitude],
-          zoom: 15.5,  // Чуть выше зума для лучшей видимости
-          duration: 700
-        });
-        showToast(`📍 Точность: ${Math.round(accuracy)}м`);
-      },
-      (err) => {
-        let message = '❌ Не удалось получить координаты';
-        switch(err.code) {
-          case 1: message = '❌ Доступ к геолокации запрещен'; break;
-          case 2: message = '❌ Источник геолокации недоступен'; break;
-          case 3: message = '⏱️ Timeout при получении координат'; break;
-        }
-        showToast(message);
-        console.warn(`[MEOW] Geo error (${err.code}): ${err.message}`);
-      },
-      geoOptions
+  // Тема
+  $('btn-theme')?.addEventListener('click', () => {
+    state.theme = applyTheme(
+      state.theme === 'light' ? 'dark' : 'light',
+      true,
+      renderMarkers
     );
   });
 
-  // Search
-  let searchT;
+  // Аватар
+  $('btn-avatar')?.addEventListener('click', () => {
+    const user = TG()?.initDataUnsafe?.user;
+    if (!user) return;
+    const name = [user.first_name, user.last_name].filter(Boolean).join(' ');
+    if (TG()?.showPopup) {
+      TG().showPopup({ title: 'Профиль', message: name || 'Пользователь',
+                       buttons: [{ type: 'close', text: 'Закрыть' }] });
+    } else {
+      showToast(name || '👤 Пользователь');
+    }
+  });
+
+  // Панель событий
+  let panelFilterMode = filterByDate(fmt(new Date())).length ? 'today' : 'all';
+  const filterAll   = $('filter-all');
+  const filterToday = $('filter-today');
+
+  $('btn-events')?.addEventListener('click', () => {
+    const willOpen = !state.panelOpen;
+    setPanel(willOpen);
+    if (willOpen) applyPanelFilter(panelFilterMode);
+  });
+
+  filterAll?.addEventListener('click', () => {
+    panelFilterMode = 'all';
+    applyPanelFilter('all');
+    filterAll.classList.add('active');
+    filterToday?.classList.remove('active');
+  });
+  filterToday?.addEventListener('click', () => {
+    panelFilterMode = 'today';
+    applyPanelFilter('today');
+    filterToday.classList.add('active');
+    filterAll?.classList.remove('active');
+  });
+  // Начальное состояние кнопок фильтра
+  if (panelFilterMode === 'today') filterToday?.classList.add('active');
+  else                              filterAll?.classList.add('active');
+
+  // Карточка
+  $('btn-close-card')?.addEventListener('click', closeCard);
+
+  // Детальный экран
+  $('btn-detail-back')?.addEventListener('click', () => {
+    if (history.state?.meowDetail) history.back(); else closeDetail();
+  });
+
+  // Свайп вниз для закрытия детального экрана
+  let swipeStartY = 0;
+  const detailEl = $('event-detail');
+  if (detailEl) {
+    detailEl.addEventListener('touchstart', e => { swipeStartY = e.touches[0].clientY; }, { passive: true });
+    detailEl.addEventListener('touchend',   e => {
+      const body = $('detail-body');
+      if (body?.scrollTop === 0 && e.changedTouches[0].clientY - swipeStartY > 72) closeDetail();
+    }, { passive: true });
+  }
+  window.addEventListener('popstate', () => {
+    if ($('event-detail')?.classList.contains('open')) closeDetail();
+  });
+
+  // Зум на постер в детальном экране
+  $('detail-poster')?.addEventListener('click', e => {
+    if (e.target.closest('.detail-back')) return;
+    $('detail-poster').classList.toggle('expanded');
+    TG()?.HapticFeedback?.impactOccurred('light');
+  });
+
+  // Дата
+  $('btn-date')?.addEventListener('click', e => { e.stopPropagation(); openCalendar(); });
+
+  // Карусель — кнопка скрыть/показать
+  const posterCarousel     = $('poster-carousel');
+  const btnCarouselToggle  = $('btn-carousel-toggle');
+  if (btnCarouselToggle && posterCarousel) {
+    btnCarouselToggle.addEventListener('click', () => {
+      state.carouselVisible = !state.carouselVisible;
+      posterCarousel.classList.toggle('hidden', !state.carouselVisible);
+      btnCarouselToggle.setAttribute('aria-expanded', String(state.carouselVisible));
+      btnCarouselToggle.setAttribute('aria-label',
+        state.carouselVisible ? 'Скрыть карусель' : 'Показать карусель');
+      TG()?.HapticFeedback?.impactOccurred('light');
+    });
+  }
+
+  // Контролы карты
+  $('btn-zoom-in')?.addEventListener('click',  () => getMapInstance()?.zoomIn({ duration: 270 }));
+  $('btn-zoom-out')?.addEventListener('click', () => getMapInstance()?.zoomOut({ duration: 270 }));
+  $('btn-locate')?.addEventListener('click',   () => _handleLocate());
+
+  // Поиск
+  let _searchTimer;
   const searchInput = $('search-input');
   if (searchInput) {
-    searchInput.addEventListener('input', e=>{
-      clearTimeout(searchT);
-      searchT=setTimeout(()=>onSearch(e.target.value.trim()),300);
+    searchInput.addEventListener('input', e => {
+      clearTimeout(_searchTimer);
+      _searchTimer = setTimeout(() => handleSearch(e.target.value.trim()), 300);
     });
-    searchInput.addEventListener('focus', ()=>{
-      if (panelOpen) setPanel(false);
+    searchInput.addEventListener('focus', () => {
+      if (state.panelOpen) setPanel(false);
       closeCard();
       closeCalendar();
     });
+    searchInput.addEventListener('blur', () => setTimeout(hideSuggestions, 200));
   }
 
-  // Close panel on outside click/touch
-  document.addEventListener('click', e => {
-    const panel = $('events-panel');
-    const btnEvents = $('btn-events');
-    if (panelOpen && panel && !panel.contains(e.target) && btnEvents !== e.target) {
+  // Закрытие панели по клику вне неё
+  const _closePanel = e => {
+    if (state.panelOpen && !$('events-panel')?.contains(e.target) && e.target !== $('btn-events')) {
       setPanel(false);
     }
+  };
+  document.addEventListener('click',      _closePanel);
+  document.addEventListener('touchstart', _closePanel);
+
+  // Скрываем подсказки при касании карты
+  $('map')?.addEventListener('touchstart', hideSuggestions, { passive: true });
+
+  // Не пропускаем клики сквозь оверлеи
+  ['events-panel','event-card','event-detail'].forEach(id => {
+    $(id)?.addEventListener('click', e => e.stopPropagation());
   });
-  document.addEventListener('touchstart', e => {
-    if (panelOpen) {
-      const panel = $('events-panel');
-      const btnEvents = $('btn-events');
-      if (panel && !panel.contains(e.target) && btnEvents !== e.target) {
-        setPanel(false);
-      }
-    }
-  });
-  const mapEl = $('map');
-  if (mapEl) {
-    mapEl.addEventListener('touchstart', hideSearchSuggestions, {passive:true});
-  }
-
-  // Hide suggestions on blur
-  if (searchInput) {
-    searchInput.addEventListener('blur', () => setTimeout(hideSearchSuggestions, 200));
-  }
-
-  // Prevent event propagation from panels
-  ['events-panel','event-card','event-detail'].forEach(id=>{
-    const el = $(id);
-    if (el) el.addEventListener('click', e=>e.stopPropagation());
-  });
-
-  // Poster toggle (один раз, без накопления обработчиков)
-  const detailPoster = $('detail-poster');
-  if (detailPoster) {
-    detailPoster.addEventListener('click', (e) => {
-      if (e.target.closest('.detail-back')) return;
-      detailPoster.classList.toggle('expanded');
-      TG()?.HapticFeedback?.impactOccurred('light');
-    });
-  }
-
-  // Carousel toggle button
-  const btnCarouselToggle = $('btn-carousel-toggle');
-  const posterCarousel = $('poster-carousel');
-  if (btnCarouselToggle && posterCarousel) {
-    btnCarouselToggle.addEventListener('click', () => {
-      carouselVisible = !carouselVisible;
-      posterCarousel.classList.toggle('hidden', !carouselVisible);
-      btnCarouselToggle.classList.toggle('collapsed', !carouselVisible);
-      btnCarouselToggle.setAttribute('aria-expanded', String(carouselVisible));
-      btnCarouselToggle.setAttribute('aria-label', carouselVisible ? 'Скрыть карусель' : 'Показать карусель');
-      TG()?.HapticFeedback?.impactOccurred('light');
-    });
-  }
 
   console.log('[MEOW] Application initialized');
+}
+
+// ─── Геолокация ──────────────────────────────────────
+
+function _handleLocate() {
+  if (!navigator.geolocation) { showToast('Геолокация недоступна'); return; }
+  TG()?.HapticFeedback?.impactOccurred('medium');
+  navigator.geolocation.getCurrentPosition(
+    ({ coords: { latitude, longitude, accuracy } }) => {
+      if (accuracy > 50) console.warn(`[MEOW] Точность геолокации: ${accuracy}м`);
+      const [minLon, minLat, maxLon, maxLat] = CFG.BBOX;
+      if (latitude < minLat || latitude > maxLat || longitude < minLon || longitude > maxLon) {
+        showToast('⚠️ Координаты вне региона. Проверьте GPS.');
+        return;
+      }
+      addUserMarker(longitude, latitude);
+      getMapInstance()?.flyTo({ center: [longitude, latitude], zoom: 15.5, duration: 700 });
+      showToast(`📍 Точность: ${Math.round(accuracy)}м`);
+    },
+    err => {
+      const msg = {
+        1: '❌ Доступ к геолокации запрещён',
+        2: '❌ Источник геолокации недоступен',
+        3: '⏱️ Timeout при получении координат',
+      }[err.code] ?? '❌ Не удалось получить координаты';
+      showToast(msg);
+      console.warn(`[MEOW] Geo error (${err.code}): ${err.message}`);
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+  );
 }

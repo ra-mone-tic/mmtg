@@ -84,6 +84,8 @@
    BASE
 ══════════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+/* Убираем жёлтую/синюю обводку при тапе в Telegram WebView (Android) */
+button,a,[role="button"],[tabindex]{-webkit-tap-highlight-color:transparent;outline:none}
 html,body{height:100%;overflow:hidden}
 body{font-family:var(--ff);background:var(--c-canvas);color:var(--c-t1);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 button{cursor:pointer;font-family:inherit;border:none;background:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
@@ -146,7 +148,7 @@ svg{display:block;flex-shrink:0}
   font-size:13px;font-weight:800;letter-spacing:-.2px;
   box-shadow:var(--sh-glow),var(--sh-float);
   background-size:cover;background-position:center;
-  transition:transform .14s var(--ease-s);
+  transition:transform .14s var(--ease-s));
   flex-shrink:0;-webkit-tap-highlight-color:transparent;
 }
 .avatar-btn:active{transform:scale(.88)}

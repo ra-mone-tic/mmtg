@@ -3,6 +3,7 @@
 
 let map = null;
 let markers = [];
+let placeDots = [];
 let userMarker = null;
 
 export function getMapInstance() {
@@ -12,6 +13,51 @@ export function getMapInstance() {
 export function clearMarkers() {
   markers.forEach(m => m.ml.remove());
   markers = [];
+}
+
+// ── Place dots ────────────────────────────────────
+
+export function addPlaceDots(places, onDotClick) {
+  clearPlaceDots();
+  for (const p of places) {
+    const el = document.createElement('div');
+    el.className = 'm-dot';
+    el.setAttribute('data-place-id', p.id);
+    el.setAttribute('role', 'button');
+    el.setAttribute('aria-label', p.name);
+    el.setAttribute('tabindex', '0');
+    el.addEventListener('click', e => {
+      e.stopPropagation();
+      if (onDotClick) onDotClick(p);
+    });
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (onDotClick) onDotClick(p);
+      }
+    });
+    const marker = new maplibregl.Marker({element:el,anchor:'center'}).setLngLat([p.lng, p.lat]).addTo(map);
+    placeDots.push({id: p.id, ml: marker});
+  }
+}
+
+export function clearPlaceDots() {
+  placeDots.forEach(d => d.ml.remove());
+  placeDots = [];
+}
+
+export function clearPlaceDotsActive() {
+  document.querySelectorAll('.m-dot').forEach(el => el.classList.remove('active'));
+}
+
+export function setPlaceDotActive(id, active) {
+  clearPlaceDotsActive();
+  const el = document.querySelector(`.m-dot[data-place-id="${id}"]`);
+  if (el) el.classList.toggle('active', active);
+}
+
+export function flyToPlace(place, zoom = 14.5, offset = [0, -40], ms = 540) {
+  map.flyTo({center: [place.lng, place.lat], zoom, offset, duration: ms, essential: true});
 }
 
 export function addUserMarker(lng, lat) {

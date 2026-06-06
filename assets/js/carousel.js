@@ -8,11 +8,13 @@ import { flyTo } from './map-core.js';
 let _onOpenCard  = null;
 let _onSetPanel  = null;
 let _onDateChange = null;
+let _onClosePlaceCard = null;
 
-export function initCarousel({ onOpenCard, onSetPanel, onDateChange }) {
+export function initCarousel({ onOpenCard, onSetPanel, onDateChange, onClosePlaceCard }) {
   _onOpenCard   = onOpenCard;
   _onSetPanel   = onSetPanel;
   _onDateChange = onDateChange;
+  _onClosePlaceCard = onClosePlaceCard;
 }
 
 export function renderCarousel() {
@@ -73,6 +75,7 @@ function _buildCard(ev) {
   const go = async () => {
     const track = $('poster-track');
     if (track) state.carouselScrollPos = track.scrollLeft;
+    _onClosePlaceCard?.();
     if (ev.date !== fmt(state.currentDate)) await _onDateChange?.(ev.date);
     flyTo(ev);
     _onOpenCard?.(ev.id);

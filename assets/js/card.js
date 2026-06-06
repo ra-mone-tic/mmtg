@@ -4,11 +4,14 @@ import { state } from './state.js';
 import { clearPinsActive, setPinActive } from './map-core.js';
 import { shareEvent } from './share.js';
 import { syncActive } from './events-list.js';
+import { searchPlaces } from './places.js';
 
 let _onOpenDetail = null;
+let _onOpenPlace = null;
 
-export function initCard({ onOpenDetail }) {
+export function initCard({ onOpenDetail, onOpenPlace }) {
   _onOpenDetail = onOpenDetail;
+  _onOpenPlace = onOpenPlace;
 
   // ResizeObserver \u2014 \u043f\u0435\u0440\u0435\u0441\u0447\u0438\u0442\u044b\u0432\u0430\u0435\u043c \u043f\u043e\u0437\u0438\u0446\u0438\u044e \u043a\u043e\u043d\u0442\u0440\u043e\u043b\u043e\u0432 \u043f\u0440\u0438 \u0438\u0437\u043c\u0435\u043d\u0435\u043d\u0438\u0438 \u0432\u044b\u0441\u043e\u0442\u044b \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0438
   const card = $('event-card');
@@ -31,7 +34,27 @@ export function openCard(id) {
   const elDesc  = $('card-desc');
   const elMeta  = $('card-meta');
 
-  if (elVenue) elVenue.textContent = ev.venue;
+  if (elVenue) {
+    elVenue.textContent = ev.venue;
+    // Проверяем, совпадает ли venue с каким-либо местом
+    const venueTag = elVenue.closest('.venue-tag');
+    if (venueTag) {
+      const matchedPlace = state.rawPlaces.find(p =>
+        p.keywords?.some(kw => ev.venue.toLowerCase().includes(kw.toLowerCase()))
+      );
+      if (matchedPlace) {
+        venueTag.classList.add('is-link');
+        venueTag.onclick = (e) => {
+          e.stopPropagation();
+          closeCard?.();
+          _onOpenPlace?.(matchedPlace.id);
+        };
+      } else {
+        venueTag.classList.remove('is-link');
+        venueTag.onclick = null;
+      }
+    }
+  }
   if (elTitle) elTitle.textContent = ev.title;
   if (elDesc)  elDesc.innerHTML    = blocksHTML(ev);
   // \u0414\u043b\u044f \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0438 \u043d\u0435 \u043f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u043c \u0430\u0434\u0440\u0435\u0441 (\u043e\u043d \u0443\u0436\u0435 \u0432 venue-tag)

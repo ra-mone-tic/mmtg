@@ -1,0 +1,287 @@
+[
+  {
+    "id": "place-1",
+    "name": "Ельцин",
+    "lat": 54.7245038,
+    "lng": 20.5061209,
+    "address": "Гаражная 2",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://visit-kaliningrad.ru/upload/iblock/124/965heyd7u3dm1te397zc6zthhx37zcll/2fadc0b1a0921dcbb918fa95fbc4b9bd_600_600.jpg",
+    "keywords": [
+      "ельцин"
+    ]
+  },
+  {
+    "id": "place-2",
+    "name": "Форма",
+    "lat": 54.724125,
+    "lng": 20.504923,
+    "address": "Гаражная 2б",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/14336229/2a0000019a036fb787014bfefef317659c1b/XXL_height",
+    "keywords": [
+      "форма"
+    ]
+  },
+  {
+    "id": "place-3",
+    "name": "Место силы",
+    "lat": 54.714207,
+    "lng": 20.4967406,
+    "address": "Галицкого 18",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/5234013/2a0000017b4b9678a3b19c03e899bc53e0f4/XXL_height",
+    "keywords": [
+      "место силы"
+    ]
+  },
+  {
+    "id": "place-4",
+    "name": "Bus Station",
+    "lat": 54.721737385132,
+    "lng": 20.496573271461,
+    "address": "Генделя 3а",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/10494556/2a0000018e665cdad99687d8302bbd139cc1/XXL_height",
+    "keywords": [
+      "bus station"
+    ]
+  },
+  {
+    "id": "place-5",
+    "name": "Бар Советов",
+    "lat": 54.722776573098,
+    "lng": 20.465626721732,
+    "address": "Мира 118",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://visit-kaliningrad.ru/upload/resize_cache/iblock/382/086tge7taafvat6c06ww2r0bom1q6n1o/650_500_2/1.png",
+    "keywords": [
+      "бар советов"
+    ]
+  },
+  {
+    "id": "place-6",
+    "name": "Суспирия",
+    "lat": 54.710566319856,
+    "lng": 20.504079014298,
+    "address": "Коперника 21",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/19521209/2a0000019bda5bf76d911c18e9e97e08e264/S",
+    "keywords": [
+      "суспирия"
+    ]
+  },
+  {
+    "id": "place-7",
+    "name": "Dreadnought",
+    "lat": 54.7218613,
+    "lng": 20.495918,
+    "address": "Генделя 5",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/760153/2a00000188c9d1e24e62b35fd4cb95772450/XXL_height",
+    "keywords": [
+      "dreadnought"
+    ]
+  },
+  {
+    "id": "place-8",
+    "name": "Африка",
+    "lat": 54.722110212185,
+    "lng": 20.468461206401,
+    "address": "пр-т. Мира 106",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://cdn4.telesco.pe/file/R1sqh83ZxBRL0OuPFzhjG3rmsdi5lUWCv7KupBc6BlLEbvv-t4BrvND3DK2ewf1zi1IZX-_0wBUImYExVBHAGrGDFc61olbdIqZpSYvgINclNzshGtNPoGfAVf2ReVzpSLHegUfK0kUQUVlDVi6BZO-Lp68plOWTmuGqHov5YwX3GzYYwQFskKns-Jj9hDCzUFNvLLM5CNhDqULWuWFa2LI_agt1TQ0w4cEzNUFrCWZdAEu0AcMV1dHwY1nRHFZ7AC6og4fZ0Q7rXdkyfq7mR2T1HbZcbmzp1xgJFX_4foetFHp1qnQixFcuogni0IFUvH2Z1_OTOYDv7FeI1uROnw.jpg",
+    "keywords": [
+      "африка"
+    ]
+  },
+  {
+    "id": "place-9",
+    "name": "Татьяна",
+    "lat": 54.725384518842,
+    "lng": 20.470662880908,
+    "address": "ул. Карла Маркса 41-43",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/12838938/2a000001926c62ecd6cfec2de81f83c3f921/XXL_height",
+    "keywords": [
+      "татьяна"
+    ]
+  },
+  {
+    "id": "place-11",
+    "name": "Железнодорожные ворота",
+    "lat": 54.710309917438,
+    "lng": 20.491058565905,
+    "address": "пр-т. Гвардейский 51А",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/4537001/2a0000017a8604184743a651b6e8c0a42d7d/XXL_height",
+    "keywords": [
+      "железнодорожные ворота"
+    ]
+  },
+  {
+    "id": "place-12",
+    "name": "Склад",
+    "lat": 54.705610184328,
+    "lng": 20.544408541426,
+    "address": "Ялтинская 20п",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/9822373/2a000001926877672cc883f43857dac15b0d/XXL_height",
+    "keywords": [
+      "склад"
+    ]
+  },
+  {
+    "id": "place-13",
+    "name": "Heart Rock Bar",
+    "lat": 54.727238009091,
+    "lng": 20.493202824375,
+    "address": "Советский 21а",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/14350490/2a000001967e2422e48c9e0e95aecde9d50c/XXL_height",
+    "keywords": [
+      "heart rock bar",
+      "heart rock"
+    ]
+  },
+  {
+    "id": "place-14",
+    "name": "Old School Bar",
+    "lat": 54.714161779133,
+    "lng": 20.500955917174,
+    "address": "ул. Геологическая 1",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/16480821/2a000001999108dab50be1e9054db33f5c1e/XXL_height",
+    "keywords": [
+      "old school bar",
+      "old school"
+    ]
+  },
+  {
+    "id": "place-15",
+    "name": "Плохой охотник",
+    "lat": 54.713760914613,
+    "lng": 20.504639512163,
+    "address": "пр-т. Ленинский 18к1",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/14193233/2a00000192920a4a05d882dbba57164c9986/XXL_height",
+    "keywords": [
+      "плохой охотник"
+    ]
+  },
+  {
+    "id": "place-16",
+    "name": "barn",
+    "lat": 54.710073212492,
+    "lng": 20.467264438266,
+    "address": "Каштановая аллея 1а",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/13944697/2a00000195d27a0d8413fc4bda659848b57f/XXL_height",
+    "keywords": [
+      "барн",
+      "barn"
+    ]
+  },
+  {
+    "id": "place-17",
+    "name": "Кафедральный собор",
+    "lat": 54.7064365,
+    "lng": 20.5118981,
+    "address": "ул. Канта 1",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/1583613/2a0000016d41827a4a7f16b745f328faf753/XXL_height",
+    "keywords": [
+      "кафедральный собор",
+      "собор"
+    ]
+  },
+  {
+    "id": "place-18",
+    "name": "Филармония",
+    "lat": 54.69840050019712,
+    "lng": 20.509282871123975,
+    "address": "",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/239474/2a0000015e530dfb8f44abc370f9adb24600/XXL_height",
+    "keywords": [
+      "филармония"
+    ]
+  },
+  {
+    "id": "place-19",
+    "name": "Сигнал",
+    "lat": 54.725808288807215,
+    "lng": 20.482095968506528,
+    "address": "Леонова 22",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/16379675/2a0000019c58c98b887acefd3354e01fe6a6/S",
+    "keywords": [
+      "сигнал"
+    ]
+  },
+  {
+    "id": "place-20",
+    "name": "Краны и стаканы",
+    "lat": 54.7262672,
+    "lng": 20.4943453,
+    "address": "ул. Брамска 40",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/1588111/2a0000016b313e04448feaa3df6303f0cc7d/XXL_height",
+    "keywords": [
+      "краны и стаканы",
+      "краны"
+    ]
+  },
+  {
+    "id": "place-21",
+    "name": "Human concept",
+    "lat": 54.734743710018,
+    "lng": 20.472201965969,
+    "address": "",
+    "description": "",
+    "time": "",
+    "contacts": "",
+    "imageUrl": "https://avatars.mds.yandex.net/get-altay/16965486/2a0000019b229848b15dab07ae7caf38932f/XXL_height",
+    "keywords": [
+      "human concept"
+    ]
+  }
+]

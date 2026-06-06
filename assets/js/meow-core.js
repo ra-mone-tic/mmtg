@@ -15,6 +15,7 @@ import {
   initMap as mapInit,
   addMarkers, clearMarkers, setPinActive,
   flyTo, getMapInstance, addUserMarker,
+  addPlaceDots, setPlaceDotActive, flyToPlace,
 } from './map-core.js';
 
 import { CFG }                                       from './config.js';
@@ -30,6 +31,9 @@ import { initCard, openCard, closeCard, shiftControls } from './card.js';
 import { openDetail, closeDetail }                  from './detail.js';
 import { initCalendar, openCalendar, closeCalendar, setMultiApplyHandler } from './calendar.js';
 import { initSearch, handleSearch, hideSuggestions } from './search.js';
+import { loadPlaces, getPlaceById }                 from './places.js';
+import { initPlaceCard, openPlaceCard, closePlaceCard } from './place-card.js';
+import { initPlaceDetail, openPlaceDetail, closePlaceDetail } from './place-detail.js';
 
 // ─── Внутренние хелперы ──────────────────────────────
 
@@ -75,6 +79,7 @@ async function fetchEvents(dateStr) {
 function renderMarkers(eventList) {
   clearMarkers();
   addMarkers(eventList ?? state.events, ev => {
+    closePlaceCard();
     openCard(ev.id);
     flyTo(ev);
   });
@@ -97,7 +102,7 @@ export async function boot() {
   initAvatar();
 
   // Данные
-  await loadAllEvents();
+  await Promise.all([loadAllEvents(), loadPlaces()]);
 
   // Стартовая дата: сегодня или ближайшая с событиями
   state.currentDate = new Date(); state.currentDate.setHours(0, 0, 0, 0);
@@ -114,12 +119,14 @@ export async function boot() {
   if (dateLabel) dateLabel.textContent = fmt(state.currentDate);
 
   // Инициализация модулей с callbacks
-  initCard({ onOpenDetail: openDetail });
-  initCarousel({ onOpenCard: openCard, onSetPanel: setPanel, onDateChange });
-  initEventsList({ onOpenCard: openCard, onDateChange });
+  initCard({ onOpenDetail: openDetail, onOpenPlace: _onOpenPlace });
+  initCarousel({ onOpenCard: openCard, onSetPanel: setPanel, onDateChange, onClosePlaceCard: closePlaceCard });
+  initEventsList({ onOpenCard: openCard, onDateChange, onOpenPlaceCard: _onOpenPlace });
   initCalendar({ onDateChange });
   setMultiApplyHandler(applyMultiDates);
   initSearch({ onOpenCard: openCard, onDateChange });
+  initPlaceCard({ onOpenDetail: openPlaceDetail });
+  initPlaceDetail({ onOpenEventCard: _onOpenEventFromPlace });
 
   // Карта
   mapInit({
@@ -127,8 +134,16 @@ export async function boot() {
     center    : CFG.MAP_CENTER,
     zoom      : CFG.MAP_ZOOM,
     bbox      : CFG.BBOX,
-    onMapReady: () => { $('loading')?.classList.add('gone'); renderMarkers(); },
-    onMapClick: () => closeCard(),
+    onMapReady: () => {
+      $('loading')?.classList.add('gone');
+      addPlaceDots(state.rawPlaces, p => {
+        closeCard();
+        openPlaceCard(p.id);
+        flyToPlace(p);
+      });
+      renderMarkers();
+    },
+    onMapClick: () => { closeCard(); closePlaceCard(); },
   });
 
   requestAnimationFrame(() => requestAnimationFrame(() => shiftControls(false)));
@@ -179,19 +194,28 @@ export async function boot() {
   const filterToday = $('filter-today');
 
   $('btn-events')?.addEventListener('click', () => {
-    const willOpen = !state.panelOpen;
-    setPanel(willOpen);
+    const willOpen = !state.panelOpen || state.panelMode !== 'events';
+    closePlaceCard();
+    setPanel(willOpen, 'events');
     if (willOpen) applyPanelFilter(panelFilterMode);
+  });
+
+  $('btn-places')?.addEventListener('click', () => {
+    if (state.panelOpen && state.panelMode === 'places') return;
+    closeCard();
+    setPanel(true, 'places');
   });
 
   filterAll?.addEventListener('click', () => {
     panelFilterMode = 'all';
+    setPanel(true, 'events');
     applyPanelFilter('all');
     filterAll.classList.add('active');
     filterToday?.classList.remove('active');
   });
   filterToday?.addEventListener('click', () => {
     panelFilterMode = 'today';
+    setPanel(true, 'events');
     applyPanelFilter('today');
     filterToday.classList.add('active');
     filterAll?.classList.remove('active');
@@ -202,10 +226,14 @@ export async function boot() {
 
   // Карточка
   $('btn-close-card')?.addEventListener('click', closeCard);
+  $('btn-close-place-card')?.addEventListener('click', closePlaceCard);
 
   // Детальный экран
   $('btn-detail-back')?.addEventListener('click', () => {
     if (history.state?.meowDetail) history.back(); else closeDetail();
+  });
+  $('btn-place-detail-back')?.addEventListener('click', () => {
+    if (history.state?.meowPlaceDetail) history.back(); else closePlaceDetail();
   });
 
   // Свайп вниз для закрытия детального экрана
@@ -220,6 +248,7 @@ export async function boot() {
   }
   window.addEventListener('popstate', () => {
     if ($('event-detail')?.classList.contains('open')) closeDetail();
+    if ($('place-detail')?.classList.contains('open')) closePlaceDetail();
   });
 
   // Свайп вниз для закрытия карточки мероприятия
@@ -229,6 +258,16 @@ export async function boot() {
     cardEl.addEventListener('touchstart', e => { cardSwipeStartY = e.touches[0].clientY; }, { passive: true });
     cardEl.addEventListener('touchend',   e => {
       if (e.changedTouches[0].clientY - cardSwipeStartY > 72) closeCard();
+    }, { passive: true });
+  }
+
+  // Свайп вниз для закрытия карточки места
+  let placeCardSwipeStartY = 0;
+  const placeCardEl = $('place-card');
+  if (placeCardEl) {
+    placeCardEl.addEventListener('touchstart', e => { placeCardSwipeStartY = e.touches[0].clientY; }, { passive: true });
+    placeCardEl.addEventListener('touchend',   e => {
+      if (e.changedTouches[0].clientY - placeCardSwipeStartY > 72) closePlaceCard();
     }, { passive: true });
   }
 
@@ -281,7 +320,8 @@ export async function boot() {
 
   // Закрытие панели по клику вне неё
   const _closePanel = e => {
-    if (state.panelOpen && !$('events-panel')?.contains(e.target) && e.target !== $('btn-events')) {
+    if (state.panelOpen && !$('events-panel')?.contains(e.target)
+        && e.target !== $('btn-events') && e.target !== $('btn-places')) {
       setPanel(false);
     }
   };
@@ -292,11 +332,39 @@ export async function boot() {
   $('map')?.addEventListener('touchstart', hideSuggestions, { passive: true });
 
   // Не пропускаем клики сквозь оверлеи
-  ['events-panel','event-card','event-detail'].forEach(id => {
+  ['events-panel','event-card','event-detail','place-card','place-detail'].forEach(id => {
     $(id)?.addEventListener('click', e => e.stopPropagation());
   });
 
+  // ── Deep linking: ?place=ID ──────────────────────────
+  const placeId = new URLSearchParams(window.location.search).get('place');
+  if (placeId) {
+    const pl = getPlaceById(placeId);
+    if (pl) {
+      setTimeout(() => { flyToPlace(pl); openPlaceCard(pl.id); }, 100);
+    }
+  }
+
   console.log('[MEOW] Application initialized');
+}
+
+// ─── Внутренние обработчики для мест ─────────────────
+
+function _onOpenPlace(id) {
+  closeCard();
+  const place = getPlaceById(id);
+  if (place) flyToPlace(place);
+  openPlaceCard(id);
+}
+
+function _onOpenEventFromPlace(evId) {
+  closePlaceCard();
+  closePlaceDetail();
+  const ev = state.rawAllEvents.map(normalizeEvent).find(e => e.id === evId);
+  if (ev) {
+    openCard(evId);
+    flyTo(ev);
+  }
 }
 
 // ─── Геолокация ──────────────────────────────────────

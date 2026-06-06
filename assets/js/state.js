@@ -25,6 +25,11 @@ export const state = {
   multiSelect    : false,         // включён ли режим мультивыбора
   selectedDates  : [],            // массив строк 'dd.mm.yyyy' (если мультивыбор)
 
+  // Места
+  activePlaceId       : null,   // id активной точки места
+  panelMode           : 'events', // 'events' | 'places' — текущий режим панели
+  rawPlaces           : [],       // сырые объекты из places.json
+
   // Карусель
   carouselScrollPos   : 0,
   carouselVisible     : true,

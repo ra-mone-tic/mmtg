@@ -5,7 +5,9 @@ MeowAfisha · src/processor.py
 from __future__ import annotations
 
 import hashlib
+import json
 import logging
+import re
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
@@ -17,6 +19,79 @@ from .geocoding    import geocode_address
 from .telegram_api import get_file_url, download_image
 
 logger = logging.getLogger(__name__)
+
+
+# ─── Загрузка справочника мест ─────────────────────────
+
+def _load_places() -> List[dict]:
+    """Загружает places.json и возвращает список мест."""
+    places_path = BASE_DIR / "places.json"
+    if not places_path.exists():
+        logger.warning("places.json не найден")
+        return []
+    try:
+        with open(places_path, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as e:
+        logger.warning(f"Ошибка загрузки places.json: {e}")
+        return []
+
+
+def _normalize(s: str) -> str:
+    """Приводит строку к нижнему регистру, убирает лишние пробелы и знаки."""
+    s = s.lower().strip()
+    s = re.sub(r"[^\w\s]", " ", s)
+    s = re.sub(r"\s+", " ", s)
+    return s.strip()
+
+
+def _extract_street(address: str) -> str:
+    """Извлекает номер улицы/дома из адреса для сопоставления."""
+    # Ищем паттерн "улица/проспект/бульвар ... номер"
+    addr = address.strip().rstrip(".")
+    # Берём последнюю значимую часть адреса — обычно это улица + дом
+    parts = [p.strip() for p in addr.split(",") if p.strip()]
+    if not parts:
+        return ""
+    # Пробуем взять часть с номером дома (содержит цифры)
+    for part in reversed(parts):
+        if re.search(r"\d", part):
+            return _normalize(part)
+    return _normalize(parts[-1])
+
+
+def _match_place(event_location: str, place_name: str, place_address: str) -> bool:
+    """
+    Проверяет, относится ли событие к указанному месту.
+    Сравнивает название места или адрес события с названием/адресом места.
+    """
+    ev_norm = _normalize(event_location)
+    pl_name_norm = _normalize(place_name)
+    pl_addr_norm = _normalize(place_address)
+
+    # 1. Прямое совпадение названия места с началом адреса события
+    #    (например, "Барн, Каштановая аллея 1а" содержит "Барн")
+    if pl_name_norm and (ev_norm.startswith(pl_name_norm) or pl_name_norm in ev_norm):
+        return True
+
+    # 2. Совпадение по адресу (улица + дом)
+    ev_street = _extract_street(event_location)
+    if ev_street and pl_addr_norm:
+        if ev_street == _extract_street(place_address):
+            return True
+        # Или если адрес места содержится в адресе события
+        if pl_addr_norm in ev_norm:
+            return True
+
+    return False
+
+
+def _find_matching_place(event_location: str, places: List[dict]) -> Optional[dict]:
+    """Ищет место из справочника, соответствующее адресу события."""
+    for place in places:
+        if _match_place(event_location, place.get("name", ""), place.get("address", "")):
+            return place
+    return None
 
 
 # ─── ID события ─────────────────────────────────────
@@ -67,7 +142,7 @@ def _attach_image(ev: dict, msg: dict) -> None:
 
 # ─── Одиночное сообщение ────────────────────────────
 
-def process_single_message(msg: dict, geocache: dict) -> Optional[dict]:
+def process_single_message(msg: dict, geocache: dict, places: List[dict]) -> Optional[dict]:
     text = msg.get("text") or msg.get("caption") or ""
     if not text:
         return None
@@ -85,6 +160,17 @@ def process_single_message(msg: dict, geocache: dict) -> Optional[dict]:
         logger.warning(f"Не удалось геокодировать: {parsed['location']!r} — пропускаем")
         return None
 
+    # Сопоставляем с местом из справочника
+    matched_place = _find_matching_place(parsed["location"], places)
+    if matched_place:
+        old_lat, old_lon = lat, lon
+        lat = matched_place["lat"]
+        lon = matched_place["lng"]
+        logger.info(
+            f"Координаты скорректированы по месту «{matched_place['name']}»: "
+            f"({old_lat:.6f}, {old_lon:.6f}) → ({lat:.6f}, {lon:.6f})"
+        )
+
     ev = _build_event_dict(parsed, msg.get("message_id"), lat, lon)
     _attach_image(ev, msg)
     logger.info(f"Обработано: {ev['title']} ({ev['date']}) @ {parsed['address']}")
@@ -93,7 +179,7 @@ def process_single_message(msg: dict, geocache: dict) -> Optional[dict]:
 
 # ─── Медиагруппа ────────────────────────────────────
 
-def process_media_group(msgs: List[dict], geocache: dict) -> Optional[dict]:
+def process_media_group(msgs: List[dict], geocache: dict, places: List[dict]) -> Optional[dict]:
     # Находим сообщение с текстом и собираем все фото
     text_msg = next((m for m in msgs if m.get("caption")), msgs[0] if msgs else None)
     if not text_msg:
@@ -112,6 +198,17 @@ def process_media_group(msgs: List[dict], geocache: dict) -> Optional[dict]:
     if lat is None:
         logger.warning(f"Не удалось геокодировать (медиагруппа): {parsed['location']!r} — пропускаем")
         return None
+
+    # Сопоставляем с местом из справочника
+    matched_place = _find_matching_place(parsed["location"], places)
+    if matched_place:
+        old_lat, old_lon = lat, lon
+        lat = matched_place["lat"]
+        lon = matched_place["lng"]
+        logger.info(
+            f"Координаты скорректированы по месту «{matched_place['name']}»: "
+            f"({old_lat:.6f}, {old_lon:.6f}) → ({lat:.6f}, {lon:.6f})"
+        )
 
     ev = _build_event_dict(parsed, text_msg.get("message_id"), lat, lon)
 
@@ -143,6 +240,10 @@ def process_messages(
 ) -> Tuple[List[dict], int, int]:
     events_by_id: Dict[str, dict] = {e["id"]: e for e in existing if e.get("id")}
 
+    # Загружаем справочник мест
+    places = _load_places()
+    logger.info(f"Загружено мест из places.json: {len(places)}")
+
     media_groups: Dict[str, List[dict]] = {}
     solo: List[dict] = []
     for msg in messages:
@@ -171,10 +272,10 @@ def process_messages(
             added += 1
 
     for msg in solo:
-        _upsert(process_single_message(msg, geocache))
+        _upsert(process_single_message(msg, geocache, places))
 
     for group_msgs in media_groups.values():
-        _upsert(process_media_group(group_msgs, geocache))
+        _upsert(process_media_group(group_msgs, geocache, places))
 
     logger.info(f"Обработано: добавлено {added}, обновлено {updated}")
     return list(events_by_id.values()), added, updated

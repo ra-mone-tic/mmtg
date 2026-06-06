@@ -148,7 +148,7 @@ svg{display:block;flex-shrink:0}
   font-size:13px;font-weight:800;letter-spacing:-.2px;
   box-shadow:var(--sh-glow),var(--sh-float);
   background-size:cover;background-position:center;
-  transition:transform .14s var(--ease-s));
+   transition:transform .14s var(--ease-s);
   flex-shrink:0;-webkit-tap-highlight-color:transparent;
 }
 .avatar-btn:active{transform:scale(.88)}
@@ -311,6 +311,8 @@ svg{display:block;flex-shrink:0}
 
 .venue-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:var(--r-p);background:var(--c-accent-d);font-size:11px;font-weight:700;color:var(--c-accent);margin-bottom:10px;max-width:calc(100% - 36px)}
 .venue-tag span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.venue-tag.is-link{cursor:pointer;transition:background .12s,box-shadow .12s}
+.venue-tag.is-link:hover{background:var(--c-accent-g);box-shadow:var(--sh-glow)}
 
 .card-close{position:absolute;top:13px;right:13px;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--c-soft-br);background:var(--c-accent-d);color:var(--c-t2);display:flex;align-items:center;justify-content:center;transition:all .13s}
 .card-close:hover{border-color:var(--c-accent);color:var(--c-accent)}
@@ -453,12 +455,13 @@ svg{display:block;flex-shrink:0}
   filter:drop-shadow(0 3px 6px rgba(0,0,0,.20));
   -webkit-tap-highlight-color:transparent;touch-action:manipulation;
   transition:transform .22s var(--ease-s),filter .15s;
+  z-index:1;
 }
 .m-pin:hover{transform:scale(1.14)}
 .m-pin.active{transform:scale(1.28);filter:drop-shadow(0 5px 12px var(--c-accent-g))}
 
 /* ── User location marker ──────────────────────── */
-.m-user{width:28px;height:28px;cursor:default;pointer-events:none;z-index:1}
+.m-user{width:28px;height:28px;cursor:default;pointer-events:none;z-index:2}
 .m-user svg{animation:user-pulse 2s ease-in-out infinite}
 @keyframes user-pulse{0%,100%{filter:drop-shadow(0 0 4px rgba(59,130,246,.4))}50%{filter:drop-shadow(0 0 12px rgba(59,130,246,.7))}}
 .m-user circle:first-child{animation:user-ring 2s ease-in-out infinite}
@@ -561,8 +564,71 @@ svg{display:block;flex-shrink:0}
   opacity:0;pointer-events:none;
   transition:opacity .25s ease,transform .25s var(--ease-o);
 }
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-</style>
+ .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+ /* ── Place dots on map ───────────────────────────── */
+ .m-dot{
+   width:14px;height:14px;border-radius:50%;z-index:0;
+   background:var(--c-accent);border:2.5px solid var(--c-card);
+   cursor:pointer;
+   filter:drop-shadow(0 2px 4px rgba(0,0,0,.25));
+   -webkit-tap-highlight-color:transparent;touch-action:manipulation;
+   transition:transform .22s var(--ease-s),filter .15s;
+ }
+ .m-dot:hover{transform:scale(1.3)}
+ .m-dot.active{transform:scale(1.5);filter:drop-shadow(0 3px 8px var(--c-accent-g))}
+
+ /* ── Place Card ───────────────────────────────────── */
+ .place-card{
+   position:absolute;z-index:20;
+   left:var(--ph);right:var(--ph);
+   bottom:calc(var(--sai-b) + var(--bar-h) + 12px);
+   background:var(--c-card);border:2.5px solid var(--c-card-br);
+   border-radius:var(--r-c);
+   padding:15px 16px 17px;
+   box-shadow:var(--sh-card);
+   backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+   opacity:0;transform:translateY(22px);pointer-events:none;
+   transition:opacity .28s var(--ease-o),transform .28s var(--ease-o);
+ }
+ .place-card.open{opacity:1;transform:translateY(0);pointer-events:auto}
+ .place-card .card-actions{display:flex;gap:8px}
+
+ /* ── Place Detail Modal ───────────────────────────── */
+ .place-detail{
+   position:absolute;z-index:40;inset:0;
+   display:flex;flex-direction:column;
+   background:var(--c-canvas);
+   opacity:0;transform:translateY(100%);pointer-events:none;
+   transition:opacity .36s var(--ease-o),transform .36s var(--ease-o);
+ }
+ .place-detail.open{opacity:1;transform:translateY(0);pointer-events:auto}
+ .place-detail .detail-body{flex:1;overflow-y:auto;padding:18px var(--ph) calc(var(--sai-b) + 96px)}
+ .place-detail .detail-body::-webkit-scrollbar{width:3px}
+ .place-detail .detail-body::-webkit-scrollbar-thumb{background:var(--c-accent-d);border-radius:2px}
+
+ /* ── Upcoming events section in place detail ──────── */
+ .place-events-section{margin-top:20px;padding-top:16px;border-top:1px solid var(--c-soft-br)}
+ .place-events-title{font-size:14px;font-weight:800;color:var(--c-t1);margin-bottom:10px}
+ .place-event-item{
+   display:flex;align-items:center;gap:10px;
+   padding:10px 12px;border-radius:12px;
+   cursor:pointer;transition:background .12s;
+ }
+ .place-event-item:hover{background:var(--c-accent-d)}
+ .place-event-dot{width:8px;height:8px;border-radius:50%;background:var(--c-accent);flex-shrink:0}
+ .place-event-info{flex:1;min-width:0}
+ .place-event-name{font-size:13px;font-weight:700;color:var(--c-t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .place-event-date{font-size:11px;color:var(--c-t2);margin-top:2px}
+ .place-events-empty{font-size:13px;color:var(--c-t2);padding:8px 0}
+
+ /* ── Places list item ─────────────────────────────── */
+ .place-item{padding:9px 10px 9px 12px;border-radius:12px;border-left:3px solid transparent;cursor:pointer;transition:background .12s,border-color .12s}
+ .place-item:hover{background:var(--c-accent-d)}
+ .place-item.active{background:var(--c-accent-d);border-left-color:var(--c-accent)}
+ .place-item-title{font-size:12.5px;font-weight:700;line-height:1.3}
+ .place-item-sub{font-size:11px;color:var(--c-t2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ </style>
 </head>
 <body>
 <div id="app">
@@ -635,6 +701,7 @@ svg{display:block;flex-shrink:0}
   <div class="panel-head">
     <button class="pill pill-glass" id="filter-all">Все</button>
     <button class="pill pill-glass" id="filter-today">Сегодня</button>
+    <button class="pill pill-glass" id="btn-places" aria-expanded="false">Места</button>
   </div>
   <div id="events-list" class="events-list" role="list"></div>
 </aside>
@@ -696,6 +763,63 @@ svg{display:block;flex-shrink:0}
       Контакты
     </button>
     <button class="btn-detail-share" id="btn-detail-share">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+        <polyline points="16 6 12 2 8 6"/>
+        <line x1="12" y1="2" x2="12" y2="15"/>
+      </svg>
+      Поделиться
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════ PLACE CARD ══════════════════ -->
+<article id="place-card" class="place-card" aria-hidden="true" aria-label="Карточка места">
+  <button class="card-close" id="btn-close-place-card" aria-label="Закрыть">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  </button>
+  <h3 id="place-card-title" class="card-title">—</h3>
+  <div id="place-card-meta" class="card-meta"></div>
+  <p id="place-card-desc" class="card-desc"></p>
+  <div class="card-actions">
+    <button class="btn-a" id="btn-place-learn-more">Подробнее</button>
+    <button class="btn-b" id="btn-place-share">Поделиться</button>
+  </div>
+</article>
+
+<!-- ═══════════════════ PLACE DETAIL ════════════════ -->
+<div id="place-detail" class="place-detail" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="detail-poster" id="place-detail-poster" style="cursor:default">
+    <button class="detail-back" id="btn-place-detail-back" aria-label="Назад">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+    </button>
+    <div id="place-poster-inner" class="poster-ph">
+      <span class="poster-initial" id="place-poster-initial">—</span>
+    </div>
+    <div class="poster-fade"></div>
+  </div>
+  <div class="detail-body" id="place-detail-body">
+    <div class="detail-venue-tag">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+      </svg>
+      <span id="place-detail-address">—</span>
+    </div>
+    <h2 id="place-detail-title" class="detail-title">—</h2>
+    <div id="place-detail-meta" class="detail-meta"></div>
+    <p id="place-detail-desc" class="detail-desc">—</p>
+    <div id="place-events-section" class="place-events-section" style="display:none">
+      <h3 class="place-events-title">Ближайшие события в этом месте</h3>
+      <div id="place-events-list"></div>
+    </div>
+  </div>
+  <div class="detail-actions">
+    <button class="btn-detail-share" id="btn-place-detail-share">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
         <polyline points="16 6 12 2 8 6"/>

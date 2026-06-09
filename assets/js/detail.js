@@ -1,20 +1,21 @@
-// \u2500\u2500\u2500 Event Detail Modal \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// ─── Event Detail Modal ─────────────────────────────
 import { $, metaHTML, renderTags, blocksHTML, posterGrad, TG, showBackButton, hideBackButton } from './helpers.js';
 import { state } from './state.js';
 import { shareEvent } from './share.js';
 import { showToast } from './toast.js';
 import { addChip } from './search.js';
+import { openPlaceDetail } from './place-detail.js';
 
 export function openDetail(id) {
   const ev = state.events.find(e => e.id === id);
   if (!ev) return;
   state.detailId = id;
 
-  // \u041f\u043e\u0441\u0442\u0435\u0440
+  // Постер
   const poster = $('detail-poster');
   if (poster) {
     poster.style.background = posterGrad(ev.id);
-    // \u0421\u0431\u0440\u0430\u0441\u044b\u0432\u0430\u0435\u043c \u0441\u043e\u0441\u0442\u043e\u044f\u043d\u0438\u0435 expanded
+    // Сбрасываем состояние expanded
     poster.classList.remove('expanded');
   }
 
@@ -47,7 +48,7 @@ export function openDetail(id) {
     }
   }
 
-  // \u0422\u0435\u043a\u0441\u0442\u043e\u0432\u043e\u0435 \u0441\u043e\u0434\u0435\u0440\u0436\u0438\u043c\u043e\u0435
+  // Текстовое содержимое
   const elVenue = $('detail-venue');
   const elTitle = $('detail-title');
   const elMeta  = $('detail-meta');
@@ -56,16 +57,39 @@ export function openDetail(id) {
   if (elVenue) elVenue.textContent = ev.venue;
   if (elTitle) elTitle.textContent = ev.title;
   if (elMeta)  elMeta.innerHTML    = metaHTML(ev, false);
-  renderTags(ev.tags, 'detail-tags', addChip);
+  // При клике на тег в деталке — сначала закрываем деталку, потом добавляем чипс
+  renderTags(ev.tags, 'detail-tags', tag => {
+    closeDetail();
+    addChip(tag);
+  });
   if (elDesc)  elDesc.innerHTML    = blocksHTML(ev);
 
-  // \u041a\u043d\u043e\u043f\u043a\u0438
+  // Делаем venue-tag кликабельным, если место совпадает
+  const venueTag = elVenue?.closest('.detail-venue-tag');
+  if (venueTag) {
+    const matchedPlace = state.rawPlaces.find(p =>
+      p.keywords?.some(kw => ev.venue.toLowerCase().includes(kw.toLowerCase()))
+    );
+    if (matchedPlace) {
+      venueTag.classList.add('is-link');
+      venueTag.onclick = (e) => {
+        e.stopPropagation();
+        closeDetail();
+        openPlaceDetail(matchedPlace.id);
+      };
+    } else {
+      venueTag.classList.remove('is-link');
+      venueTag.onclick = null;
+    }
+  }
+
+  // Кнопки
   const btnContacts    = $('btn-contacts');
   const btnDetailShare = $('btn-detail-share');
   if (btnContacts)    btnContacts.onclick    = () => _openContacts(ev);
   if (btnDetailShare) btnDetailShare.onclick = () => shareEvent(ev);
 
-  // \u041e\u0442\u043a\u0440\u044b\u0432\u0430\u0435\u043c \u043c\u043e\u0434\u0430\u043b
+  // Открываем модал
   const modal = $('event-detail');
   if (modal) { modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); }
 
@@ -85,7 +109,7 @@ export function closeDetail() {
   TG()?.HapticFeedback?.impactOccurred('light');
 }
 
-// \u2500\u2500 \u0412\u043d\u0443\u0442\u0440\u0435\u043d\u043d\u0438\u0435 \u0443\u0442\u0438\u043b\u0438\u0442\u044b \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// ── Внутренние утилиты ──────────────────────────────
 
 function _placeholderImg(title) {
   return `<img src="assets/Group 27.png" alt="${title || ''}"
@@ -94,7 +118,7 @@ function _placeholderImg(title) {
 
 function _openContacts(ev) {
   TG()?.HapticFeedback?.impactOccurred('light');
-  if (!ev.contacts) { showToast('\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b \u043d\u0435\u0434\u043e\u0441\u0442\u0443\u043f\u043d\u044b'); return; }
+  if (!ev.contacts) { showToast('Контакты недоступны'); return; }
   const c = ev.contacts.trim();
   try {
     if (
@@ -105,7 +129,7 @@ function _openContacts(ev) {
     } else if (c.startsWith('@')) {
       window.open('https://t.me/' + c.slice(1), '_blank');
     } else {
-      showToast('\u041a\u043e\u043d\u0442\u0430\u043a\u0442\u044b: ' + c);
+      showToast('Контакты: ' + c);
     }
-  } catch (_) { showToast('\u041d\u0435 \u0443\u0434\u0430\u043b\u043e\u0441\u044c \u043e\u0442\u043a\u0440\u044b\u0442\u044c \u043a\u043e\u043d\u0442\u0430\u043a\u0442'); }
+  } catch (_) { showToast('Не удалось открыть контакт'); }
 }

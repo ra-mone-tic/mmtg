@@ -22,7 +22,7 @@ import { CFG }                                       from './config.js';
 import { $, fmt, TG }                               from './helpers.js';
 import { state }                                    from './state.js';
 import { showToast }                                from './toast.js';
-import { initTheme, applyTheme }                    from './theme.js';
+import { initTheme, applyTheme, bindTelegramTheme }  from './theme.js';
 import { initAvatar }                               from './avatar.js';
 import { loadAllEvents, filterByDate, filterByDates, findNearestDate, normalizeEvent } from './data.js';
 import { initCarousel, renderCarousel }             from './carousel.js';
@@ -99,6 +99,21 @@ export async function boot() {
   state.theme = initTheme();
   applyTheme(state.theme, false);
 
+  // Привязываем палитру Telegram к CSS-переменным (themeChanged + старт)
+  bindTelegramTheme();
+
+  // Синхронизация MainButton с темой пользователя
+  try {
+    const params = webapp?.themeParams;
+    if (params) {
+      webapp.MainButton?.setParams({
+        color:      params.button_color      || '#2481cc',
+        text_color: params.button_text_color || '#ffffff',
+        is_visible: false,
+      });
+    }
+  } catch (_) { /* не критично */ }
+
   // Аватар
   initAvatar();
 
@@ -171,14 +186,23 @@ export async function boot() {
 
   // ── Listeners ────────────────────────────────────────
 
-  // Тема
+  // Тема — переключение доступно только вне Telegram Mini App
+  // (в Telegram тема определяется автоматически из themeParams)
   $('btn-theme')?.addEventListener('click', () => {
+    // Если Telegram доступен с themeParams — не даём переключать вручную
+    if (TG()?.themeParams) return;
     state.theme = applyTheme(
       state.theme === 'light' ? 'dark' : 'light',
       true,
       renderMarkers
     );
   });
+
+  // Скрываем кнопку темы в Telegram Mini App
+  if (TG()?.themeParams) {
+    const btnTheme = $('btn-theme');
+    if (btnTheme) btnTheme.style.display = 'none';
+  }
 
   // Аватар
   $('btn-avatar')?.addEventListener('click', () => {

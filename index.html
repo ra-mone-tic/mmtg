@@ -18,27 +18,28 @@
 ══════════════════════════════════════════════════ */
 :root {
   /* Telegram-driven цвета (прописываются через style.setProperty в рантайме).
+     CSS-переменные --tg-theme-* устанавливаются из WebApp.themeParams.
      Если Telegram недоступен — используются дизайнерские fallback. */
-  --c-canvas:   var(--tg-bg-color, #e7e5f1);
+  --c-canvas:   var(--tg-theme-bg-color, #e7e5f1);
   --c-glass:    rgba(249, 247, 255, 0.70);
   --c-glass-br: rgba(255, 255, 255, 0.58);
-  --c-card:     var(--tg-secondary-bg-color, rgba(255, 255, 255, 0.93));
-  --c-card-br:  var(--tg-accent-text-color, #191432);
+  --c-card:     var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.93));
+  --c-card-br:  var(--tg-theme-accent-text-color, #191432);
   --c-pill:     rgba(18, 14, 44, 0.88);
   --c-pill-fg:  #ede8ff;
   --c-soft-br:  rgba(24, 20, 50, 0.09);
-  --c-t1:       var(--tg-text-color, #15112e);
-  --c-t2:       var(--tg-hint-color, #726d88);
-  --c-accent:   var(--tg-button-color, #6652bb);
+  --c-t1:       var(--tg-theme-text-color, #15112e);
+  --c-t2:       var(--tg-theme-hint-color, #726d88);
+  --c-accent:   var(--tg-theme-button-color, #6652bb);
   --c-accent-d: rgba(102, 82, 187, 0.10);
   --c-accent-g: rgba(102, 82, 187, 0.22);
   --c-pin:      #ccc3ec;
-  --c-pin-a:    var(--tg-button-color, #6652bb);
-  --c-pin-e:    var(--tg-text-color, #15112e);
-  --c-sol-bg:   var(--tg-button-color, #15112e);
-  --c-sol-fg:   var(--tg-button-text-color, #ffffff);
-  --c-out-br:   var(--tg-accent-text-color, #15112e);
-  --c-out-fg:   var(--tg-accent-text-color, #15112e);
+  --c-pin-a:    var(--tg-theme-button-color, #6652bb);
+  --c-pin-e:    var(--tg-theme-text-color, #15112e);
+  --c-sol-bg:   var(--tg-theme-button-color, #15112e);
+  --c-sol-fg:   var(--tg-theme-button-text-color, #ffffff);
+  --c-out-br:   var(--tg-theme-accent-text-color, #15112e);
+  --c-out-fg:   var(--tg-theme-accent-text-color, #15112e);
 
   --sh-card:  0 8px 32px rgba(102,82,187,.13), 0 2px 6px rgba(0,0,0,.06);
   --sh-float: 0 2px 12px rgba(0,0,0,.09), 0 1px 3px rgba(0,0,0,.04);
@@ -56,26 +57,26 @@
 
 [data-theme="dark"] {
   /* Telegram-driven тёмная тема (fallback — дизайнерские цвета) */
-  --c-canvas:   var(--tg-bg-color, #0b0b1a);
+  --c-canvas:   var(--tg-theme-bg-color, #0b0b1a);
   --c-glass:    rgba(17,14,42,.78);
   --c-glass-br: rgba(118,98,218,.17);
-  --c-card:     var(--tg-secondary-bg-color, rgba(15,12,40,.92));
-  --c-card-br:  var(--tg-accent-text-color, rgba(118,98,218,.28));
+  --c-card:     var(--tg-theme-secondary-bg-color, rgba(15,12,40,.92));
+  --c-card-br:  var(--tg-theme-accent-text-color, rgba(118,98,218,.28));
   --c-pill:     rgba(22,18,54,.92);
   --c-pill-fg:  #dbd4ff;
   --c-soft-br:  rgba(118,98,218,.11);
-  --c-t1:       var(--tg-text-color, #ece6ff);
-  --c-t2:       var(--tg-hint-color, #938eb4);
-  --c-accent:   var(--tg-button-color, #9880de);
+  --c-t1:       var(--tg-theme-text-color, #ece6ff);
+  --c-t2:       var(--tg-theme-hint-color, #938eb4);
+  --c-accent:   var(--tg-theme-button-color, #9880de);
   --c-accent-d: rgba(152,128,222,.14);
   --c-accent-g: rgba(152,128,222,.26);
   --c-pin:      #6652bb;
-  --c-pin-a:    var(--tg-button-color, #b3a6ee);
-  --c-pin-e:    var(--tg-text-color, #ece6ff);
-  --c-sol-bg:   var(--tg-button-color, #6e5ec8);
-  --c-sol-fg:   var(--tg-button-text-color, #ffffff);
-  --c-out-br:   var(--tg-accent-text-color, rgba(152,128,222,.48));
-  --c-out-fg:   var(--tg-button-color, #dbd4ff);
+  --c-pin-a:    var(--tg-theme-button-color, #b3a6ee);
+  --c-pin-e:    var(--tg-theme-text-color, #ece6ff);
+  --c-sol-bg:   var(--tg-theme-button-color, #6e5ec8);
+  --c-sol-fg:   var(--tg-theme-button-text-color, #ffffff);
+  --c-out-br:   var(--tg-theme-accent-text-color, rgba(152,128,222,.48));
+  --c-out-fg:   var(--tg-theme-button-color, #dbd4ff);
 
   --sh-card:  0 8px 40px rgba(0,0,0,.54), 0 2px 8px rgba(0,0,0,.24);
   --sh-float: 0 2px 16px rgba(0,0,0,.30);
@@ -89,8 +90,8 @@
 /* Убираем жёлтую/синюю обводку при тапе в Telegram WebView (Android) */
 button,a,[role="button"],[tabindex]{-webkit-tap-highlight-color:transparent;outline:none}
 html,body{height:100%;overflow:hidden}
-body{font-family:var(--ff);background:var(--c-canvas);color:var(--c-t1);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
-button{cursor:pointer;font-family:inherit;border:none;background:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+body{font-family:var(--ff);background:var(--c-canvas);color:var(--c-t1);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;transition:background .35s ease,color .35s ease}
+button{cursor:pointer;font-family:inherit;border:none;background:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:background .25s ease,color .25s ease,border-color .25s ease}
 input{font-family:inherit;border:none;outline:none;background:none;-webkit-tap-highlight-color:transparent}
 svg{display:block;flex-shrink:0}
 

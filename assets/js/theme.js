@@ -11,7 +11,6 @@ import { getMapInstance } from './map-core.js';
  */
 function detectThemeFromBg(bgColor) {
   if (!bgColor) return 'dark';
-  // Парсим HEX или rgb/rgba
   let r, g, b;
   if (bgColor.startsWith('#')) {
     const hex = bgColor.replace('#', '');
@@ -26,14 +25,19 @@ function detectThemeFromBg(bgColor) {
     if (!m) return 'dark';
     [r, g, b] = m.map(Number);
   }
-  // Relative luminance (simplified)
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return luminance < 0.5 ? 'dark' : 'light';
 }
 
 /**
+ * Проверяет, что themeParams содержит реальные цвета (а не пустой объект).
+ */
+function hasRealThemeParams(tp) {
+  return tp && typeof tp === 'object' && typeof tp.bg_color === 'string' && tp.bg_color.length > 0;
+}
+
+/**
  * Маппинг Telegram themeParams ключей → CSS-переменных.
- * Telegram отдаёт ключи вида: bg_color, text_color, button_color и т.д.
  */
 const TG_CSS_MAP = {
   'bg_color'                  : '--tg-theme-bg-color',
@@ -55,14 +59,14 @@ const TG_CSS_MAP = {
 export function initTheme() {
   const webapp = TG();
 
-  // Если Telegram доступен — определяем тему из themeParams
-  if (webapp?.themeParams) {
+  // Если Telegram доступен И bg_color уже пришёл — определяем тему из themeParams
+  if (hasRealThemeParams(webapp?.themeParams)) {
     const theme = detectThemeFromBg(webapp.themeParams.bg_color);
     localStorage.setItem('meow-theme', theme);
     return theme;
   }
 
-  // Если Telegram недоступен — используем сохранённую тему или fallback
+  // Если Telegram недоступен или themeParams ещё пуст — используем сохранённую тему
   const saved = localStorage.getItem('meow-theme') || 'dark';
   applyTheme(saved, false);
   return saved;
@@ -99,16 +103,16 @@ export function applyTheme(t, updateMap = true, onStyleLoad) {
 
 /**
  * Применяет палитру Telegram на CSS-переменные document.documentElement.
- * Вызывается при старте и при themeChanged.
+ * @returns {boolean} true если themeParams были применены
  */
 export function applyTelegramTheme() {
   const webapp = TG();
-  if (!webapp?.themeParams) return;
+  const params = webapp?.themeParams;
 
-  const params = webapp.themeParams;
+  if (!hasRealThemeParams(params)) return false;
+
   const root = document.documentElement;
 
-  // Устанавливаем CSS-переменные из themeParams
   Object.entries(TG_CSS_MAP).forEach(([tgKey, cssVar]) => {
     if (params[tgKey]) {
       root.style.setProperty(cssVar, params[tgKey]);
@@ -119,27 +123,69 @@ export function applyTelegramTheme() {
   try {
     if (params.bg_color) webapp.setHeaderColor(params.bg_color);
     if (params.secondary_bg_color) webapp.setBackgroundColor(params.secondary_bg_color);
-  } catch (e) {
-    // Ошибки игнорируем — могут быть, если WebApp не fully ready
-  }
+  } catch (e) { /* не критично */ }
+
+  return true;
 }
 
 /**
- * Подписывается на событие themeChanged и применяет палитру динамически.
- * Вызывается один раз при boot().
+ * Подписывается на themeChanged и применяет палитру динамически.
+ * Добавлен retry-механизм: если themeParams ещё не пришли — опрашиваем
+ * каждые 200мс (до 5 сек), чтобы поймать момент их появления.
  */
 export function bindTelegramTheme() {
   const webapp = TG();
-  if (!webapp) return;
+  if (!webapp) {
+    console.log('[MEOW][Theme] Telegram WebApp not found — using fallback theme');
+    return;
+  }
 
-  // Применяем палитру при старте
-  applyTelegramTheme();
+  console.log('[MEOW][Theme] themeParams:', JSON.stringify(webapp.themeParams));
+
+  // Применяем палитру если она уже есть
+  const applied = applyTelegramTheme();
+  console.log('[MEOW][Theme] Initial apply:', applied ? 'SUCCESS' : 'PENDING');
+
+  // Определяем и устанавливаем dark/light если bg_color уже доступен
+  if (applied) {
+    const theme = detectThemeFromBg(webapp.themeParams?.bg_color);
+    console.log('[MEOW][Theme] Detected theme:', theme, '| bg_color:', webapp.themeParams?.bg_color);
+    applyTheme(theme, false);
+  }
 
   // Подписываемся на динамическое изменение темы
   webapp.onEvent?.('themeChanged', () => {
-    applyTelegramTheme();
-    // Определяем dark/light из нового bg_color и переключаем тему карты если нужно
-    const theme = detectThemeFromBg(TG()?.themeParams?.bg_color);
-    applyTheme(theme, true);
+    console.log('[MEOW][Theme] themeChanged fired! New params:', JSON.stringify(TG()?.themeParams));
+    if (applyTelegramTheme()) {
+      const theme = detectThemeFromBg(TG()?.themeParams?.bg_color);
+      console.log('[MEOW][Theme] Theme updated to:', theme);
+      applyTheme(theme, true);
+    }
   });
+
+  // Retry: если при старте themeParams были пусты — опрашиваем
+  if (!applied) {
+    let attempts = 0;
+    const MAX_ATTEMPTS = 25; // 25 × 200мс = 5 сек
+    console.log('[MEOW][Theme] Retry mode: waiting for themeParams...');
+    const interval = setInterval(() => {
+      attempts++;
+      if (applyTelegramTheme()) {
+        clearInterval(interval);
+        const tp = TG()?.themeParams;
+        if (tp) {
+          const theme = detectThemeFromBg(tp.bg_color);
+          console.log('[MEOW][Theme] Retry success! themeParams:', JSON.stringify(tp), '| theme:', theme);
+          applyTheme(theme, true);
+          localStorage.setItem('meow-theme', theme);
+        }
+      } else if (attempts % 5 === 0) {
+        console.log(`[MEOW][Theme] Retry ${attempts}/${MAX_ATTEMPTS}...`);
+      }
+      if (attempts >= MAX_ATTEMPTS) {
+        clearInterval(interval);
+        console.log('[MEOW][Theme] Retry exhausted. Using fallback theme.');
+      }
+    }, 200);
+  }
 }

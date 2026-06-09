@@ -99,20 +99,27 @@ export async function boot() {
   state.theme = initTheme();
   applyTheme(state.theme, false);
 
-  // Привязываем палитру Telegram к CSS-переменным (themeChanged + старт)
+  // Привязываем палитру Telegram к CSS-переменным (themeChanged + retry + старт)
   bindTelegramTheme();
 
   // Синхронизация MainButton с темой пользователя
-  try {
-    const params = webapp?.themeParams;
-    if (params) {
-      webapp.MainButton?.setParams({
-        color:      params.button_color      || '#2481cc',
-        text_color: params.button_text_color || '#ffffff',
-        is_visible: false,
-      });
-    }
-  } catch (_) { /* не критично */ }
+  // Если themeParams ещё не пришли — повторяем после задержки
+  const syncMainButton = () => {
+    try {
+      const params = webapp?.themeParams;
+      if (params?.button_color) {
+        webapp.MainButton?.setParams({
+          color:      params.button_color,
+          text_color: params.button_text_color || '#ffffff',
+          is_visible: false,
+        });
+      }
+    } catch (_) { /* не критично */ }
+  };
+  syncMainButton();
+  // Повторяем через 1с и 3с на случай задержки themeParams
+  setTimeout(syncMainButton, 1000);
+  setTimeout(syncMainButton, 3000);
 
   // Аватар
   initAvatar();
@@ -189,8 +196,9 @@ export async function boot() {
   // Тема — переключение доступно только вне Telegram Mini App
   // (в Telegram тема определяется автоматически из themeParams)
   $('btn-theme')?.addEventListener('click', () => {
-    // Если Telegram доступен с themeParams — не даём переключать вручную
-    if (TG()?.themeParams) return;
+    const tp = TG()?.themeParams;
+    // Если Telegram доступен с реальными themeParams — не даём переключать вручную
+    if (tp && typeof tp.bg_color === 'string' && tp.bg_color.length > 0) return;
     state.theme = applyTheme(
       state.theme === 'light' ? 'dark' : 'light',
       true,
@@ -198,11 +206,18 @@ export async function boot() {
     );
   });
 
-  // Скрываем кнопку темы в Telegram Mini App
-  if (TG()?.themeParams) {
-    const btnTheme = $('btn-theme');
-    if (btnTheme) btnTheme.style.display = 'none';
-  }
+  // Скрываем кнопку темы если Telegram Mini App с реальными themeParams
+  // Проверяем сразу и через задержку (themeParams могут прийти позже)
+  const _hideThemeBtnIfNeeded = () => {
+    const tp = TG()?.themeParams;
+    if (tp && typeof tp.bg_color === 'string' && tp.bg_color.length > 0) {
+      const btnTheme = $('btn-theme');
+      if (btnTheme) btnTheme.style.display = 'none';
+    }
+  };
+  _hideThemeBtnIfNeeded();
+  setTimeout(_hideThemeBtnIfNeeded, 1500);
+  setTimeout(_hideThemeBtnIfNeeded, 4000);
 
   // Аватар
   $('btn-avatar')?.addEventListener('click', () => {

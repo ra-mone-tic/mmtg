@@ -3,6 +3,7 @@ import { $, metaHTML, renderTags, blocksHTML, posterGrad, TG, showBackButton, hi
 import { state } from './state.js';
 import { shareEvent } from './share.js';
 import { showToast } from './toast.js';
+import { addChip } from './search.js';
 
 export function openDetail(id) {
   const ev = state.events.find(e => e.id === id);
@@ -55,7 +56,7 @@ export function openDetail(id) {
   if (elVenue) elVenue.textContent = ev.venue;
   if (elTitle) elTitle.textContent = ev.title;
   if (elMeta)  elMeta.innerHTML    = metaHTML(ev, false);
-  renderTags(ev.tags, 'detail-tags');
+  renderTags(ev.tags, 'detail-tags', addChip);
   if (elDesc)  elDesc.innerHTML    = blocksHTML(ev);
 
   // \u041a\u043d\u043e\u043f\u043a\u0438

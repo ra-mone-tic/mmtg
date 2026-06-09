@@ -36,4 +36,7 @@ export const state = {
   carouselVisible     : true,
   carouselLoadedCount : 12,
   carouselObserver    : null,
+
+  // Поисковые чипсы (теги)
+  searchChips         : [],       // массив строк-тегов, добавленных как чипсы
 };

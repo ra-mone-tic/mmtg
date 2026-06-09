@@ -118,7 +118,13 @@ export function hideBackButton() {
 
 // ─── Tags ────────────────────────────────────────────
 
-export function renderTags(tags, containerId) {
+/**
+ * Рендерит теги в указанном контейнере.
+ * @param {string[]|string} tags
+ * @param {string} containerId
+ * @param {function(string): void} [onTagClick] — колбэк при клике на тег
+ */
+export function renderTags(tags, containerId, onTagClick) {
   const container = $(containerId);
   if (!container) return;
   container.innerHTML = '';
@@ -130,6 +136,14 @@ export function renderTags(tags, containerId) {
     const span = document.createElement('span');
     span.className = 'tag-pill';
     span.textContent = tag;
+    if (onTagClick) {
+      span.style.cursor = 'pointer';
+      span.title = 'Добавить в поиск';
+      span.addEventListener('click', e => {
+        e.stopPropagation();
+        onTagClick(tag);
+      });
+    }
     container.appendChild(span);
   });
 }

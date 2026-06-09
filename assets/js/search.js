@@ -1,4 +1,4 @@
-// ─── Search & Suggestions ────────────────────────────
+// ─── Search & Suggestions with Tag Chips ─────────────
 import { $, fmt } from './helpers.js';
 import { state } from './state.js';
 import { normalizeEvent } from './data.js';
@@ -15,20 +15,136 @@ export function initSearch({ onOpenCard, onDateChange }) {
   _onDateChange = onDateChange;
 }
 
+// ─── Chip management ─────────────────────────────────
+
+/**
+ * Добавляет тег как чипс в строку поиска.
+ * Если такой тег уже есть — не дублирует.
+ * После добавления — фокусирует поиск и показывает подсказки.
+ */
+export function addChip(tag) {
+  if (!tag || state.searchChips.includes(tag)) return;
+  state.searchChips.push(tag);
+  _renderChips();
+  // Фокус на поиск
+  const inp = $('search-input');
+  if (inp) {
+    inp.focus();
+    inp.value = '';
+  }
+  // Запускаем поиск с пустым вводом — покажем события по тегу
+  handleSearch('');
+}
+
+/**
+ * Удаляет чипс по индексу.
+ */
+export function removeChip(index) {
+  state.searchChips.splice(index, 1);
+  _renderChips();
+  // Если чипсов больше нет — скрываем подсказки
+  if (!state.searchChips.length) {
+    hideSuggestions();
+    const inp = $('search-input');
+    if (inp) inp.value = '';
+  } else {
+    // Перезапускаем поиск
+    const inp = $('search-input');
+    handleSearch(inp?.value?.trim() || '');
+  }
+}
+
+/**
+ * Очищает все чипсы.
+ */
+export function clearChips() {
+  state.searchChips = [];
+  _renderChips();
+  hideSuggestions();
+  const inp = $('search-input');
+  if (inp) inp.value = '';
+}
+
+function _renderChips() {
+  const container = $('search-chips');
+  const searchWrap = container?.closest('.search-wrap');
+  const input = $('search-input');
+  if (!container) return;
+  if (!state.searchChips.length) {
+    container.innerHTML = '';
+    container.style.display = 'none';
+    searchWrap?.classList.remove('has-chips');
+    if (input) input.style.paddingLeft = '';
+    return;
+  }
+  container.style.display = 'flex';
+  searchWrap?.classList.add('has-chips');
+
+  container.innerHTML = state.searchChips.map((tag, idx) => `
+    <span class="search-chip" data-index="${idx}">
+      <span class="search-chip-label">${tag}</span>
+      <button class="search-chip-remove" data-index="${idx}" aria-label="Убрать тег">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="3" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </span>
+  `).join('');
+
+  // Обработчики удаления
+  container.querySelectorAll('.search-chip-remove').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const idx = parseInt(btn.getAttribute('data-index'), 10);
+      removeChip(idx);
+    });
+  });
+
+  // Сдвигаем input вправо на ширину чипсов (с запасом 12px)
+  requestAnimationFrame(() => {
+    if (!state.searchChips.length) return;
+    const chipsWidth = container.scrollWidth;
+    if (input && chipsWidth > 0) {
+      input.style.paddingLeft = (chipsWidth + 16) + 'px';
+    }
+  });
+}
+
+// ─── Search ───────────────────────────────────────────
+
 export function handleSearch(q) {
-  if (!q?.trim()) { hideSuggestions(); return; }
-  const query   = q.toLowerCase().trim();
+  const chips = state.searchChips;
 
-  // Search events
-  const eventResults = state.rawAllEvents.map(normalizeEvent).filter(ev =>
-    ev.title.toLowerCase().includes(query)   ||
-    ev.venue.toLowerCase().includes(query)   ||
-    ev.address.toLowerCase().includes(query) ||
-    ev.desc.toLowerCase().includes(query)
-  );
+  // Если нет чипсов и пустой запрос — ничего не делаем
+  if (!chips.length && !q?.trim()) { hideSuggestions(); return; }
 
-  // Search places
-  const placeResults = searchPlaces(q);
+  const query = q?.toLowerCase().trim() || '';
+
+  // Фильтр событий: И по чипсам (если есть), И по тексту (если есть)
+  let eventResults = state.rawAllEvents.map(normalizeEvent);
+
+  // Фильтр по чипсам: событие должно содержать хотя бы один из тегов
+  if (chips.length) {
+    eventResults = eventResults.filter(ev => {
+      if (!ev.tags || !ev.tags.length) return false;
+      const evTags = Array.isArray(ev.tags) ? ev.tags : String(ev.tags).split(',').map(s => s.trim());
+      return chips.some(chip => evTags.some(t => t.toLowerCase() === chip.toLowerCase()));
+    });
+  }
+
+  // Фильтр по тексту
+  if (query) {
+    eventResults = eventResults.filter(ev =>
+      ev.title.toLowerCase().includes(query)   ||
+      ev.venue.toLowerCase().includes(query)   ||
+      ev.address.toLowerCase().includes(query) ||
+      ev.desc.toLowerCase().includes(query)
+    );
+  }
+
+  // Поиск мест (только по тексту, без чипсов)
+  const placeResults = query ? searchPlaces(q) : [];
 
   _showSuggestions(eventResults, placeResults);
 }

@@ -638,46 +638,11 @@ svg{display:block;flex-shrink:0}
  </style>
 <script>
   // ══════════════════════════════════════════════════
-  // Синхронная предзагрузка темы — NO FLASH
+  // Минимальный NO-FLASH: ставим data-theme="dark" как fallback.
+  // Telegram-переменные и реальная тема определяются в theme.js (initTheme),
+  // который гарантированно выполняется после полной загрузки Telegram WebApp.
   // ══════════════════════════════════════════════════
-  (function() {
-    try {
-      var tg = window.Telegram?.WebApp;
-      var tp = tg?.themeParams;
-      // 1. Определяем тему из Telegram themeParams
-      var theme;
-      if (tp?.bg_color) {
-        var c = tp.bg_color.replace('#','');
-        var r = parseInt(c.substring(0,2),16);
-        var g = parseInt(c.substring(2,4),16);
-        var b = parseInt(c.substring(4,6),16);
-        theme = (r*299 + g*587 + b*114)/1000 < 128 ? 'dark' : 'light';
-      }
-      // 2. Если пользователь уже выбирал тему (из localStorage) — приоритет
-      try {
-        var saved = localStorage.getItem('meow-theme');
-        if (saved === 'dark' || saved === 'light') theme = saved;
-      } catch(e) {}
-      // 3. Fallback
-      if (!theme) theme = 'dark';
-      // 4. Устанавливаем data-theme ДО отрисовки
-      document.documentElement.setAttribute('data-theme', theme);
-      // 5. Прописываем CSS-переменные Telegram в :root (если доступны)
-      if (tp) {
-        var keys = ['bg_color','text_color','hint_color','link_color','button_color',
-                    'button_text_color','secondary_bg_color','header_bg_color',
-                    'accent_text_color','section_bg_color','section_header_text_color',
-                    'subtitle_text_color','destructive_text_color'];
-        for (var i = 0; i < keys.length; i++) {
-          var val = tp[keys[i]];
-          if (val) {
-            var cssVar = '--tg-' + keys[i].replace(/_/g, '-');
-            document.documentElement.style.setProperty(cssVar, val);
-          }
-        }
-      }
-    } catch(e) { /* безопасный fail */ }
-  })();
+  document.documentElement.setAttribute('data-theme', 'dark');
 </script>
 </head>
 <body>

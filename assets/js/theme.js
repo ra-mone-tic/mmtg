@@ -79,18 +79,16 @@ function saveToCloud(t) {
  * @returns {'dark'|'light'}
  */
 export async function initTheme() {
-  // 1. Сначала применяем Telegram-переменные (чтобы не было flash)
+  // Применяем CSS-переменные Telegram (Telegram WebApp уже инициализирован к этому моменту)
   applyTGTheme();
+  // Слушаем смену темы в Telegram (авто-синхронизация)
   TG()?.onEvent('themeChanged', () => {
-    // При смене темы в Telegram обновляем CSS-переменные
-    // и переключаем data-theme, если нет ручного оверрайда
     const manual = localStorage.getItem(STORAGE_KEY);
     applyTGTheme();
     const tp = TG()?.themeParams;
     if (!manual && tp?.bg_color) {
       const t = isColorDark(tp.bg_color) ? 'dark' : 'light';
       document.documentElement.setAttribute('data-theme', t);
-      // синхронизируем с картой, если она уже готова
       if (getMapInstance()?.loaded()) {
         getMapInstance().setStyle(CFG.STYLES[t]);
       }

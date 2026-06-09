@@ -62,7 +62,7 @@ export function initCalendar({ onDateChange }) {
 
 export function openCalendar() {
   _calViewDate = new Date();
-  // \u0415\u0441\u043b\u0438 \u043c\u044b \u0432 multi-select \u2014 \u0432\u043e\u0441\u0441\u0442\u0430\u043d\u0430\u0432\u043b\u0438\u0432\u0430\u0435\u043c \u0432\u044b\u0431\u043e\u0440
+  // Если мы в multi-select — восстанавливаем выбор
   if (state.multiSelect && state.selectedDates.length) {
     _multiSet = new Set(state.selectedDates);
   } else {
@@ -75,6 +75,8 @@ export function openCalendar() {
   if (modal) { modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); }
   showBackButton();
   setPanel(false);
+  // Свайпы для календаря
+  _initSwipe();
 }
 
 export function closeCalendar() {
@@ -127,6 +129,39 @@ function _formatRangeLabel(dates) {
   }
   if (+dt1 === +today) return `\u0421\u0435\u0433\u043e\u0434\u043d\u044f + ${dates.length - 1}`;
   return `${dates[0]}\u2026${dates.at(-1)} (${dates.length})`;
+}
+
+// ─── Свайпы для календаря ──────────────────────────
+
+let _swipeCal = { startX: 0, startY: 0 };
+
+function _initSwipe() {
+  const calSheet = $('cal-sheet');
+  if (!calSheet) return;
+  calSheet.addEventListener('touchstart', e => {
+    _swipeCal.startX = e.touches[0].clientX;
+    _swipeCal.startY = e.touches[0].clientY;
+  }, { passive: true });
+  calSheet.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - _swipeCal.startX;
+    const dy = e.changedTouches[0].clientY - _swipeCal.startY;
+    // Горизонтальный свайп (влево/вправо) — смена месяца
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx > 0) {
+        // Свайп вправо — предыдущий месяц
+        _calViewDate.setMonth(_calViewDate.getMonth() - 1);
+      } else {
+        // Свайп влево — следующий месяц
+        _calViewDate.setMonth(_calViewDate.getMonth() + 1);
+      }
+      _render();
+      return;
+    }
+    // Вертикальный свайп вниз — закрыть календарь
+    if (dy > 72) {
+      closeCalendar();
+    }
+  }, { passive: true });
 }
 
 function _render() {

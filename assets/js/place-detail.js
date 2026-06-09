@@ -17,7 +17,10 @@ export function openPlaceDetail(id) {
 
   // Poster
   const poster = $('place-detail-poster');
-  if (poster) poster.style.background = posterGrad(place.id);
+  if (poster) {
+    poster.style.background = posterGrad(place.id);
+    poster.classList.remove('expanded');
+  }
 
   const posterInner = $('place-poster-inner');
   const posterInitial = $('place-poster-initial');
@@ -25,30 +28,36 @@ export function openPlaceDetail(id) {
     posterInner.innerHTML = '';
     const imageUrl = place.imageUrl?.trim() || null;
     if (imageUrl) {
+      state.placeDetailHasImage = true;
+      if (poster) poster.style.cursor = 'zoom-in';
       const img = document.createElement('img');
       img.src = imageUrl;
       img.alt = place.name;
       img.loading = 'lazy';
       img.onerror = () => {
+        state.placeDetailHasImage = false;
+        if (poster) poster.style.cursor = 'default';
         posterInner.innerHTML = _placeholderImg(place.name);
       };
       img.onload = () => {
+        state.placeDetailHasImage = true;
+        if (poster) poster.style.cursor = 'zoom-in';
         posterInner.innerHTML = '';
         posterInner.appendChild(img);
       };
       posterInner.appendChild(img);
     } else {
+      state.placeDetailHasImage = false;
+      if (poster) poster.style.cursor = 'default';
       posterInner.innerHTML = _placeholderImg(place.name);
     }
   }
 
   // Text content
-  const elAddress = $('place-detail-address');
   const elTitle   = $('place-detail-title');
   const elMeta    = $('place-detail-meta');
   const elDesc    = $('place-detail-desc');
 
-  if (elAddress) elAddress.textContent = place.address || place.name;
   if (elTitle)   elTitle.textContent = place.name;
   if (elMeta) {
     let meta = '';

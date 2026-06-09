@@ -290,7 +290,7 @@ export async function boot() {
     if (history.state?.meowPlaceDetail) history.back(); else closePlaceDetail();
   });
 
-  // Свайп вниз для закрытия детального экрана
+  // Свайп вниз для закрытия детального экрана события
   let swipeStartY = 0;
   const detailEl = $('event-detail');
   if (detailEl) {
@@ -298,6 +298,17 @@ export async function boot() {
     detailEl.addEventListener('touchend',   e => {
       const body = $('detail-body');
       if (body?.scrollTop === 0 && e.changedTouches[0].clientY - swipeStartY > 72) closeDetail();
+    }, { passive: true });
+  }
+
+  // Свайп вниз для закрытия детального экрана места
+  let placeSwipeStartY = 0;
+  const placeDetailEl = $('place-detail');
+  if (placeDetailEl) {
+    placeDetailEl.addEventListener('touchstart', e => { placeSwipeStartY = e.touches[0].clientY; }, { passive: true });
+    placeDetailEl.addEventListener('touchend',   e => {
+      const body = $('place-detail-body');
+      if (body?.scrollTop === 0 && e.changedTouches[0].clientY - placeSwipeStartY > 72) closePlaceDetail();
     }, { passive: true });
   }
   window.addEventListener('popstate', () => {
@@ -325,12 +336,21 @@ export async function boot() {
     }, { passive: true });
   }
 
-  // Зум на постер в детальном экране
+  // Зум на постер в детальном экране события
   // Разворачиваем только если у мероприятия есть картинка
   $('detail-poster')?.addEventListener('click', e => {
     if (e.target.closest('.detail-back')) return;
     if (!state.detailHasImage) return;
     $('detail-poster').classList.toggle('expanded');
+    TG()?.HapticFeedback?.impactOccurred('light');
+  });
+
+  // Зум на постер в детальном экране места
+  // Разворачиваем только если у места есть картинка
+  $('place-detail-poster')?.addEventListener('click', e => {
+    if (e.target.closest('.detail-back')) return;
+    if (!state.placeDetailHasImage) return;
+    $('place-detail-poster').classList.toggle('expanded');
     TG()?.HapticFeedback?.impactOccurred('light');
   });
 
@@ -362,11 +382,13 @@ export async function boot() {
   if (searchInput) {
     searchInput.addEventListener('input', e => {
       clearTimeout(_searchTimer);
+      if (state.activePlaceId) closePlaceCard();
       _searchTimer = setTimeout(() => handleSearch(e.target.value.trim()), 300);
     });
     searchInput.addEventListener('focus', () => {
       if (state.panelOpen) setPanel(false);
       closeCard();
+      closePlaceCard();
       closeCalendar();
     });
     searchInput.addEventListener('blur', () => setTimeout(hideSuggestions, 200));

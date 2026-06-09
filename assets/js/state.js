@@ -16,7 +16,8 @@ export const state = {
   // UI
   activeId       : null, // id активного маркера/карточки
   detailId       : null, // id открытого детального экрана
-  detailHasImage : true, // есть ли картинка у открытого детального экрана
+  detailHasImage      : true, // есть ли картинка у открытого детального экрана события
+  placeDetailHasImage : true, // есть ли картинка у открытого детального экрана места
   panelOpen      : false,
   theme          : 'dark',
   currentDate    : new Date(),

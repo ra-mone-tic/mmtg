@@ -1,5 +1,5 @@
 // ─── Event Detail Modal ─────────────────────────────
-import { $, metaHTML, renderTags, blocksHTML, posterGrad, TG, showBackButton, hideBackButton } from './helpers.js';
+import { $, metaHTML, renderTags, blocksHTML, posterGrad, TG } from './helpers.js';
 import { state } from './state.js';
 import { shareEvent } from './share.js';
 import { showToast } from './toast.js';
@@ -97,7 +97,6 @@ export function openDetail(id) {
   if (body) body.scrollTop = 0;
 
   TG()?.HapticFeedback?.selectionChanged();
-  showBackButton();
   history.pushState({ meowDetail: true }, '');
 }
 
@@ -105,7 +104,6 @@ export function closeDetail() {
   const modal = $('event-detail');
   if (modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); }
   state.detailId = null;
-  hideBackButton();
   TG()?.HapticFeedback?.impactOccurred('light');
 }
 

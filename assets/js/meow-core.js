@@ -35,26 +35,6 @@ import { loadPlaces, getPlaceById }                 from './places.js';
 import { initPlaceCard, openPlaceCard, closePlaceCard } from './place-card.js';
 import { initPlaceDetail, openPlaceDetail, closePlaceDetail } from './place-detail.js';
 
-// ─── Telegram MainButton helper ───────────────────────
-
-const TG_MAIN_TEXT  = '🗓️ События недели';
-
-function setupMainButton(text) {
-  const mb = TG()?.MainButton;
-  if (!mb) return;
-  mb.setText(text ?? TG_MAIN_TEXT);
-  mb.color      = TG()?.themeParams?.button_color   ?? '#6652bb';
-  mb.textColor  = TG()?.themeParams?.button_text_color ?? '#ffffff';
-  mb.show().enable();
-}
-
-function updateMainButtonTheme() {
-  const mb = TG()?.MainButton;
-  if (!mb) return;
-  mb.color     = TG()?.themeParams?.button_color   ?? '#6652bb';
-  mb.textColor = TG()?.themeParams?.button_text_color ?? '#ffffff';
-}
-
 // ─── Внутренние хелперы ──────────────────────────────
 
 async function onDateChange(dateStr) {
@@ -113,8 +93,8 @@ export async function boot() {
   const webapp = TG();
   webapp?.expand();
 
-  // Тема (загружается асинхронно из Cloud Storage)
-  state.theme = await initTheme();
+  // Тема
+  state.theme = initTheme();
   applyTheme(state.theme, false);
 
   // Аватар
@@ -176,37 +156,6 @@ export async function boot() {
 
   // Карусель
   renderCarousel();
-
-  // ── Main Button ──────────────────────────────────────
-  setupMainButton();
-  TG()?.MainButton?.onClick(() => {
-    // Показываем/скрываем панель событий
-    const willOpen = !state.panelOpen || state.panelMode !== 'events';
-    closePlaceCard();
-    setPanel(willOpen, 'events');
-    if (willOpen) {
-      const filterMode = filterByDate(fmt(new Date())).length ? 'today' : 'all';
-      applyPanelFilter(filterMode);
-    }
-    TG()?.HapticFeedback?.impactOccurred('light');
-  });
-
-  // ── BackButton ────────────────────────────────────
-  TG()?.BackButton?.onClick(() => {
-    if ($('event-detail')?.classList.contains('open')) {
-      closeDetail();
-    } else if ($('place-detail')?.classList.contains('open')) {
-      closePlaceDetail();
-    } else if ($('calendar-modal')?.classList.contains('open')) {
-      closeCalendar();
-    }
-    // Если ничего не открыто — Telegram сам обработает BackButton
-  });
-
-  // Синхронизация MainButton при смене темы Telegram
-  TG()?.onEvent('themeChanged', () => {
-    updateMainButtonTheme();
-  });
 
   // ── Deep linking: ?event=ID ──────────────────────────
   const eventId = new URLSearchParams(window.location.search).get('event');

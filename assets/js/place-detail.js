@@ -1,5 +1,5 @@
 // ─── Place Detail Modal ─────────────────────────────
-import { $, fmt, posterGrad, dayName, ICONS, showBackButton, hideBackButton } from './helpers.js';
+import { $, fmt, posterGrad, dayName, ICONS } from './helpers.js';
 import { state } from './state.js';
 import { getPlaceById, getEventsForPlace } from './places.js';
 import { flyTo } from './map-core.js';
@@ -119,14 +119,12 @@ export function openPlaceDetail(id) {
   const body = $('place-detail-body');
   if (body) body.scrollTop = 0;
 
-  showBackButton();
   history.pushState({ meowPlaceDetail: true }, '');
 }
 
 export function closePlaceDetail() {
   const modal = $('place-detail');
   if (modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); }
-  hideBackButton();
 }
 
 // ── Internal ───────────────────────────────────────

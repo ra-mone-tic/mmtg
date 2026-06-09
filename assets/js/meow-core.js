@@ -92,6 +92,8 @@ export async function boot() {
   // Telegram WebApp — НЕ вызываем ready() сразу, ждём готовности UI
   const webapp = TG();
   webapp?.expand();
+  // Скрыть главную кнопку
+  webapp?.MainButton?.hide();
 
   // Тема
   state.theme = initTheme();

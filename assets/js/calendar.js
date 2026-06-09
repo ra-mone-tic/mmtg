@@ -1,5 +1,5 @@
 // \u2500\u2500\u2500 Calendar \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-import { $, pad, fmt } from './helpers.js';
+import { $, pad, fmt, showBackButton, hideBackButton } from './helpers.js';
 import { state } from './state.js';
 import { parseDate } from './data.js';
 import { setPanel } from './events-list.js';
@@ -73,6 +73,7 @@ export function openCalendar() {
   _render();
   const modal = $('calendar-modal');
   if (modal) { modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); }
+  showBackButton();
   setPanel(false);
 }
 
@@ -85,6 +86,7 @@ export function closeCalendar() {
   }
   const modal = $('calendar-modal');
   if (modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); }
+  hideBackButton();
 }
 
 function _applyMulti() {

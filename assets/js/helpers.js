@@ -74,6 +74,50 @@ export function blocksHTML(ev) {
   return _escape(ev.desc || '').replace(/\n/g, "<br>");
 }
 
+// ─── Telegram Feature Detection ──────────────────────
+
+/**
+ * Проверяет, поддерживается ли указанная функция Telegram WebApp.
+ * @param {'cloudStorage'|'backButton'|'mainButton'|'hapticFeedback'} feature
+ * @returns {boolean}
+ */
+export function isSupports(feature) {
+  const webapp = TG();
+  if (!webapp) return false;
+  switch (feature) {
+    case 'cloudStorage':
+      // CloudStorage доступен с версии 6.2
+      return !!webapp.isVersionAtLeast?.('6.2') && !!webapp.CloudStorage;
+    case 'backButton':
+      return !!webapp.BackButton;
+    case 'mainButton':
+      return !!webapp.MainButton;
+    case 'hapticFeedback':
+      return !!webapp.HapticFeedback;
+    default:
+      return false;
+  }
+}
+
+// ─── Telegram BackButton ─────────────────────────────
+
+/**
+ * Показывает или скрывает нативную кнопку «Назад» Telegram.
+ */
+export function showBackButton() {
+  const bb = TG()?.BackButton;
+  if (bb) bb.show();
+}
+
+export function hideBackButton() {
+  const bb = TG()?.BackButton;
+  if (bb) {
+    try { bb.hide(); } catch (_) {}
+  }
+}
+
+// ─── Tags ────────────────────────────────────────────
+
 export function renderTags(tags, containerId) {
   const container = $(containerId);
   if (!container) return;

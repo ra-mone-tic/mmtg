@@ -21,19 +21,19 @@
      CSS-переменные --tg-theme-* устанавливаются из WebApp.themeParams.
      Если Telegram недоступен — используются дизайнерские fallback. */
   --c-canvas:   var(--tg-theme-bg-color, #e7e5f1);
-  --c-glass:    rgba(249, 247, 255, 0.70);
-  --c-glass-br: rgba(255, 255, 255, 0.58);
+  --c-glass:    color-mix(in srgb, var(--tg-theme-bg-color, #e7e5f1) 70%, transparent);
+  --c-glass-br: color-mix(in srgb, var(--tg-theme-bg-color, #ffffff) 40%, transparent);
   --c-card:     var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.93));
   --c-card-br:  var(--tg-theme-accent-text-color, #191432);
-  --c-pill:     rgba(18, 14, 44, 0.88);
-  --c-pill-fg:  #ede8ff;
-  --c-soft-br:  rgba(24, 20, 50, 0.09);
+  --c-pill:     color-mix(in srgb, var(--tg-theme-bg-color, #120e2c) 88%, transparent);
+  --c-pill-fg:  var(--tg-theme-button-text-color, #ede8ff);
+  --c-soft-br:  color-mix(in srgb, var(--tg-theme-text-color, #181432) 9%, transparent);
   --c-t1:       var(--tg-theme-text-color, #15112e);
   --c-t2:       var(--tg-theme-hint-color, #726d88);
   --c-accent:   var(--tg-theme-button-color, #6652bb);
-  --c-accent-d: rgba(102, 82, 187, 0.10);
-  --c-accent-g: rgba(102, 82, 187, 0.22);
-  --c-pin:      #ccc3ec;
+  --c-accent-d: color-mix(in srgb, var(--tg-theme-button-color, #6652bb) 10%, transparent);
+  --c-accent-g: color-mix(in srgb, var(--tg-theme-button-color, #6652bb) 22%, transparent);
+  --c-pin:      color-mix(in srgb, var(--tg-theme-button-color, #6652bb) 30%, var(--tg-theme-bg-color, #ccc3ec));
   --c-pin-a:    var(--tg-theme-button-color, #6652bb);
   --c-pin-e:    var(--tg-theme-text-color, #15112e);
   --c-sol-bg:   var(--tg-theme-button-color, #15112e);
@@ -41,9 +41,9 @@
   --c-out-br:   var(--tg-theme-accent-text-color, #15112e);
   --c-out-fg:   var(--tg-theme-accent-text-color, #15112e);
 
-  --sh-card:  0 8px 32px rgba(102,82,187,.13), 0 2px 6px rgba(0,0,0,.06);
+  --sh-card:  0 8px 32px color-mix(in srgb, var(--tg-theme-button-color, #6652bb) 13%, transparent), 0 2px 6px rgba(0,0,0,.06);
   --sh-float: 0 2px 12px rgba(0,0,0,.09), 0 1px 3px rgba(0,0,0,.04);
-  --sh-glow:  0 4px 22px rgba(102,82,187,.26);
+  --sh-glow:  0 4px 22px color-mix(in srgb, var(--tg-theme-button-color, #6652bb) 26%, transparent);
 
   --blur: blur(20px) saturate(1.6);
   --r-p: 999px; --r-c: 20px; --r-b: 50px;
@@ -58,29 +58,29 @@
 [data-theme="dark"] {
   /* Telegram-driven тёмная тема (fallback — дизайнерские цвета) */
   --c-canvas:   var(--tg-theme-bg-color, #0b0b1a);
-  --c-glass:    rgba(17,14,42,.78);
-  --c-glass-br: rgba(118,98,218,.17);
+  --c-glass:    color-mix(in srgb, var(--tg-theme-bg-color, #110e2a) 78%, transparent);
+  --c-glass-br: color-mix(in srgb, var(--tg-theme-button-color, #7662da) 17%, transparent);
   --c-card:     var(--tg-theme-secondary-bg-color, rgba(15,12,40,.92));
-  --c-card-br:  var(--tg-theme-accent-text-color, rgba(118,98,218,.28));
-  --c-pill:     rgba(22,18,54,.92);
-  --c-pill-fg:  #dbd4ff;
-  --c-soft-br:  rgba(118,98,218,.11);
+  --c-card-br:  var(--tg-theme-accent-text-color, color-mix(in srgb, var(--tg-theme-button-color, #7662da) 28%, transparent));
+  --c-pill:     color-mix(in srgb, var(--tg-theme-bg-color, #161236) 92%, transparent);
+  --c-pill-fg:  var(--tg-theme-button-text-color, #dbd4ff);
+  --c-soft-br:  color-mix(in srgb, var(--tg-theme-button-color, #7662da) 11%, transparent);
   --c-t1:       var(--tg-theme-text-color, #ece6ff);
   --c-t2:       var(--tg-theme-hint-color, #938eb4);
   --c-accent:   var(--tg-theme-button-color, #9880de);
-  --c-accent-d: rgba(152,128,222,.14);
-  --c-accent-g: rgba(152,128,222,.26);
-  --c-pin:      #6652bb;
+  --c-accent-d: color-mix(in srgb, var(--tg-theme-button-color, #9880de) 14%, transparent);
+  --c-accent-g: color-mix(in srgb, var(--tg-theme-button-color, #9880de) 26%, transparent);
+  --c-pin:      var(--tg-theme-button-color, #6652bb);
   --c-pin-a:    var(--tg-theme-button-color, #b3a6ee);
   --c-pin-e:    var(--tg-theme-text-color, #ece6ff);
   --c-sol-bg:   var(--tg-theme-button-color, #6e5ec8);
   --c-sol-fg:   var(--tg-theme-button-text-color, #ffffff);
-  --c-out-br:   var(--tg-theme-accent-text-color, rgba(152,128,222,.48));
+  --c-out-br:   var(--tg-theme-accent-text-color, color-mix(in srgb, var(--tg-theme-button-color, #9880de) 48%, transparent));
   --c-out-fg:   var(--tg-theme-button-color, #dbd4ff);
 
   --sh-card:  0 8px 40px rgba(0,0,0,.54), 0 2px 8px rgba(0,0,0,.24);
   --sh-float: 0 2px 16px rgba(0,0,0,.30);
-  --sh-glow:  0 4px 24px rgba(152,128,222,.28);
+  --sh-glow:  0 4px 24px color-mix(in srgb, var(--tg-theme-button-color, #9880de) 28%, transparent);
 }
 
 /* ══════════════════════════════════════════════════

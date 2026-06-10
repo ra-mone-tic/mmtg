@@ -12,13 +12,11 @@ permissions:
 
 concurrency:
   group: "pages"
-  # Изменено на true: если пойдет повторный пуш, старый зависший деплой сразу отменится
   cancel-in-progress: true 
 
 jobs:
   parse:
     runs-on: ubuntu-latest
-    # Переносим окружение на уровень всей задачи
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -54,7 +52,8 @@ jobs:
             git add images
           fi
 
-          git diff --cached --quiet || git commit -m "Update events and images"
+          # [skip ci] в сообщении запретит GitHub запускать этот же воркфлоу заново после пуша
+          git diff --cached --quiet || git commit -m "Update events and images [skip ci]"
           git pull --rebase && git push
 
       - name: Setup Pages
@@ -64,7 +63,12 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
+          # Добавляем уникальное имя с ID запуска, чтобы избежать дублирования артефактов
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
+        with:
+          # Указываем деплою искать именно этот конкретный артефакт
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}

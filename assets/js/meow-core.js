@@ -307,13 +307,9 @@ export async function boot() {
   $('btn-close-card')?.addEventListener('click', closeCard);
   $('btn-close-place-card')?.addEventListener('click', closePlaceCard);
 
-  // Детальный экран
-  $('btn-detail-back')?.addEventListener('click', () => {
-    if (history.state?.meowDetail) history.back(); else closeDetail();
-  });
-  $('btn-place-detail-back')?.addEventListener('click', () => {
-    if (history.state?.meowPlaceDetail) history.back(); else closePlaceDetail();
-  });
+  // Детальный экран — просто закрываем, без history manipulation
+  $('btn-detail-back')?.addEventListener('click', () => closeDetail());
+  $('btn-place-detail-back')?.addEventListener('click', () => closePlaceDetail());
 
   // Свайп вниз для закрытия детального экрана события
   let swipeStartY = 0;
@@ -336,9 +332,10 @@ export async function boot() {
       if (body?.scrollTop === 0 && e.changedTouches[0].clientY - placeSwipeStartY > 72) closePlaceDetail();
     }, { passive: true });
   }
+  // Popstate больше не управляет деталками, так как мы не используем pushState
+  // Оставляем только для закрытия при системной кнопке "Назад" в браузере
   window.addEventListener('popstate', () => {
-    if ($('event-detail')?.classList.contains('open')) closeDetail();
-    if ($('place-detail')?.classList.contains('open')) closePlaceDetail();
+    // Деталки уже закрыты, ничего не делаем
   });
 
   // Свайп вниз для закрытия карточки мероприятия

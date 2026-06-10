@@ -7,7 +7,7 @@ import { addChip } from './search.js';
 import { openPlaceDetail } from './place-detail.js';
 import { isAuthed } from './auth.js';
 import { toggleFavorite, isFavorited, mountFavButton } from './favorites.js';
-import { toggleGoing, isGoing, getGoers, renderWhoGoing, subscribeGoers } from './social.js';
+import { toggleGoing, isGoing, getGoers, renderWhoGoing, subscribeGoers, unsubscribeGoers } from './social.js';
 import { openReport } from './report.js';
 
 export function openDetail(id) {
@@ -118,8 +118,15 @@ export function openDetail(id) {
   const whoGoing = $('detail-who-going');
   if (whoGoing) {
     renderWhoGoing(whoGoing, ev.id);
-    // Subscribe to realtime changes
-    subscribeGoers(ev.id, () => renderWhoGoing(whoGoing, ev.id));
+
+    // Unsubscribe previous goers channel before creating a new one
+    if (state._goersChannel) {
+      unsubscribeGoers(state._goersChannel);
+      state._goersChannel = null;
+    }
+
+    // Subscribe to realtime changes (unique channel per event)
+    state._goersChannel = subscribeGoers(ev.id, () => renderWhoGoing(whoGoing, ev.id));
   }
 
   // ── Report button ──────────────────────────────────
@@ -143,7 +150,6 @@ export function openDetail(id) {
   if (body) body.scrollTop = 0;
 
   TG()?.HapticFeedback?.selectionChanged();
-  history.pushState({ meowDetail: true }, '');
 }
 
 export function closeDetail() {
@@ -158,8 +164,6 @@ export function closeDetail() {
   const btnReport = $('btn-detail-report');
   if (btnReport) btnReport.style.display = 'none';
   TG()?.HapticFeedback?.impactOccurred('light');
-  // Pop history state if we pushed it (avoids stale state blocking next openDetail)
-  if (history.state?.meowDetail) history.back();
 }
 
 // ── Внутренние утилиты ──────────────────────────────

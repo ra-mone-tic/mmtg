@@ -118,8 +118,6 @@ export function openPlaceDetail(id) {
 
   const body = $('place-detail-body');
   if (body) body.scrollTop = 0;
-
-  history.pushState({ meowPlaceDetail: true }, '');
 }
 
 export function closePlaceDetail() {

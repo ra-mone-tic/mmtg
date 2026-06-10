@@ -82,14 +82,21 @@ export async function getGoers(eventId) {
 // ── Realtime: обновлять список кто идёт ──────────────
 
 export function subscribeGoers(eventId, onUpdate) {
-  return subscribeTable(
-    'event_attendance',
-    `event_id=eq.${eventId}`,
-    () => {
-      state.goersCache.delete(eventId);
-      onUpdate?.();
-    }
-  );
+  const channelName = `event_attendance-changes-${eventId}`;
+  return supabase
+    .channel(channelName)
+    .on('postgres_changes',
+      { event: '*', schema: 'public', table: 'event_attendance', filter: `event_id=eq.${eventId}` },
+      () => {
+        state.goersCache.delete(eventId);
+        onUpdate?.();
+      }
+    )
+    .subscribe();
+}
+
+export function unsubscribeGoers(channel) {
+  if (channel) supabase.removeChannel(channel);
 }
 
 // ══════════════════════════════════════════════════════

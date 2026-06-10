@@ -127,20 +127,16 @@ export async function boot() {
   setTimeout(syncMainButton, 1000);
   setTimeout(syncMainButton, 3000);
 
-  // ── Auth ───────────────────────────────────────────
-  await initAuth();
-
-  // ── Social data (favorites, going, following) ──────
-  await Promise.all([loadFavorites(), loadGoing(), loadFollowing()]);
-
-  // ── Notifications ─────────────────────────────────
-  await initNotifications();
-
-  // Аватар
+  // ── Auth + Events + Places — параллельно ────────────
+  // Auth не зависит от событий, события не зависят от auth.
+  // Social и notifications загружаем ПОСЛЕ карты (fire & forget).
   initAvatar();
 
-  // Данные
-  await Promise.all([loadAllEvents(), loadPlaces()]);
+  await Promise.all([
+    initAuth(),
+    loadAllEvents(),
+    loadPlaces(),
+  ]);
 
   // Стартовая дата: сегодня или ближайшая с событиями
   state.currentDate = new Date(); state.currentDate.setHours(0, 0, 0, 0);
@@ -192,6 +188,10 @@ export async function boot() {
 
   // Загружаем события стартовой даты
   await fetchEvents(fmt(state.currentDate));
+
+  // ── Deferred: social + notifications (after UI ready) ──
+  Promise.all([loadFavorites(), loadGoing(), loadFollowing()]).catch(() => {});
+  initNotifications().catch(() => {});
 
   // Карусель
   renderCarousel();

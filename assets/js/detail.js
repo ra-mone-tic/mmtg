@@ -158,6 +158,8 @@ export function closeDetail() {
   const btnReport = $('btn-detail-report');
   if (btnReport) btnReport.style.display = 'none';
   TG()?.HapticFeedback?.impactOccurred('light');
+  // Pop history state if we pushed it (avoids stale state blocking next openDetail)
+  if (history.state?.meowDetail) history.back();
 }
 
 // ── Внутренние утилиты ──────────────────────────────

@@ -52,7 +52,6 @@ jobs:
             git add images
           fi
 
-          # [skip ci] в сообщении запретит GitHub запускать этот же воркфлоу заново после пуша
           git diff --cached --quiet || git commit -m "Update events and images [skip ci]"
           git pull --rebase && git push
 
@@ -63,12 +62,12 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
-          # Добавляем уникальное имя с ID запуска, чтобы избежать дублирования артефактов
+          # Для upload-pages-artifact параметр называется 'name'
           name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
 
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
         with:
-          # Указываем деплою искать именно этот конкретный артефакт
-          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
+          # ИСПРАВЛЕНО: Для deploy-pages параметр называется 'artifact_name'
+          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}

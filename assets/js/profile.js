@@ -45,6 +45,11 @@ async function _renderProfile(modal) {
     const { data: levelData } = await supabase
       .from('user_levels').select('*').eq('level', profile.level).single();
 
+    // Check if this user is an admin
+    const { data: adminRow } = await supabase
+      .from('admin_roles').select('role').eq('user_id', uid).single();
+    const isUserAdmin = !!adminRow;
+
     const isSelf = state.user?.id === uid;
     const stats = await _loadStats(uid);
     const friends = await loadFriends(uid);
@@ -55,8 +60,9 @@ async function _renderProfile(modal) {
       ? `<img src="${profile.photo_url}" alt="${profile.first_name}">`
       : `<span>${initials}</span>`;
 
-    const levelBadge = levelData
-      ? `${levelData.badge_emoji} ${levelData.badge_label}` : '🌱 Новичок';
+    const levelBadge = isUserAdmin
+      ? '🛡️ Админ'
+      : (levelData ? `${levelData.badge_emoji} ${levelData.badge_label}` : '🌱 Новичок');
 
     // Header
     const header = modal.querySelector('.profile-header');

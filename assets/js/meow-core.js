@@ -267,6 +267,13 @@ export async function boot() {
     }
   });
 
+  // Custom event → open user mini card (from looking section, who's going, etc.)
+  document.addEventListener('meow:open-user-card', e => {
+    const userId = e.detail?.userId;
+    if (!userId) return;
+    import('./social.js').then(mod => mod.openUserCard(userId));
+  });
+
   // Панель событий
   let panelFilterMode = filterByDate(fmt(new Date())).length ? 'today' : 'all';
   const filterAll   = $('filter-all');

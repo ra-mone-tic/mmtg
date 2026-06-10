@@ -15,7 +15,7 @@ import sys
 
 from src.config    import TELEGRAM_BOT_TOKEN
 from src.storage   import (load_existing_events, load_geocache, load_state,
-                           save_events, save_geocache, save_state)
+                           save_events, save_geocache, save_state, sync_to_supabase)
 from src.telegram_api import get_channel_messages
 from src.processor    import process_messages, clean_old_posters
 
@@ -72,6 +72,13 @@ def main() -> None:
             f"События обновлены: +{added}, ~{updated}"
             f"{' (афиши очищены)' if cleaned else ''}"
         )
+
+        # ── Синхронизация в Supabase ──────────────────
+        sync_result = sync_to_supabase(all_events)
+        if sync_result.get("error"):
+            logger.warning(f"Supabase sync failed: {sync_result['error']}")
+        elif not sync_result.get("skipped"):
+            logger.info(f"Supabase sync: {sync_result.get('upserted', 0)} событий")
     else:
         logger.info("Изменений нет")
 

@@ -18,11 +18,11 @@ export async function initAuth() {
 }
 
 async function _doInit() {
+  // ── Попробуем восстановить сессию из localStorage ─
   try {
-    // ── Попробуем восстановить сессию из localStorage ─
     const existing = await getSession();
-    if (existing) {
-      const { data: profile } = await supabase
+    if (existing?.user?.id) {
+      const { data: profile, error: profErr } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', existing.user.id)
@@ -31,11 +31,18 @@ async function _doInit() {
         const { data: adminRow } = await supabase
           .from('admin_roles').select('role').eq('user_id', existing.user.id).single();
         state.user = { ...profile, is_admin: !!adminRow };
+        console.info('[MEOW] Auth restored from session');
         return state.user;
       }
+      // Profile not found for this session — session is stale, fall through
+      console.warn('[MEOW] Session exists but profile not found, re-authenticating');
     }
+  } catch (err) {
+    console.warn('[MEOW] Session restore failed, re-authenticating:', err.message);
+  }
 
-    // ── Telegram initData (только в Mini App) ────────
+  // ── Telegram initData (только в Mini App) ────────
+  try {
     const webapp   = TG();
     const initData = webapp?.initData;
     if (!initData) {
@@ -62,6 +69,7 @@ async function _doInit() {
     });
 
     state.user = { ...result.profile };
+    console.info('[MEOW] Authenticated via Telegram initData');
     return state.user;
 
   } catch (err) {

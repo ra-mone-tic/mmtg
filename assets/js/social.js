@@ -271,6 +271,10 @@ async function _loadUserCard(userId, panel) {
       .eq('level', p.level)
       .single();
 
+    const { data: adminRow } = await supabase
+      .from('admin_roles').select('role').eq('user_id', userId).single();
+    const isUserAdmin = !!adminRow;
+
     const isSelf    = state.user?.id === userId;
     const following = isFollowing(userId);
     const isFriend  = await isMutualFollow(userId);
@@ -282,8 +286,9 @@ async function _loadUserCard(userId, panel) {
 
     const friendBadge = isFriend
       ? `<span class="friend-badge">👥 Друзья</span>` : '';
-    const levelBadge  = levelData
-      ? `<span class="level-badge">${levelData.badge_emoji} ${levelData.badge_label}</span>` : '';
+    const levelBadge  = isUserAdmin
+      ? `<span class="level-badge">🛡️ Админ</span>`
+      : (levelData ? `<span class="level-badge">${levelData.badge_emoji} ${levelData.badge_label}</span>` : '');
 
     panel.innerHTML = `
       <button class="user-card-close" id="btn-user-card-close" aria-label="Закрыть">

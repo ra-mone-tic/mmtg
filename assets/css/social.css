@@ -414,3 +414,44 @@
 .notif-body{font-size:11px;color:var(--c-t2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .notif-time{font-size:10px;color:var(--c-t2);margin-top:3px}
 .notif-empty{padding:20px;text-align:center;font-size:13px;color:var(--c-t2)}
+
+/* ── Looking for company section ─────────────────── */
+.looking-section{
+  margin:14px 0 14px;padding:14px 0;
+  border-top:1px solid var(--c-soft-br);
+}
+.looking-section:empty{display:none}
+.looking-btn{
+  width:100%;height:40px;border-radius:var(--r-b);
+  background:transparent;color:var(--c-out-fg);
+  border:2px solid var(--c-out-br);
+  font-size:13px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:5px;
+  transition:transform .13s var(--ease-s),background .13s,border-color .13s,color .13s,box-shadow .13s;
+}
+.looking-btn:active{transform:scale(.97)}
+.looking-btn.active{
+  background:rgba(241,196,15,.12);color:#f39c12;border-color:#f39c12;
+}
+.looking-list{
+  margin-top:10px;display:flex;flex-direction:column;gap:6px;
+}
+.looking-row{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:12px;
+  background:var(--c-glass);border:1px solid var(--c-glass-br);
+}
+.looking-row.is-self{border-color:rgba(241,196,15,.3);background:rgba(241,196,15,.06)}
+.looking-avatar{
+  width:32px;height:32px;border-radius:50%;overflow:hidden;
+  background:var(--c-accent-d);color:var(--c-accent);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;cursor:pointer;flex-shrink:0;
+  transition:transform .15s var(--ease-s);
+}
+.looking-avatar:hover{transform:scale(1.12)}
+.looking-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.looking-info{flex:1;min-width:0}
+.looking-name{font-size:12px;font-weight:700;color:var(--c-t1)}
+.looking-text{font-size:11px;color:var(--c-t2);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.looking-empty{font-size:12px;color:var(--c-t2);padding:4px 0;font-style:italic}

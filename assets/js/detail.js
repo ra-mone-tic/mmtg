@@ -9,6 +9,7 @@ import { isAuthed } from './auth.js';
 import { toggleFavorite, isFavorited, mountFavButton } from './favorites.js';
 import { toggleGoing, isGoing, getGoers, renderWhoGoing, subscribeGoers, unsubscribeGoers } from './social.js';
 import { openReport } from './report.js';
+import { renderLookingSection } from './looking.js';
 
 export function openDetail(id) {
   const ev = state.events.find(e => e.id === id);
@@ -136,6 +137,12 @@ export function openDetail(id) {
     btnReport.style.display = '';
   }
 
+  // ── Looking for company section ────────────────────
+  const lookingContainer = $('detail-looking');
+  if (lookingContainer) {
+    renderLookingSection(lookingContainer, ev.id);
+  }
+
   // Кнопки
   const btnContacts    = $('btn-contacts');
   const btnDetailShare = $('btn-detail-share');
@@ -163,6 +170,8 @@ export function closeDetail() {
   if (whoGoing) whoGoing.innerHTML = '';
   const btnReport = $('btn-detail-report');
   if (btnReport) btnReport.style.display = 'none';
+  const lookingContainer = $('detail-looking');
+  if (lookingContainer) lookingContainer.innerHTML = '';
   TG()?.HapticFeedback?.impactOccurred('light');
 }
 

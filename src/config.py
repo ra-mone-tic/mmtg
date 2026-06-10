@@ -36,3 +36,8 @@ KLGD_CITIES = (
 
 # ─── Nominatim rate limiting ─────────────────────────
 NOMINATIM_MIN_INTERVAL = 1.1   # секунд между запросами
+
+# ─── Supabase ───────────────────────────────────────
+SUPABASE_URL          = os.environ.get("SUPABASE_URL", "")
+SUPABASE_ANON_KEY     = os.environ.get("SUPABASE_ANON_KEY", "")
+SUPABASE_SERVICE_KEY  = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")

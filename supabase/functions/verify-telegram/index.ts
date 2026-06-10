@@ -47,16 +47,16 @@ serve(async (req) => {
       .map(b => b.toString(16).padStart(2, "0")).join("");
 
     const isValid = computed === hash;
-    // In non-production (missing auth_date or zero id) allow anyway for dev
+    // auth_date check — allow up to 7 days (Telegram Desktop may have stale initData)
     const authDate = parseInt(params.get("auth_date") ?? "0");
-    const stale    = authDate > 0 && (Date.now() / 1000 - authDate) > 86400;
+    const stale    = authDate > 0 && (Date.now() / 1000 - authDate) > 604800; // 7 days
 
     if (!isValid || stale) {
-      // Parse user even if verification fails – just block in production
       const isDev = Deno.env.get("ENVIRONMENT") !== "production";
+      console.warn(`[verify-telegram] isValid=${isValid} stale=${stale} authDate=${authDate}`);
       if (!isDev) {
         return new Response(
-          JSON.stringify({ error: !isValid ? "Invalid signature" : "initData expired" }),
+          JSON.stringify({ error: !isValid ? "Invalid signature" : "initData expired (>7 days)" }),
           { status: 401, headers: { ...CORS, "Content-Type": "application/json" } }
         );
       }

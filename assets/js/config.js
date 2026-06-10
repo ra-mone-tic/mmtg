@@ -9,7 +9,6 @@ export const CFG = {
   FLY_ZOOM   : 14.5,
   FLY_OFFSET : [0, 240],
   FLY_MS     : 540,
-  /** Вычисляется при каждом обращении, т.к. зависит от window.location */
   get SHARE_BASE() {
     return window.location.origin +
            window.location.pathname.replace(/\/+$/, '') +

@@ -1,6 +1,7 @@
 // ─── Data loading & normalization ───────────────────
 import { pad } from './helpers.js';
 import { state } from './state.js';
+import { supabase } from './supabase.js';
 
 // ── Утилиты дат ──────────────────────────────────────
 
@@ -32,8 +33,8 @@ export function normalizeEvent(e) {
     time          : e.time || '',
     desc          : e.full_description || e.short_description || '',
     blocks        : Array.isArray(e.description_blocks) ? e.description_blocks : null,
-    imageUrl      : e.imageUrl || null,
-    lng           : e.lon,
+    imageUrl      : e.imageUrl || e.image_url || null,
+    lng           : e.lon || e.lng,
     lat           : e.lat,
     contacts      : e.contacts || '',
     tags          : e.tags || [],
@@ -49,15 +50,10 @@ export function filterByDate(dateStr) {
     .map(normalizeEvent);
 }
 
-/**
- * Возвращает все события для списка дат (или всех, если список пуст).
- */
 export function filterByDates(dateList) {
   if (!dateList || !dateList.length) return [];
   const set = new Set(dateList);
-  return state.rawAllEvents
-    .filter(e => set.has(e.date))
-    .map(normalizeEvent);
+  return state.rawAllEvents.filter(e => set.has(e.date)).map(normalizeEvent);
 }
 
 export function findNearestDate() {
@@ -66,15 +62,37 @@ export function findNearestDate() {
   const dates = [...new Set(state.rawAllEvents.map(e => e.date))]
     .filter(d => parseDate(d) !== null)
     .sort((a, b) => parseDate(a) - parseDate(b));
-  for (const d of dates) {
-    if (parseDate(d) >= today) return d;
-  }
+  for (const d of dates) { if (parseDate(d) >= today) return d; }
   return dates.at(-1) ?? null;
 }
 
 // ── Загрузка ─────────────────────────────────────────
 
 export async function loadAllEvents() {
+  // ── Пробуем Supabase ──────────────────────────────
+  try {
+    const { data, error } = await supabase
+      .from('events')
+      .select('*')
+      .eq('is_active', true)
+      .order('date', { ascending: true });
+
+    if (error) throw error;
+    if (data?.length) {
+      state.rawAllEvents = data.map(e => ({
+        ...e,
+        // Supabase хранит image_url, клиент ждёт imageUrl
+        imageUrl: e.image_url,
+        date: normalizeDate(e.date),
+      }));
+      state.usingSupabase = true;
+      return state.rawAllEvents;
+    }
+  } catch (err) {
+    console.warn('[MEOW] Supabase events unavailable, falling back to JSON:', err.message);
+  }
+
+  // ── Fallback: локальный JSON ───────────────────────
   try {
     const resp = await fetch('events.json');
     const data = await resp.json();

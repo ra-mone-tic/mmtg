@@ -9,7 +9,6 @@ export const CFG = {
   FLY_ZOOM   : 14.5,
   FLY_OFFSET : [0, 240],
   FLY_MS     : 540,
-  /** Вычисляется при каждом обращении, т.к. зависит от window.location */
   get SHARE_BASE() {
     return window.location.origin +
            window.location.pathname.replace(/\/+$/, '') +
@@ -26,3 +25,14 @@ export const CFG = {
   ],
   BBOX: REGION_BBOX,
 };
+
+// ─── Supabase Config ─────────────────────────────────
+// ⚠️  Заполните после создания проекта в Supabase Dashboard
+// Project Settings → API → Project URL & anon/public key
+export const SUPABASE_CONFIG = {
+  URL:      'https://YOUR_PROJECT_REF.supabase.co',
+  ANON_KEY: 'YOUR_ANON_KEY',
+};
+
+// URL деплоя Edge Functions
+export const EDGE_BASE = `${SUPABASE_CONFIG.URL}/functions/v1`;

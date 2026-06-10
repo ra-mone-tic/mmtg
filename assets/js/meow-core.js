@@ -35,6 +35,14 @@ import { loadPlaces, getPlaceById }                 from './places.js';
 import { initPlaceCard, openPlaceCard, closePlaceCard } from './place-card.js';
 import { initPlaceDetail, openPlaceDetail, closePlaceDetail } from './place-detail.js';
 
+// ── Auth / Social / Profile / Notifications ────────────
+import { initAuth }                                 from './auth.js';
+import { loadFavorites }                            from './favorites.js';
+import { loadGoing, loadFollowing }                 from './social.js';
+import { openProfile, closeProfile }                from './profile.js';
+import { initNotifications, handleOutsideClick as handleNotifOutside } from './notifications-ui.js';
+import { closeReport }                              from './report.js';
+
 // ─── Внутренние хелперы ──────────────────────────────
 
 async function onDateChange(dateStr) {
@@ -103,7 +111,6 @@ export async function boot() {
   bindTelegramTheme();
 
   // Синхронизация MainButton с темой пользователя
-  // Если themeParams ещё не пришли — повторяем после задержки
   const syncMainButton = () => {
     try {
       const params = webapp?.themeParams;
@@ -117,9 +124,17 @@ export async function boot() {
     } catch (_) { /* не критично */ }
   };
   syncMainButton();
-  // Повторяем через 1с и 3с на случай задержки themeParams
   setTimeout(syncMainButton, 1000);
   setTimeout(syncMainButton, 3000);
+
+  // ── Auth ───────────────────────────────────────────
+  await initAuth();
+
+  // ── Social data (favorites, going, following) ──────
+  await Promise.all([loadFavorites(), loadGoing(), loadFollowing()]);
+
+  // ── Notifications ─────────────────────────────────
+  await initNotifications();
 
   // Аватар
   initAvatar();
@@ -219,16 +234,36 @@ export async function boot() {
   setTimeout(_hideThemeBtnIfNeeded, 1500);
   setTimeout(_hideThemeBtnIfNeeded, 4000);
 
-  // Аватар
+  // Аватар → Profile modal
   $('btn-avatar')?.addEventListener('click', () => {
-    const user = TG()?.initDataUnsafe?.user;
-    if (!user) return;
-    const name = [user.first_name, user.last_name].filter(Boolean).join(' ');
-    if (TG()?.showPopup) {
-      TG().showPopup({ title: 'Профиль', message: name || 'Пользователь',
-                       buttons: [{ type: 'close', text: 'Закрыть' }] });
+    if (state.user?.id) {
+      openProfile(state.user.id);
     } else {
-      showToast(name || '👤 Пользователь');
+      showToast('Войдите через Telegram для профиля');
+    }
+  });
+
+  // Profile back button
+  $('profile-back-btn')?.addEventListener('click', closeProfile);
+
+  // Profile modal — swipe down to close
+  let profSwipeY = 0;
+  const profEl = $('profile-modal');
+  if (profEl) {
+    profEl.addEventListener('touchstart', e => { profSwipeY = e.touches[0].clientY; }, { passive: true });
+    profEl.addEventListener('touchend', e => {
+      if (e.changedTouches[0].clientY - profSwipeY > 72) closeProfile();
+    }, { passive: true });
+  }
+
+  // Custom event from profile → open event detail
+  document.addEventListener('meow:open-event', e => {
+    const evId = e.detail?.eventId;
+    if (!evId) return;
+    const ev = state.rawAllEvents.map(normalizeEvent).find(x => x.id === evId);
+    if (ev) {
+      openCard(evId);
+      flyTo(ev);
     }
   });
 

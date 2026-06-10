@@ -5,6 +5,10 @@ import { shareEvent } from './share.js';
 import { showToast } from './toast.js';
 import { addChip } from './search.js';
 import { openPlaceDetail } from './place-detail.js';
+import { isAuthed } from './auth.js';
+import { toggleFavorite, isFavorited, mountFavButton } from './favorites.js';
+import { toggleGoing, isGoing, getGoers, renderWhoGoing, subscribeGoers } from './social.js';
+import { openReport } from './report.js';
 
 export function openDetail(id) {
   const ev = state.events.find(e => e.id === id);
@@ -83,6 +87,48 @@ export function openDetail(id) {
     }
   }
 
+  // ── Social actions row (favorite + going) ──────────
+  const socialRow = $('detail-social-actions');
+  if (socialRow) {
+    // Favorite button
+    const favWrap = socialRow.querySelector('.fav-wrap');
+    if (favWrap) mountFavButton(favWrap, ev.id);
+
+    // Going button
+    const goingBtn = socialRow.querySelector('.btn-going');
+    if (goingBtn) {
+      const going = isGoing(ev.id);
+      goingBtn.classList.toggle('active', going);
+      goingBtn.textContent = going ? '✅ Идёшь' : '✓ Пойду';
+      goingBtn.onclick = async () => {
+        if (!isAuthed()) { showToast('Войдите через Telegram'); return; }
+        await toggleGoing(ev.id);
+        const now = isGoing(ev.id);
+        goingBtn.classList.toggle('active', now);
+        goingBtn.textContent = now ? '✅ Идёшь' : '✓ Пойду';
+        // Refresh who's going
+        const wgContainer = $('detail-who-going');
+        if (wgContainer) renderWhoGoing(wgContainer, ev.id);
+      };
+    }
+    socialRow.style.display = '';
+  }
+
+  // ── Who's going section ────────────────────────────
+  const whoGoing = $('detail-who-going');
+  if (whoGoing) {
+    renderWhoGoing(whoGoing, ev.id);
+    // Subscribe to realtime changes
+    subscribeGoers(ev.id, () => renderWhoGoing(whoGoing, ev.id));
+  }
+
+  // ── Report button ──────────────────────────────────
+  const btnReport = $('btn-detail-report');
+  if (btnReport) {
+    btnReport.onclick = () => openReport('event', ev.id, ev.title);
+    btnReport.style.display = '';
+  }
+
   // Кнопки
   const btnContacts    = $('btn-contacts');
   const btnDetailShare = $('btn-detail-share');
@@ -104,6 +150,13 @@ export function closeDetail() {
   const modal = $('event-detail');
   if (modal) { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); }
   state.detailId = null;
+  // Hide social actions
+  const socialRow = $('detail-social-actions');
+  if (socialRow) socialRow.style.display = 'none';
+  const whoGoing = $('detail-who-going');
+  if (whoGoing) whoGoing.innerHTML = '';
+  const btnReport = $('btn-detail-report');
+  if (btnReport) btnReport.style.display = 'none';
   TG()?.HapticFeedback?.impactOccurred('light');
 }
 

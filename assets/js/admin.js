@@ -1,7 +1,7 @@
 // ─── Admin Panel — CRUD Events & Reports ───────────────
 import { $, posterGrad, renderTags, ICONS } from './helpers.js';
 import { state } from './state.js';
-import { supabase, rpc } from './supabase.js';
+import { supabase } from './supabase.js';
 import { isAdmin, isAuthed } from './auth.js';
 import { showToast } from './toast.js';
 import { loadAllEvents, normalizeDate, parseDate } from './data.js';

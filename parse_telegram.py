@@ -66,21 +66,22 @@ def main() -> None:
 
     cleaned = clean_old_posters(all_events)
 
+    save_events(all_events)
+
     if added or updated or cleaned:
-        save_events(all_events)
         logger.info(
             f"События обновлены: +{added}, ~{updated}"
             f"{' (афиши очищены)' if cleaned else ''}"
         )
-
-        # ── Синхронизация в Supabase ──────────────────
-        sync_result = sync_to_supabase(all_events)
-        if sync_result.get("error"):
-            logger.warning(f"Supabase sync failed: {sync_result['error']}")
-        elif not sync_result.get("skipped"):
-            logger.info(f"Supabase sync: {sync_result.get('upserted', 0)} событий")
     else:
-        logger.info("Изменений нет")
+        logger.info("Изменений нет, сохранён текущий список событий")
+
+    # ── Синхронизация в Supabase (всегда) ────────────
+    sync_result = sync_to_supabase(all_events)
+    if sync_result.get("error"):
+        logger.warning(f"Supabase sync failed: {sync_result['error']}")
+    elif not sync_result.get("skipped"):
+        logger.info(f"Supabase sync: {sync_result.get('upserted', 0)} событий")
 
     save_geocache(geocache)
     save_state(state)

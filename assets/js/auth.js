@@ -68,7 +68,11 @@ async function _doInit() {
       refresh_token: result.session.refresh_token,
     });
 
-    state.user = { ...result.profile };
+    // ── Проверка прав администратора ──────────────────
+    const { data: adminRow } = await supabase
+      .from('admin_roles').select('role').eq('user_id', result.profile.id).maybeSingle();
+
+    state.user = { ...result.profile, is_admin: !!adminRow };
     console.info('[MEOW] Authenticated via Telegram initData');
     return state.user;
 

@@ -1,5 +1,6 @@
 // ─── Place Detail Modal ─────────────────────────────
 import { $, fmt, posterGrad, dayName, ICONS } from './helpers.js';
+import { isAdmin } from './auth.js';
 import { state } from './state.js';
 import { getPlaceById, getEventsForPlace } from './places.js';
 import { flyTo } from './map-core.js';
@@ -110,6 +111,34 @@ export function openPlaceDetail(id) {
         navigator.clipboard.writeText(url);
       }
     };
+  }
+
+  // Admin: edit place button
+  const adminRow = $('place-admin-actions');
+  if (adminRow) adminRow.remove();
+  if (isAdmin()) {
+    const detailBody = $('place-detail-body');
+    if (detailBody) {
+      const div = document.createElement('div');
+      div.id = 'place-admin-actions';
+      div.style.cssText = 'display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--c-soft-br)';
+      div.innerHTML = `
+        <button class="btn-admin-detail edit" id="place-admin-edit" style="flex:1;height:38px;border-radius:var(--r-b);background:var(--c-glass);border:1.5px solid var(--c-glass-br);color:var(--c-accent);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:5px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Редактировать место
+        </button>
+      `;
+      detailBody.appendChild(div);
+      div.querySelector('#place-admin-edit')?.addEventListener('click', async () => {
+        closePlaceDetail();
+        const mod = await import('./admin.js');
+        // For places, we reuse the admin panel (future: dedicated place form)
+        mod.openAdminPanel();
+      });
+    }
   }
 
   // Open modal

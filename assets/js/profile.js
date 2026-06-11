@@ -2,7 +2,7 @@
 import { $, TG, posterGrad } from './helpers.js';
 import { state } from './state.js';
 import { supabase, subscribeTable } from './supabase.js';
-import { isAuthed } from './auth.js';
+import { isAuthed, isAdmin } from './auth.js';
 import { loadFavoritesList } from './favorites.js';
 import { loadFriends } from './social.js';
 import { showToast } from './toast.js';
@@ -179,6 +179,19 @@ async function _renderProfile(modal) {
       </div>`;
     }
 
+    // Admin section (self only, if admin)
+    if (isSelf && isAdmin()) {
+      html += `<div class="profile-admin-section">
+        <div class="profile-admin-title">🛡️ Управление</div>
+        <button class="btn-admin-create" id="profile-btn-admin-create" style="margin-top:10px">
+          ➕ Создать мероприятие
+        </button>
+        <button class="btn-admin-panel" id="profile-btn-admin-panel" style="margin-top:8px;width:100%;height:44px;border-radius:var(--r-b);background:var(--c-glass);border:1.5px solid var(--c-glass-br);color:var(--c-accent);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px">
+          🛡️ Админ-панель
+        </button>
+      </div>`;
+    }
+
     body.innerHTML = html;
 
     // ── Bind events ────────────────────────────────────
@@ -212,6 +225,18 @@ async function _renderProfile(modal) {
       row.addEventListener('click', () => {
         openProfile(row.dataset.uid);
       });
+    });
+
+    // Admin buttons (dynamic import to avoid circular deps)
+    body.querySelector('#profile-btn-admin-create')?.addEventListener('click', async () => {
+      closeProfile();
+      const mod = await import('./admin.js');
+      mod.openAdminCreate();
+    });
+    body.querySelector('#profile-btn-admin-panel')?.addEventListener('click', async () => {
+      closeProfile();
+      const mod = await import('./admin.js');
+      mod.openAdminPanel();
     });
 
     // Favorite item click → open event detail

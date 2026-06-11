@@ -42,6 +42,7 @@ import { loadGoing, loadFollowing }                 from './social.js';
 import { openProfile, closeProfile }                from './profile.js';
 import { initNotifications, handleOutsideClick as handleNotifOutside } from './notifications-ui.js';
 import { closeReport }                              from './report.js';
+import { openAdminPanel, closeAdminPanel }           from './admin.js';
 
 // ─── Внутренние хелперы ──────────────────────────────
 
@@ -256,6 +257,17 @@ export async function boot() {
     }, { passive: true });
   }
 
+  // Admin panel back button
+  $('admin-panel-back-btn')?.addEventListener('click', closeAdminPanel);
+  $('admin-panel')?.addEventListener('click', e => e.stopPropagation());
+
+  // Custom event: events changed (e.g. after admin delete)
+  document.addEventListener('meow:events-changed', () => {
+    renderMarkers();
+    renderCarousel();
+    renderList();
+  });
+
   // Custom event from profile → open event detail
   document.addEventListener('meow:open-event', e => {
     const evId = e.detail?.eventId;
@@ -437,9 +449,20 @@ export async function boot() {
   $('map')?.addEventListener('touchstart', hideSuggestions, { passive: true });
 
   // Не пропускаем клики сквозь оверлеи
-  ['events-panel','event-card','event-detail','place-card','place-detail'].forEach(id => {
+  ['events-panel','event-card','event-detail','place-card','place-detail','admin-panel'].forEach(id => {
     $(id)?.addEventListener('click', e => e.stopPropagation());
   });
+
+  // Swipe down to close admin panel
+  let adminSwipeY = 0;
+  const adminPanelEl = $('admin-panel');
+  if (adminPanelEl) {
+    adminPanelEl.addEventListener('touchstart', e => { adminSwipeY = e.touches[0].clientY; }, { passive: true });
+    adminPanelEl.addEventListener('touchend', e => {
+      const adminBody = adminPanelEl.querySelector('.admin-body');
+      if (adminBody?.scrollTop === 0 && e.changedTouches[0].clientY - adminSwipeY > 72) closeAdminPanel();
+    }, { passive: true });
+  }
 
   // ── Deep linking: ?place=ID ──────────────────────────
   const placeId = new URLSearchParams(window.location.search).get('place');

@@ -5,7 +5,7 @@ import { shareEvent } from './share.js';
 import { showToast } from './toast.js';
 import { addChip } from './search.js';
 import { openPlaceDetail } from './place-detail.js';
-import { isAuthed } from './auth.js';
+import { isAuthed, isAdmin } from './auth.js';
 import { toggleFavorite, isFavorited, mountFavButton } from './favorites.js';
 import { toggleGoing, isGoing, getGoers, renderWhoGoing, subscribeGoers, unsubscribeGoers } from './social.js';
 import { openReport } from './report.js';
@@ -135,6 +135,68 @@ export function openDetail(id) {
   if (btnReport) {
     btnReport.onclick = () => openReport('event', ev.id, ev.title);
     btnReport.style.display = '';
+  }
+
+  // ── Admin actions (edit/delete) ────────────────────
+  if (isAdmin()) {
+    let adminRow = $('detail-admin-actions');
+    if (!adminRow) {
+      // Insert admin row into detail-body
+      const detailBody = $('detail-body');
+      if (detailBody) {
+        const div = document.createElement('div');
+        div.id = 'detail-admin-actions';
+        div.className = 'detail-admin-actions';
+        div.style.cssText = 'display:flex;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--c-soft-br)';
+        div.innerHTML = `
+          <button class="btn-admin-detail edit" data-event-id="${ev.id}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="m18.5 2.5 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Редактировать
+          </button>
+          <button class="btn-admin-detail delete" data-event-id="${ev.id}">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+            </svg>
+            Удалить
+          </button>
+        `;
+        detailBody.appendChild(div);
+        adminRow = div;
+      }
+    }
+    if (adminRow) {
+      adminRow.style.display = 'flex';
+      // Update IDs
+      adminRow.querySelectorAll('.btn-admin-detail').forEach(btn => {
+        btn.dataset.eventId = ev.id;
+      });
+      // Bind edit
+      adminRow.querySelector('.btn-admin-detail.edit')?.addEventListener('click', async () => {
+        closeDetail();
+        const mod = await import('./admin.js');
+        mod.openAdminEdit(ev.id);
+      });
+      // Bind delete
+      adminRow.querySelector('.btn-admin-detail.delete')?.addEventListener('click', async () => {
+        if (!confirm('Удалить мероприятие "' + ev.title + '"?')) return;
+        try {
+          const { supabase } = await import('./supabase.js');
+          const { error } = await supabase.from('events').delete().eq('id', ev.id);
+          if (error) throw error;
+          closeDetail();
+          const { loadAllEvents } = await import('./data.js');
+          await loadAllEvents();
+          showToast('Удалено');
+          // Trigger re-render of markers
+          document.dispatchEvent(new CustomEvent('meow:events-changed'));
+        } catch (err) {
+          showToast('Ошибка: ' + (err.message || err));
+        }
+      });
+    }
   }
 
   // ── Looking for company section ────────────────────

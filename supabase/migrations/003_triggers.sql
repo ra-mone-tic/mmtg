@@ -163,6 +163,12 @@ END;
 $$;
 
 -- ─── Realtime: enable for social tables ───────────────
-ALTER PUBLICATION supabase_realtime ADD TABLE notifications;
-ALTER PUBLICATION supabase_realtime ADD TABLE event_attendance;
-ALTER PUBLICATION supabase_realtime ADD TABLE looking_for_company;
+DO $$ BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE notifications;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE event_attendance;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  ALTER PUBLICATION supabase_realtime ADD TABLE looking_for_company;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;

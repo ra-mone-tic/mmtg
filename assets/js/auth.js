@@ -29,7 +29,7 @@ async function _doInit() {
         .single();
       if (profile) {
         const { data: adminRow } = await supabase
-          .from('admin_roles').select('role').eq('user_id', existing.user.id).single();
+          .from('admin_roles').select('role').eq('user_id', existing.user.id).maybeSingle();
         state.user = { ...profile, is_admin: !!adminRow };
         console.info('[MEOW] Auth restored from session');
         return state.user;

@@ -47,7 +47,7 @@ async function _renderProfile(modal) {
 
     // Check if this user is an admin
     const { data: adminRow } = await supabase
-      .from('admin_roles').select('role').eq('user_id', uid).single();
+      .from('admin_roles').select('role').eq('user_id', uid).maybeSingle();
     const isUserAdmin = !!adminRow;
 
     const isSelf = state.user?.id === uid;

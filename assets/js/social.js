@@ -272,7 +272,7 @@ async function _loadUserCard(userId, panel) {
       .single();
 
     const { data: adminRow } = await supabase
-      .from('admin_roles').select('role').eq('user_id', userId).single();
+      .from('admin_roles').select('role').eq('user_id', userId).maybeSingle();
     const isUserAdmin = !!adminRow;
 
     const isSelf    = state.user?.id === userId;

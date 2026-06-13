@@ -192,46 +192,7 @@ async function _renderProfile(modal) {
       </div>`;
     }
 
-    // ── DEBUG: visible admin diagnostic (self only) ────
-    if (isSelf) {
-      const debugId = state.user?.id ?? 'null';
-      const debugIsAdmin = isAdmin();
-      const debugIsAdminState = state.user?.is_admin;
-      html += `<div id="admin-debug" style="margin-top:16px;padding:12px;border-radius:var(--r-b);background:var(--c-glass);border:1px solid var(--c-glass-br);font-size:11px;color:var(--c-t2);font-family:monospace;word-break:break-all">
-        <div style="font-weight:700;margin-bottom:6px;color:var(--c-t1)">🔍 Admin Debug</div>
-        <div>user.id: ${debugId}</div>
-        <div>state.user.is_admin: ${debugIsAdminState}</div>
-        <div>isAdmin(): ${debugIsAdmin}</div>
-        <div>adminRow query: <span id="admin-debug-status">loading…</span></div>
-        <div>admin roles data: <span id="admin-debug-data">loading…</span></div>
-      </div>`;
-    }
-
     body.innerHTML = html;
-
-    // ── DEBUG: async admin_roles check ─────────────────
-    if (isSelf) {
-      const debugStatusEl = body.querySelector('#admin-debug-status');
-      const debugDataEl = body.querySelector('#admin-debug-data');
-      try {
-        const { data: dbgAdmin, error: dbgErr } = await supabase
-          .from('admin_roles').select('*').eq('user_id', uid).maybeSingle();
-        if (dbgErr) {
-          debugStatusEl.textContent = 'ERROR: ' + dbgErr.message;
-          debugStatusEl.style.color = '#f44';
-        } else if (dbgAdmin) {
-          debugStatusEl.textContent = 'FOUND';
-          debugStatusEl.style.color = '#4f4';
-          debugDataEl.textContent = JSON.stringify(dbgAdmin);
-        } else {
-          debugStatusEl.textContent = 'NULL (no row)';
-          debugStatusEl.style.color = '#ff0';
-        }
-      } catch (e) {
-        debugStatusEl.textContent = 'EXCEPTION: ' + e.message;
-        debugStatusEl.style.color = '#f44';
-      }
-    }
 
     // ── Bind events ────────────────────────────────────
     // Bio save

@@ -8,7 +8,6 @@ import { openPlaceDetail } from './place-detail.js';
 import { isAuthed, isAdmin } from './auth.js';
 import { toggleFavorite, isFavorited, mountFavButton } from './favorites.js';
 import { toggleGoing, isGoing, getGoers, renderWhoGoing, subscribeGoers, unsubscribeGoers } from './social.js';
-import { openReport } from './report.js';
 import { renderLookingSection } from './looking.js';
 
 export function openDetail(id) {
@@ -136,13 +135,6 @@ export function openDetail(id) {
     state._goersChannel = subscribeGoers(ev.id, () => renderWhoGoing(whoGoing, ev.id));
   }
 
-  // ── Report button ──────────────────────────────────
-  const btnReport = $('btn-detail-report');
-  if (btnReport) {
-    btnReport.onclick = () => openReport('event', ev.id, ev.title);
-    btnReport.style.display = '';
-  }
-
   // ── Admin actions (edit/delete) ────────────────────
   if (isAdmin()) {
     let adminRow = $('detail-admin-actions');
@@ -236,8 +228,6 @@ export function closeDetail() {
   if (socialRow) socialRow.style.display = 'none';
   const whoGoing = $('detail-who-going');
   if (whoGoing) whoGoing.innerHTML = '';
-  const btnReport = $('btn-detail-report');
-  if (btnReport) btnReport.style.display = 'none';
   const lookingContainer = $('detail-looking');
   if (lookingContainer) lookingContainer.innerHTML = '';
   TG()?.HapticFeedback?.impactOccurred('light');

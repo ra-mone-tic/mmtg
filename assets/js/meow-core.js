@@ -40,7 +40,6 @@ import { initAuth }                                 from './auth.js';
 import { loadFavorites }                            from './favorites.js';
 import { loadGoing, loadFollowing }                 from './social.js';
 import { openProfile, closeProfile }                from './profile.js';
-import { initNotifications, handleOutsideClick as handleNotifOutside } from './notifications-ui.js';
 import { closeReport }                              from './report.js';
 import { openAdminPanel, closeAdminPanel }           from './admin.js';
 
@@ -190,9 +189,8 @@ export async function boot() {
   // Загружаем события стартовой даты
   await fetchEvents(fmt(state.currentDate));
 
-  // ── Deferred: social + notifications (after UI ready) ──
+  // ── Deferred: social (after UI ready) ──
   Promise.all([loadFavorites(), loadGoing(), loadFollowing()]).catch(() => {});
-  initNotifications().catch(() => {});
 
   // Карусель
   renderCarousel();

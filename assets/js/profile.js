@@ -130,6 +130,14 @@ async function _renderProfile(modal) {
           <div class="toggle ${profile.show_follow ? 'active' : ''}" data-setting="show_follow"></div>
         </div>
       </div>`;
+      
+      // Report button
+      html += `<div class="profile-report-section" style="margin-top:16px;padding-top:14px;border-top:1px solid var(--c-soft-br)">
+        <button class="btn-report" id="profile-btn-report" style="display:flex;align-items:center;gap:6px;width:100%;height:44px;border-radius:var(--r-b);background:var(--c-glass);border:1.5px solid var(--c-glass-br);color:var(--c-t2);font-size:12.5px;font-weight:600;justify-content:center">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Сообщить об ошибке
+        </button>
+      </div>`;
     }
 
     // Friends
@@ -203,6 +211,13 @@ async function _renderProfile(modal) {
         state.user.bio = val;
         showToast('✅ Сохранено');
       } catch { showToast('Ошибка'); }
+    });
+
+    // Report button
+    body.querySelector('#profile-btn-report')?.addEventListener('click', async () => {
+      closeProfile();
+      const { openReport } = await import('./report.js');
+      openReport('user', state.user?.id || '', '');
     });
 
     // Toggle settings

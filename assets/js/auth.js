@@ -4,21 +4,11 @@ import { EDGE_BASE } from './config.js';
 import { state } from './state.js';
 import { TG } from './helpers.js';
 
-/** Check admin via Edge Function (bypasses RLS recursion) */
+/** Check admin via RPC (uses SECURITY DEFINER function, bypasses RLS) */
 async function _checkAdmin() {
   try {
-    const session = await getSession();
-    if (!session?.access_token) return false;
-    const res = await fetch(`${EDGE_BASE}/check-admin`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${session.access_token}`,
-      },
-      body: JSON.stringify({}),
-    });
-    const data = await res.json();
-    return !!data.is_admin;
+    const { data } = await supabase.rpc('is_admin');
+    return !!data;
   } catch {
     return false;
   }

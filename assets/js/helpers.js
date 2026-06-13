@@ -68,7 +68,10 @@ function _escape(s) {
 export function blocksHTML(ev) {
   if (Array.isArray(ev.blocks) && ev.blocks.length) {
     return ev.blocks
-      .map(blk => `<p>${blk.map(_escape).join("<br>")}</p>`)
+      .map(blk => {
+        const lines = Array.isArray(blk) ? blk : [String(blk)];
+        return `<p>${lines.map(_escape).join("<br>")}</p>`;
+      })
       .join('');
   }
   return _escape(ev.desc || '').replace(/\n/g, "<br>");

@@ -45,12 +45,10 @@ async function _renderProfile(modal) {
     const { data: levelData } = await supabase
       .from('user_levels').select('*').eq('level', profile.level).single();
 
-    // Check if this user is an admin
-    const { data: adminRow } = await supabase
-      .from('admin_roles').select('role').eq('user_id', uid).maybeSingle();
-    const isUserAdmin = !!adminRow;
-
     const isSelf = state.user?.id === uid;
+    // For self: use cached is_admin from auth. For others: skip (avoids RLS recursion).
+    const isUserAdmin = isSelf ? !!state.user?.is_admin : false;
+
     const stats = await _loadStats(uid);
     const friends = await loadFriends(uid);
     const favList = isSelf ? await loadFavoritesList() : [];

@@ -4,6 +4,26 @@ import { EDGE_BASE } from './config.js';
 import { state } from './state.js';
 import { TG } from './helpers.js';
 
+/** Check admin via Edge Function (bypasses RLS recursion) */
+async function _checkAdmin() {
+  try {
+    const session = await getSession();
+    if (!session?.access_token) return false;
+    const res = await fetch(`${EDGE_BASE}/check-admin`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({}),
+    });
+    const data = await res.json();
+    return !!data.is_admin;
+  } catch {
+    return false;
+  }
+}
+
 let _initPromise = null;
 
 /**
@@ -28,9 +48,7 @@ async function _doInit() {
         .eq('id', existing.user.id)
         .single();
       if (profile) {
-        const { data: adminRow } = await supabase
-          .from('admin_roles').select('role').eq('user_id', existing.user.id).maybeSingle();
-        state.user = { ...profile, is_admin: !!adminRow };
+        state.user = { ...profile, is_admin: await _checkAdmin() };
         console.info('[MEOW] Auth restored from session');
         return state.user;
       }
@@ -69,10 +87,7 @@ async function _doInit() {
     });
 
     // ── Проверка прав администратора ──────────────────
-    const { data: adminRow } = await supabase
-      .from('admin_roles').select('role').eq('user_id', result.profile.id).maybeSingle();
-
-    state.user = { ...result.profile, is_admin: !!adminRow };
+    state.user = { ...result.profile, is_admin: await _checkAdmin() };
     console.info('[MEOW] Authenticated via Telegram initData');
     return state.user;
 

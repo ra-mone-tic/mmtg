@@ -359,13 +359,19 @@ export async function boot() {
     // Деталки уже закрыты, ничего не делаем
   });
 
-  // Свайп вниз для закрытия карточки мероприятия
+  // Свайп вниз для закрытия карточки мероприятия, свайп вверх — открытие деталки
   let cardSwipeStartY = 0;
   const cardEl = $('event-card');
   if (cardEl) {
     cardEl.addEventListener('touchstart', e => { cardSwipeStartY = e.touches[0].clientY; }, { passive: true });
     cardEl.addEventListener('touchend',   e => {
-      if (e.changedTouches[0].clientY - cardSwipeStartY > 72) closeCard();
+      const delta = e.changedTouches[0].clientY - cardSwipeStartY;
+      if (delta > 72) {
+        closeCard();
+      } else if (delta < -72 && state.activeId) {
+        TG()?.HapticFeedback?.selectionChanged();
+        openDetail(state.activeId);
+      }
     }, { passive: true });
   }
 

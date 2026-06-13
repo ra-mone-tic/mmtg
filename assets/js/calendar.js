@@ -28,6 +28,9 @@ export function initCalendar({ onDateChange }) {
   calNext?.addEventListener('click',    () => { _calViewDate.setMonth(_calViewDate.getMonth() + 1); _render(); });
   calOverlay?.addEventListener('click', closeCalendar);
 
+  // Свайпы для календаря — инициализируем один раз
+  _initSwipe();
+
   // \u041a\u043d\u043e\u043f\u043a\u0430 "\u0412\u044b\u0431\u0440\u0430\u0442\u044c \u043d\u0435\u0441\u043a\u043e\u043b\u044c\u043a\u043e" \u2192 "\u041f\u0440\u0438\u043c\u0435\u043d\u0438\u0442\u044c"
   calMulti?.addEventListener('click', () => {
     if (state.multiSelect) {
@@ -74,8 +77,6 @@ export function openCalendar() {
   const modal = $('calendar-modal');
   if (modal) { modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); }
   setPanel(false);
-  // Свайпы для календаря
-  _initSwipe();
 }
 
 export function closeCalendar() {

@@ -100,6 +100,16 @@ def sync_to_supabase(events: List[dict]) -> dict:
     # Map events to Supabase schema
     rows = []
     for e in events:
+        # Fix tags: ensure it's a list (some events store it as a string)
+        tags = e.get("tags", [])
+        if isinstance(tags, str):
+            tags = [tags] if tags else []
+
+        # Fix description_blocks: flatten nested lists [["a"]] -> ["a"]
+        db = e.get("description_blocks", [])
+        if isinstance(db, list) and db and isinstance(db[0], list):
+            db = [item for sub in db if isinstance(sub, list) for item in sub]
+
         row = {
             "id":               e.get("id", ""),
             "date":             e.get("date", ""),
@@ -107,10 +117,10 @@ def sync_to_supabase(events: List[dict]) -> dict:
             "location":         e.get("location") or e.get("venue", ""),
             "address":          e.get("address") or e.get("location", ""),
             "time":             e.get("time", ""),
-            "tags":             e.get("tags", []),
+            "tags":             tags,
             "short_description": e.get("short_description", ""),
             "full_description": e.get("full_description", ""),
-            "description_blocks": e.get("description_blocks", []),
+            "description_blocks": db,
             "contacts":         e.get("contacts", ""),
             "lat":              e.get("lat"),
             "lon":              e.get("lon"),

@@ -611,17 +611,24 @@ function _renderEventForm(modal, event) {
   const previewImg = body.querySelector('#admin-preview-img');
   const previewRemove = body.querySelector('#admin-preview-remove');
 
+  // Store base64 fallback data
+  let _lastBase64 = '';
+
   fileInput?.addEventListener('change', async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Show preview
+    // Show preview + get base64 as fallback
     const reader = new FileReader();
     reader.onload = (re) => {
+      const dataUrl = re.target.result;
+      _lastBase64 = dataUrl;
       if (previewImg && previewWrap) {
-        previewImg.src = re.target.result;
+        previewImg.src = dataUrl;
         previewWrap.style.display = 'flex';
       }
+      // Auto-fill the URL field with base64 as temporary fallback
+      if (imageUrlInput) imageUrlInput.value = dataUrl;
     };
     reader.readAsDataURL(file);
 
@@ -641,12 +648,18 @@ function _renderEventForm(modal, event) {
 
       if (urlData?.publicUrl) {
         if (imageUrlInput) imageUrlInput.value = urlData.publicUrl;
+        _lastBase64 = '';
         showToast('✅ Изображение загружено');
       }
     } catch (err) {
-      console.warn('[MEOW] Supabase Storage upload failed, using base64 fallback:', err.message);
-      // Fallback: keep the base64 data URL in preview, show toast
-      showToast('⚠️ Не удалось загрузить в облако, используйте URL');
+      console.warn('[MEOW] Supabase Storage upload failed, keeping base64:', err.message);
+      // The base64 data URL is already in the image field as fallback
+      // Show specific error about the bucket
+      if (err.message?.includes('bucket') || err.message?.includes('not found')) {
+        showToast('⚠️ Бакет event-images не найден. Выполните миграцию SQL.');
+      } else {
+        showToast('⚠️ Изображение сохранено как base64 (будет в данных события)');
+      }
     }
   });
 
@@ -749,6 +762,8 @@ async function _submitEvent(modal, isEdit) {
 
     showToast(isEdit ? '✅ Сохранено' : '✅ Создано');
     await loadAllEvents();
+    // Trigger re-render of markers on map
+    document.dispatchEvent(new CustomEvent('meow:events-changed'));
     _renderAdminList(modal);
   } catch (err) {
     console.error('[MEOW] Admin save error:', err);

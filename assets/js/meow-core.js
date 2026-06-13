@@ -261,8 +261,12 @@ export async function boot() {
   $('admin-panel-back-btn')?.addEventListener('click', closeAdminPanel);
   $('admin-panel')?.addEventListener('click', e => e.stopPropagation());
 
-  // Custom event: events changed (e.g. after admin delete)
-  document.addEventListener('meow:events-changed', () => {
+  // Custom event: events changed (e.g. after admin create/edit/delete)
+  document.addEventListener('meow:events-changed', async () => {
+    // Re-fetch events for current date after data reload
+    const currentStr = fmt(state.currentDate);
+    state.events = filterByDate(currentStr);
+    state.allEvents = state.events;
     renderMarkers();
     renderCarousel();
     renderList();
@@ -453,16 +457,8 @@ export async function boot() {
     $(id)?.addEventListener('click', e => e.stopPropagation());
   });
 
-  // Swipe down to close admin panel
-  let adminSwipeY = 0;
-  const adminPanelEl = $('admin-panel');
-  if (adminPanelEl) {
-    adminPanelEl.addEventListener('touchstart', e => { adminSwipeY = e.touches[0].clientY; }, { passive: true });
-    adminPanelEl.addEventListener('touchend', e => {
-      const adminBody = adminPanelEl.querySelector('.admin-body');
-      if (adminBody?.scrollTop === 0 && e.changedTouches[0].clientY - adminSwipeY > 72) closeAdminPanel();
-    }, { passive: true });
-  }
+  // Swipe down to close admin panel — DISABLED to prevent accidental close while editing
+  // (intentionally left blank)
 
   // ── Deep linking: ?place=ID ──────────────────────────
   const placeId = new URLSearchParams(window.location.search).get('place');

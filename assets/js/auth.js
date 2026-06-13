@@ -53,7 +53,40 @@ async function _doInit() {
   try {
     const webapp   = TG();
     const initData = webapp?.initData;
+    const tgUser   = webapp?.initDataUnsafe?.user;
+
+    // Если initData пуст — пытаемся войти напрямую (Telegram Desktop fallback)
     if (!initData) {
+      if (tgUser) {
+        console.info('[MEOW] No initData but tgUser found — trying direct auth');
+        try {
+          const res = await fetch(`${EDGE_BASE}/direct-auth`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              telegram_id: tgUser.id,
+              first_name: tgUser.first_name,
+              last_name: tgUser.last_name,
+              username: tgUser.username,
+              photo_url: tgUser.photo_url,
+            }),
+          });
+          const result = await res.json();
+          if (!res.ok || !result.session) {
+            console.warn('[MEOW] Direct auth failed:', result.error);
+          } else {
+            await supabase.auth.setSession({
+              access_token: result.session.access_token,
+              refresh_token: result.session.refresh_token,
+            });
+            state.user = { ...result.profile, is_admin: await _checkAdmin() };
+            console.info('[MEOW] Direct auth fallback succeeded');
+            return state.user;
+          }
+        } catch (e) {
+          console.warn('[MEOW] Direct auth fallback failed:', e.message);
+        }
+      }
       console.info('[MEOW] No Telegram initData — running without auth');
       return null;
     }

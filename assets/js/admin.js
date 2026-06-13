@@ -1,18 +1,28 @@
 // ─── Admin Panel — CRUD Events & Reports ───────────────
-import { $, posterGrad, renderTags, ICONS } from './helpers.js';
+import { $, posterGrad, renderTags, ICONS, TG } from './helpers.js';
 import { state } from './state.js';
 import { supabase } from './supabase.js';
 import { isAdmin, isAuthed } from './auth.js';
 import { showToast } from './toast.js';
 import { loadAllEvents, normalizeDate, parseDate } from './data.js';
-import { TG } from './helpers.js';
 
 // ── Available event tags ──────────────────────────────
-const EVENT_TAGS = [
+let EVENT_TAGS = [
   'Концерт', 'Выставка', 'Вечеринка', 'Фестиваль',
   'Лекция', 'Йога', 'Бесплатно', 'Спорт',
   'Кино', 'Мастер-класс', 'Танцы', 'Театр',
 ];
+
+// ── Load custom tags from Supabase ────────────────────
+async function _loadTags() {
+  try {
+    const { data, error } = await supabase.from('tags').select('name').order('name');
+    if (!error && data?.length) {
+      const extra = data.map(t => t.name).filter(n => !EVENT_TAGS.includes(n));
+      EVENT_TAGS = [...EVENT_TAGS, ...extra];
+    }
+  } catch { /* ignore */ }
+}
 
 // ── Open / Close ──────────────────────────────────────
 
@@ -252,11 +262,155 @@ function _bindEventActions(container) {
   });
 }
 
+// ─── Autocomplete for Location field ────────────────────
+
+let _locationAutocompleteTimer = null;
+
+function _initLocationAutocomplete() {
+  const input = document.getElementById('admin-f-location');
+  const container = document.getElementById('admin-location-suggestions');
+  if (!input || !container) return;
+
+  input.addEventListener('input', () => {
+    clearTimeout(_locationAutocompleteTimer);
+    const val = input.value.trim();
+    if (val.length < 2) {
+      container.innerHTML = '';
+      container.classList.remove('open');
+      return;
+    }
+    _locationAutocompleteTimer = setTimeout(() => {
+      _fetchLocationSuggestions(val, container, input);
+    }, 250);
+  });
+
+  // Close on blur
+  input.addEventListener('blur', () => {
+    setTimeout(() => {
+      container.classList.remove('open');
+    }, 200);
+  });
+
+  // Prevent closing on container click
+  container.addEventListener('mousedown', (e) => e.preventDefault());
+}
+
+function _fetchLocationSuggestions(query, container, input) {
+  const q = query.toLowerCase().trim();
+
+  // 1. Search places.json (places in state)
+  const placeResults = (state.rawPlaces || []).filter(p => {
+    const name = (p.name || '').toLowerCase();
+    const addr = (p.address || '').toLowerCase();
+    const kw = (p.keywords || []).join(' ').toLowerCase();
+    return name.includes(q) || addr.includes(q) || kw.includes(q);
+  });
+
+  // 2. Search geocode_cache.json (load fresh from file)
+  let cacheResults = [];
+  try {
+    // Try to match keys from a preloaded cache (we'll lazy-load it)
+    if (window._geocodeCache) {
+      cacheResults = Object.keys(window._geocodeCache)
+        .filter(key => key.toLowerCase().includes(q))
+        .map(key => ({
+          _cacheKey: key,
+          name: key,
+          lat: window._geocodeCache[key]?.[0],
+          lon: window._geocodeCache[key]?.[1],
+        }));
+    }
+  } catch { /* ignore */ }
+
+  const allResults = [
+    ...placeResults.map(p => ({ type: 'place', data: p })),
+    ...cacheResults.map(r => ({ type: 'cache', data: r })),
+  ];
+
+  if (!allResults.length) {
+    container.innerHTML = '';
+    container.classList.remove('open');
+    return;
+  }
+
+  // Deduplicate by name
+  const seen = new Set();
+  const unique = [];
+  for (const r of allResults) {
+    const label = r.type === 'place' ? r.data.name : r.data.name;
+    if (!seen.has(label.toLowerCase())) {
+      seen.add(label.toLowerCase());
+      unique.push(r);
+    }
+  }
+
+  container.innerHTML = unique.slice(0, 10).map(r => {
+    if (r.type === 'place') {
+      const p = r.data;
+      return `<div class="admin-sug-item" data-type="place" data-place-id="${p.id}">
+        <div class="admin-sug-icon">📍</div>
+        <div class="admin-sug-text">${_esc(p.name)}</div>
+        <div class="admin-sug-sub">${_esc(p.address || '')}</div>
+      </div>`;
+    } else {
+      const c = r.data;
+      return `<div class="admin-sug-item" data-type="cache" data-lat="${c.lat}" data-lon="${c.lon}">
+        <div class="admin-sug-icon">🗺️</div>
+        <div class="admin-sug-text">${_esc(c.name)}</div>
+      </div>`;
+    }
+  }).join('');
+  container.classList.add('open');
+
+  // Bind clicks
+  container.querySelectorAll('.admin-sug-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const type = el.dataset.type;
+      if (type === 'place') {
+        const placeId = el.dataset.placeId;
+        const place = state.rawPlaces.find(p => p.id === placeId);
+        if (place) {
+          document.getElementById('admin-f-location').value = place.name;
+          document.getElementById('admin-f-address').value = place.address || '';
+          const latField = document.getElementById('admin-f-lat');
+          const lonField = document.getElementById('admin-f-lon');
+          if (latField) latField.value = place.lat ?? '';
+          if (lonField) lonField.value = place.lng ?? place.lon ?? '';
+        }
+      } else if (type === 'cache') {
+        const locInput = document.getElementById('admin-f-location');
+        const addrInput = document.getElementById('admin-f-address');
+        const latField = document.getElementById('admin-f-lat');
+        const lonField = document.getElementById('admin-f-lon');
+        if (locInput) locInput.value = el.querySelector('.admin-sug-text')?.textContent || '';
+        if (addrInput) addrInput.value = el.querySelector('.admin-sug-text')?.textContent || '';
+        if (latField) latField.value = el.dataset.lat || '';
+        if (lonField) lonField.value = el.dataset.lon || '';
+      }
+      container.classList.remove('open');
+    });
+  });
+}
+
+// ── Lazy-load geocode cache ─────────────────────────────
+
+async function _ensureGeocodeCache() {
+  if (window._geocodeCache) return;
+  try {
+    const resp = await fetch('geocode_cache.json?' + Date.now());
+    window._geocodeCache = await resp.json();
+  } catch { window._geocodeCache = {}; }
+}
+
 // ── Event Form (create / edit) ────────────────────────
 
 function _renderEventForm(modal, event) {
   const body = modal.querySelector('.admin-body');
   if (!body) return;
+
+  // Preload tags from DB on first form open
+  _loadTags();
+  _ensureGeocodeCache();
 
   const isEdit = !!event;
   const title = event?.title || '';
@@ -311,9 +465,12 @@ function _renderEventForm(modal, event) {
           <input class="admin-input" id="admin-f-time" value="${_esc(time)}" placeholder="19:00">
         </div>
       </div>
-      <div class="admin-field">
-        <label class="admin-label" for="admin-f-location">Место / Локация</label>
-        <input class="admin-input" id="admin-f-location" value="${_esc(location)}" placeholder="Барн, Каштановая аллея 1а">
+      <div class="admin-field" style="position:relative">
+        <label class="admin-label" for="admin-f-location">Место / Локация
+          <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--c-t2)">(введите для подсказок)</span>
+        </label>
+        <input class="admin-input" id="admin-f-location" value="${_esc(location)}" placeholder="Барн, Каштановая аллея 1а" autocomplete="off">
+        <div class="admin-location-suggestions" id="admin-location-suggestions"></div>
       </div>
       <div class="admin-field">
         <label class="admin-label" for="admin-f-address">Адрес</label>
@@ -326,6 +483,10 @@ function _renderEventForm(modal, event) {
             const selected = tags.includes(tag);
             return `<button type="button" class="admin-tag ${selected ? 'selected' : ''}" data-tag="${_esc(tag)}">${_esc(tag)}</button>`;
           }).join('')}
+        </div>
+        <div class="admin-tag-add-row">
+          <input class="admin-input admin-tag-input" id="admin-f-new-tag" placeholder="Новый тег..." autocomplete="off">
+          <button type="button" class="admin-tag-add-btn" id="admin-f-tag-add">Добавить</button>
         </div>
       </div>
       <div class="admin-field">
@@ -341,8 +502,26 @@ function _renderEventForm(modal, event) {
         <input class="admin-input" id="admin-f-contacts" value="${_esc(contacts)}" placeholder="https://t.me/...">
       </div>
       <div class="admin-field">
-        <label class="admin-label" for="admin-f-image">URL изображения</label>
-        <input class="admin-input" id="admin-f-image" value="${_esc(imageUrl)}" placeholder="https://... или images/...">
+        <label class="admin-label">Изображение</label>
+        <div class="admin-image-row">
+          <input class="admin-input" id="admin-f-image" value="${_esc(imageUrl)}" placeholder="URL изображения (https://... или images/...)">
+          <div class="admin-file-upload-wrap">
+            <label class="admin-file-btn" for="admin-f-file">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </label>
+            <input type="file" id="admin-f-file" accept="image/png,image/jpeg,image/webp" style="display:none">
+          </div>
+        </div>
+        <div id="admin-image-preview" class="admin-image-preview" style="display:none">
+          <img id="admin-preview-img" alt="Preview">
+          <button type="button" class="admin-preview-remove" id="admin-preview-remove">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
       </div>
       <div class="admin-row-2">
         <div class="admin-field">
@@ -377,21 +556,132 @@ function _renderEventForm(modal, event) {
     });
   });
 
-  // Active toggle
+  // ── Custom tag input ──────────────────────────────────
+  const tagInput = body.querySelector('#admin-f-new-tag');
+  const tagAddBtn = body.querySelector('#admin-f-tag-add');
+
+  function addCustomTag() {
+    const val = tagInput?.value?.trim();
+    if (!val) return;
+    // Check if already present in EVENT_TAGS
+    const existingTag = body.querySelector(`.admin-tag[data-tag="${_esc(val)}"]`);
+    if (existingTag) {
+      existingTag.classList.add('selected');
+      tagInput.value = '';
+      return;
+    }
+    // Add a new tag chip
+    const container = body.querySelector('#admin-f-tags');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'admin-tag selected';
+    btn.dataset.tag = val;
+    btn.textContent = val;
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      btn.classList.toggle('selected');
+    });
+    container.appendChild(btn);
+    tagInput.value = '';
+    // Also save to EVENT_TAGS for future
+    if (!EVENT_TAGS.includes(val)) {
+      EVENT_TAGS.push(val);
+      // Save tag to Supabase tags table (fire and forget)
+      supabase.from('tags').upsert({ name: val }, { onConflict: 'name' }).catch(() => {});
+    }
+  }
+
+  tagAddBtn?.addEventListener('click', addCustomTag);
+  tagInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addCustomTag();
+    }
+  });
+
+  // ── Active toggle ─────────────────────────────────────
   body.querySelector('#admin-f-active')?.addEventListener('click', (e) => {
     e.currentTarget.classList.toggle('active');
   });
 
-  // Cancel
+  // ── Image upload ──────────────────────────────────────
+  const fileInput = body.querySelector('#admin-f-file');
+  const imageUrlInput = body.querySelector('#admin-f-image');
+  const previewWrap = body.querySelector('#admin-image-preview');
+  const previewImg = body.querySelector('#admin-preview-img');
+  const previewRemove = body.querySelector('#admin-preview-remove');
+
+  fileInput?.addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = (re) => {
+      if (previewImg && previewWrap) {
+        previewImg.src = re.target.result;
+        previewWrap.style.display = 'flex';
+      }
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to Supabase Storage
+    try {
+      const fileName = `events/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const { data, error } = await supabase.storage
+        .from('event-images')
+        .upload(fileName, file, { upsert: true, contentType: file.type });
+
+      if (error) throw error;
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('event-images')
+        .getPublicUrl(fileName);
+
+      if (urlData?.publicUrl) {
+        if (imageUrlInput) imageUrlInput.value = urlData.publicUrl;
+        showToast('✅ Изображение загружено');
+      }
+    } catch (err) {
+      console.warn('[MEOW] Supabase Storage upload failed, using base64 fallback:', err.message);
+      // Fallback: keep the base64 data URL in preview, show toast
+      showToast('⚠️ Не удалось загрузить в облако, используйте URL');
+    }
+  });
+
+  // Remove preview
+  previewRemove?.addEventListener('click', () => {
+    if (previewWrap) previewWrap.style.display = 'none';
+    if (previewImg) previewImg.src = '';
+    if (fileInput) fileInput.value = '';
+    if (imageUrlInput) imageUrlInput.value = '';
+  });
+
+  // Update preview when URL changes
+  imageUrlInput?.addEventListener('input', () => {
+    const url = imageUrlInput.value.trim();
+    if (url && previewImg && previewWrap) {
+      previewImg.src = url;
+      previewWrap.style.display = 'flex';
+    } else if (previewWrap) {
+      previewWrap.style.display = 'none';
+    }
+  });
+
+  // ── Cancel ────────────────────────────────────────────
   body.querySelector('#admin-f-cancel')?.addEventListener('click', () => {
     _renderAdminList(modal);
   });
 
-  // Submit
+  // ── Submit ────────────────────────────────────────────
   body.querySelector('#admin-event-form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     await _submitEvent(modal, isEdit);
   });
+
+  // ── Initialize location autocomplete ────────────────
+  _initLocationAutocomplete();
 }
 
 async function _submitEvent(modal, isEdit) {

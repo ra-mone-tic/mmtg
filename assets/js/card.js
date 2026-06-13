@@ -40,9 +40,15 @@ export function openCard(id) {
     // Проверяем, совпадает ли venue с каким-либо местом
     const venueTag = elVenue.closest('.venue-tag');
     if (venueTag) {
-      const matchedPlace = state.rawPlaces.find(p =>
-        p.keywords?.some(kw => ev.venue.toLowerCase().includes(kw.toLowerCase()))
-      );
+      const matchedPlace = state.rawPlaces.find(p => {
+        const venueLower = ev.venue.toLowerCase();
+        const kw = p.keywords || [];
+        // Сначала ищем по keywords
+        if (kw.some(k => venueLower.includes(k.toLowerCase()))) return true;
+        // Fallback: ищем по названию места
+        if (p.name && venueLower.includes(p.name.toLowerCase())) return true;
+        return false;
+      });
       if (matchedPlace) {
         venueTag.classList.add('is-link');
         venueTag.onclick = (e) => {

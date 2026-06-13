@@ -35,11 +35,13 @@ export function openPlaceDetail(id) {
       img.src = imageUrl;
       img.alt = place.name;
       img.loading = 'lazy';
-      img.onerror = () => {
+      const onImageFail = () => {
         state.placeDetailHasImage = false;
         if (poster) poster.style.cursor = 'default';
         posterInner.innerHTML = _placeholderImg(place.name);
       };
+      img.onerror = onImageFail;
+      img.onabort = onImageFail;
       img.onload = () => {
         state.placeDetailHasImage = true;
         if (poster) poster.style.cursor = 'zoom-in';

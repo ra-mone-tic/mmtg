@@ -12,7 +12,14 @@ export async function loadPlaces() {
       .eq('is_active', true);
     if (error) throw error;
     if (data?.length) {
-      state.rawPlaces = data.map(p => ({ ...p, imageUrl: p.image_url }));
+      state.rawPlaces = data.map(p => ({
+        ...p,
+        imageUrl: p.image_url || p.imageUrl || null,
+        // Убеждаемся, что keywords — массив (из Supabase может прийти как pg array или строка)
+        keywords: Array.isArray(p.keywords) ? p.keywords
+          : typeof p.keywords === 'string' ? p.keywords.split(',').map(s => s.trim()).filter(Boolean)
+          : [],
+      }));
       return state.rawPlaces;
     }
   } catch (err) {

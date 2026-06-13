@@ -190,7 +190,46 @@ async function _renderProfile(modal) {
       </div>`;
     }
 
+    // ── DEBUG: admin diagnostic (self only) ────────────
+    if (isSelf) {
+      html += `<div id="admin-debug" style="margin-top:16px;padding:12px;border-radius:var(--r-b);background:var(--c-glass);border:1px solid var(--c-glass-br);font-size:11px;color:var(--c-t2);font-family:monospace;word-break:break-all">
+        <div style="font-weight:700;margin-bottom:6px;color:var(--c-t1)">🔍 Admin Debug</div>
+        <div>user.id:      ${state.user?.id}</div>
+        <div>isSelf:       ${isSelf}</div>
+        <div>isAdmin():    ${isAdmin()}</div>
+        <div>isUserAdmin:  ${isUserAdmin}</div>
+        <div>state.user:   ${JSON.stringify(state.user ?? {})}</div>
+        <div>profile level: ${levelBadge}</div>
+        <div id="admin-debug-check" style="margin-top:4px">check-admin: loading…</div>
+      </div>`;
+    }
+
     body.innerHTML = html;
+
+    // ── DEBUG async: call check-admin edge function ────
+    if (isSelf) {
+      (async () => {
+        try {
+          const { getSession } = await import('./supabase.js');
+          const session = await getSession();
+          const token = session?.access_token;
+          if (!token) {
+            body.querySelector('#admin-debug-check').textContent = 'check-admin: NO TOKEN';
+            return;
+          }
+          const { EDGE_BASE } = await import('./config.js');
+          const res = await fetch(`${EDGE_BASE}/check-admin`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body: '{}',
+          });
+          const data = await res.json();
+          body.querySelector('#admin-debug-check').textContent = 'check-admin: ' + JSON.stringify(data);
+        } catch (e) {
+          body.querySelector('#admin-debug-check').textContent = 'check-admin: ERROR ' + e.message;
+        }
+      })();
+    }
 
     // ── Bind events ────────────────────────────────────
     // Bio save

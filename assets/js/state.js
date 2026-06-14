@@ -78,4 +78,8 @@ export const state = {
   // ── Data source ──────────────────────────────────────
   /** true если данные загружены из Supabase, false = из локального JSON */
   usingSupabase: false,
+
+  // ── Realtime ─────────────────────────────────────────
+  /** Active Realtime broadcast channel (events:klgd) или null */
+  eventsBroadcastChannel: null,
 };

@@ -37,6 +37,7 @@ import { initPlaceDetail, openPlaceDetail, closePlaceDetail } from './place-deta
 
 // ── Auth / Social / Profile / Notifications ────────────
 import { initAuth }                                 from './auth.js';
+import { subscribeToEventsBroadcast }               from './realtime.js';
 import { loadFavorites }                            from './favorites.js';
 import { loadGoing, loadFollowing }                 from './social.js';
 import { openProfile, closeProfile }                from './profile.js';
@@ -137,6 +138,9 @@ export async function boot() {
     loadAllEvents(),
     loadPlaces(),
   ]);
+
+  // ── Realtime broadcast подписка на изменения событий ──
+  subscribeToEventsBroadcast();
 
   // Стартовая дата: сегодня или ближайшая с событиями
   state.currentDate = new Date(); state.currentDate.setHours(0, 0, 0, 0);

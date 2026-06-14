@@ -131,7 +131,7 @@ export async function boot() {
   // ── Auth + Events + Places — параллельно ────────────
   // Auth не зависит от событий, события не зависят от auth.
   // Social и notifications загружаем ПОСЛЕ карты (fire & forget).
-  initAvatar();
+  // initAvatar() перенесён внутрь onMapReady (см. ниже) — аватар после auth.
 
   await Promise.all([
     initAuth(),
@@ -177,6 +177,9 @@ export async function boot() {
 
       // ✅ UI готов — теперь можно сообщить Telegram
       webapp?.ready();
+
+      // Аватар — после auth (initAuth уже завершён)
+      initAvatar();
 
       addPlaceDots(state.rawPlaces, p => {
         closeCard();

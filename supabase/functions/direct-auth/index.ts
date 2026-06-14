@@ -16,6 +16,7 @@ serve(async (req) => {
 
   try {
     const { telegram_id, first_name, last_name, username, photo_url } = await req.json();
+    console.log(`[AUTH_DIAG:direct-auth] start | telegram_id=${telegram_id} | username=${username ?? 'null'}`);
 
     if (!telegram_id) {
       return new Response(JSON.stringify({ error: "telegram_id required" }), {
@@ -42,6 +43,7 @@ serve(async (req) => {
     const email = `tg_${telegram_id}@meow.app`;
 
     // ── Supabase admin client ──────────────────────────
+    console.log(`[AUTH_DIAG:direct-auth] creating admin client`);
     const admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
@@ -51,35 +53,44 @@ serve(async (req) => {
     // ── Create auth user if not exists ────────────────
     let authUserId;
     try {
+      console.log(`[AUTH_DIAG:direct-auth] trying createUser`);
       const { data: created } = await admin.auth.admin.createUser({
         email, password,
         email_confirm: true,
         user_metadata: { telegram_id },
       });
       authUserId = created?.user?.id;
+      console.log(`[AUTH_DIAG:direct-auth] createUser result | authUserId=${authUserId ?? 'null'}`);
     } catch {
+      console.log(`[AUTH_DIAG:direct-auth] createUser failed, looking up existing user`);
       const { data: list } = await admin.auth.admin.listUsers({ perPage: 1000 });
       authUserId = list?.users?.find(u => u.email === email)?.id;
+      console.log(`[AUTH_DIAG:direct-auth] existing user lookup | authUserId=${authUserId ?? 'null'}`);
     }
     if (!authUserId) {
+      console.log(`[AUTH_DIAG:direct-auth] ERROR: could not resolve auth user`);
       return new Response(JSON.stringify({ error: "Could not resolve auth user" }), {
         status: 500, headers: { ...CORS, "Content-Type": "application/json" },
       });
     }
 
     // ── Sign in ────────────────────────────────────────
+    console.log(`[AUTH_DIAG:direct-auth] signing in | authUserId=${authUserId}`);
     const regular = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!
     );
     const { data: signIn, error: signInErr } = await regular.auth.signInWithPassword({ email, password });
     if (signInErr || !signIn?.session) {
+      console.log(`[AUTH_DIAG:direct-auth] sign-in failed | error=${signInErr?.message ?? 'null session'}`);
       return new Response(JSON.stringify({ error: "Sign-in failed" }), {
         status: 500, headers: { ...CORS, "Content-Type": "application/json" },
       });
     }
+    console.log(`[AUTH_DIAG:direct-auth] sign-in OK | hasSession=true`);
 
     // ── Upsert profile ────────────────────────────────
+    console.log(`[AUTH_DIAG:direct-auth] upserting profile`);
     await admin.from("profiles").upsert({
       id: authUserId,
       telegram_id,
@@ -91,11 +102,16 @@ serve(async (req) => {
     }, { onConflict: "id" });
 
     // ── Load profile ──────────────────────────────────
+    console.log(`[AUTH_DIAG:direct-auth] loading profile`);
     const { data: profile } = await admin
       .from("profiles").select("*").eq("id", authUserId).single();
+    console.log(`[AUTH_DIAG:direct-auth] profile loaded | hasProfile=!!${!!profile}`);
 
+    console.log(`[AUTH_DIAG:direct-auth] checking admin_roles`);
     const { data: adminRow } = await admin
       .from("admin_roles").select("role").eq("user_id", authUserId).single();
+
+    console.log(`[AUTH_DIAG:direct-auth] success | is_admin=${!!adminRow}`);
 
     return new Response(JSON.stringify({
       session: signIn.session,

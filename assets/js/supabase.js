@@ -3,12 +3,56 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { SUPABASE_CONFIG, EDGE_BASE } from './config.js';
 import { state } from './state.js';
 
+// ── Custom storage with fallback ─────────────────────
+// Telegram Desktop WebView часто блокирует localStorage.
+// Пробуем localStorage → sessionStorage → in-memory Map.
+function makeStorage() {
+  const memory = new Map();
+  const api = {
+    getItem(key) {
+      try { return localStorage.getItem(key); }
+      catch {
+        try { return sessionStorage.getItem(key); }
+        catch { return memory.get(key) ?? null; }
+      }
+    },
+    setItem(key, value) {
+      try { localStorage.setItem(key, value); return; }
+      catch {
+        try { sessionStorage.setItem(key, value); return; }
+        catch { memory.set(key, value); }
+      }
+    },
+    removeItem(key) {
+      try { localStorage.removeItem(key); }
+      catch {
+        try { sessionStorage.removeItem(key); }
+        catch { memory.delete(key); }
+      }
+    },
+  };
+  // Проверка, работает ли localStorage вообще
+  try {
+    const k = '__storage_test__';
+    localStorage.setItem(k, '1');
+    localStorage.removeItem(k);
+    console.log('[MEOW] Storage: localStorage OK');
+  } catch {
+    console.warn('[MEOW] Storage: localStorage failed, fallback to ' +
+      (typeof sessionStorage !== 'undefined' ? 'sessionStorage' : 'in-memory'));
+  }
+  return api;
+}
+
+const customStorage = makeStorage();
+
 // ── Client singleton ─────────────────────────────────
 export const supabase = createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY, {
   auth: {
     persistSession  : true,
     autoRefreshToken: true,
     detectSessionInUrl: false,
+    storage: customStorage,
   },
   global: {
     headers: {

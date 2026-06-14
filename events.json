@@ -210,8 +210,7 @@
     "full_description": "Танцевальный фестиваль с бесплатным входом для зрителей. Три сцены, шоукейсы, баттлы, диджеи.",
     "contacts": "",
     "lat": 54.6964389,
-    "lon": 20.5163352,
-    "imageUrl": "images/21510ab0db69.jpg"
+    "lon": 20.5163352
   },
   {
     "id": "b8e062970608",
@@ -261,8 +260,7 @@
     "contacts": "https://t.me/tainik_artgallery",
     "lat": 54.710309917438,
     "lon": 20.491058565905,
-    "tg_message_id": 7590,
-    "imageUrl": "images/2ee06dc25467.jpg"
+    "tg_message_id": 7590
   },
   {
     "id": "c9c5c7449bb2",

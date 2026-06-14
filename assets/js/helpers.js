@@ -77,6 +77,23 @@ export function blocksHTML(ev) {
   return _escape(ev.desc || '').replace(/\n/g, "<br>");
 }
 
+/**
+ * Рендерит blocks в inline-HTML (без <p>).
+ * Используется в мини-карточке, где -webkit-line-clamp работает
+ * только с инлайновым содержимым (WebKit/iOS).
+ */
+export function cardDescHTML(ev) {
+  if (Array.isArray(ev.blocks) && ev.blocks.length) {
+    return ev.blocks
+      .map(blk => {
+        const lines = Array.isArray(blk) ? blk : [String(blk)];
+        return lines.map(_escape).join("<br>");
+      })
+      .join('<br><br>');
+  }
+  return _escape(ev.desc || '').replace(/\n/g, "<br>");
+}
+
 // ─── Tags ────────────────────────────────────────────
 
 /**

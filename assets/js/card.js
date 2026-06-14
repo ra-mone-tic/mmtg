@@ -1,5 +1,5 @@
 // \u2500\u2500\u2500 Event Card \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-import { $, metaHTML, renderTags, blocksHTML } from './helpers.js';
+import { $, metaHTML, renderTags, cardDescHTML } from './helpers.js';
 import { addChip } from './search.js';
 import { state } from './state.js';
 import { clearPinsActive, setPinActive } from './map-core.js';
@@ -63,7 +63,7 @@ export function openCard(id) {
     }
   }
   if (elTitle) elTitle.textContent = ev.title;
-  if (elDesc)  elDesc.innerHTML    = blocksHTML(ev);
+  if (elDesc)  elDesc.innerHTML    = cardDescHTML(ev);
   // \u0414\u043b\u044f \u043a\u0430\u0440\u0442\u043e\u0447\u043a\u0438 \u043d\u0435 \u043f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u043c \u0430\u0434\u0440\u0435\u0441 (\u043e\u043d \u0443\u0436\u0435 \u0432 venue-tag)
   if (elMeta)  elMeta.innerHTML    = metaHTML(ev, false);
   renderTags(ev.tags, 'card-tags', addChip);

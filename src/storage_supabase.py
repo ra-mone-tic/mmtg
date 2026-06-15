@@ -1,35 +1,35 @@
 """
 MeowAfisha · src/storage_supabase.py
-Загрузка/удаление изображений в Supabase Storage и upsert событий через supabase-py.
+Загрузка/удаление изображений в Supabase Storage и upsert событий через REST API.
 """
 from __future__ import annotations
 
+import json
 import logging
 from typing import Any, Dict
 
-from supabase import create_client, Client
+import requests
 
 from .config import SUPABASE_URL, SUPABASE_SERVICE_KEY
+from .utils  import session
 
 logger = logging.getLogger(__name__)
 
-# ─── Клиент (service_role — bypass RLS) ──────────────
-
-_supabase: Client | None = None
-
-
-def _get_client() -> Client | None:
-    global _supabase
-    if _supabase is not None:
-        return _supabase
-    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
-        logger.warning("Supabase не настроен — storage недоступен")
-        return None
-    _supabase = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
-    return _supabase
-
-
 BUCKET = "event-images"
+
+
+def _headers() -> dict:
+    return {
+        "apikey": SUPABASE_SERVICE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+    }
+
+
+def _storage_headers() -> dict:
+    return {
+        **_headers(),
+        "Content-Type": "application/octet-stream",
+    }
 
 
 # ─── Storage ─────────────────────────────────────────
@@ -40,45 +40,62 @@ def upload_event_image(event_id: str, image_data: bytes, content_type: str = "im
     Загружает изображение в бакет event-images и возвращает публичный URL.
     Если файл уже существует — перезаписывает.
     """
-    client = _get_client()
-    if not client:
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        logger.warning("Supabase не настроен — storage недоступен")
         return None
 
+    base = SUPABASE_URL.rstrip("/")
     file_path = f"{event_id}.jpg"
 
+    # 1. Удаляем старый файл (игнорируем ошибку — его может не быть)
     try:
-        # Пытаемся удалить старый файл (если есть)
-        try:
-            client.storage.from_(BUCKET).remove([file_path])
-        except Exception:
-            pass  # файла не было — ок
-
-        # Загружаем
-        client.storage.from_(BUCKET).upload(
-            path=file_path,
-            file=image_data,
-            file_options={"content-type": content_type},
+        session.delete(
+            f"{base}/storage/v1/object/{BUCKET}/{file_path}",
+            headers=_headers(),
+            timeout=15,
         )
+    except Exception:
+        pass
+
+    # 2. Загружаем новый
+    try:
+        resp = session.post(
+            f"{base}/storage/v1/object/{BUCKET}/{file_path}",
+            headers=_storage_headers(),
+            data=image_data,
+            timeout=30,
+        )
+        if resp.status_code not in (200, 201):
+            logger.error(f"Ошибка загрузки изображения: HTTP {resp.status_code} {resp.text[:200]}")
+            return None
         logger.info(f"Загружено изображение в Storage: {file_path}")
     except Exception as e:
         logger.error(f"Ошибка загрузки {file_path} в Storage: {e}")
         return None
 
-    # Публичный URL
-    public_url = client.storage.from_(BUCKET).get_public_url(file_path)
+    # 3. Публичный URL
+    public_url = f"{base}/storage/v1/object/public/{BUCKET}/{file_path}"
     return public_url
 
 
 def delete_event_image(event_id: str) -> None:
     """Удаляет изображение из Storage."""
-    client = _get_client()
-    if not client:
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
         return
 
+    base = SUPABASE_URL.rstrip("/")
     file_path = f"{event_id}.jpg"
+
     try:
-        client.storage.from_(BUCKET).remove([file_path])
-        logger.info(f"Удалено изображение из Storage: {file_path}")
+        resp = session.delete(
+            f"{base}/storage/v1/object/{BUCKET}/{file_path}",
+            headers=_headers(),
+            timeout=15,
+        )
+        if resp.status_code in (200, 204):
+            logger.info(f"Удалено изображение из Storage: {file_path}")
+        else:
+            logger.warning(f"Не удалось удалить {file_path}: HTTP {resp.status_code}")
     except Exception as e:
         logger.warning(f"Не удалось удалить {file_path} из Storage: {e}")
 
@@ -88,12 +105,13 @@ def delete_event_image(event_id: str) -> None:
 
 def upsert_event(event: Dict[str, Any]) -> dict:
     """
-    Вставляет или обновляет событие в таблицу events через service_role.
+    Вставляет или обновляет событие в таблицу events через REST API (service_role).
     Возвращает {"upserted": 1} или {"error": "..."}.
     """
-    client = _get_client()
-    if not client:
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
         return {"error": "Supabase не настроен"}
+
+    base = SUPABASE_URL.rstrip("/")
 
     # Маппинг полей (соответствует схеме БД)
     tags = event.get("tags", [])
@@ -124,9 +142,23 @@ def upsert_event(event: Dict[str, Any]) -> dict:
     }
 
     try:
-        client.table("events").upsert(data, on_conflict="id").execute()
-        logger.info(f"Upsert события {data['id']}: {data['title']}")
-        return {"upserted": 1}
+        resp = session.post(
+            f"{base}/rest/v1/events",
+            headers={
+                **_headers(),
+                "Content-Type": "application/json",
+                "Prefer": "resolution=merge-duplicates",
+            },
+            json=[data],
+            timeout=30,
+        )
+        if resp.status_code in (200, 201):
+            logger.info(f"Upsert события {data['id']}: {data['title']}")
+            return {"upserted": 1}
+        else:
+            err = resp.text[:300]
+            logger.error(f"Ошибка upsert события {data['id']}: HTTP {resp.status_code} {err}")
+            return {"error": f"HTTP {resp.status_code}: {err}"}
     except Exception as e:
         logger.error(f"Ошибка upsert события {data['id']}: {e}")
         return {"error": str(e)}

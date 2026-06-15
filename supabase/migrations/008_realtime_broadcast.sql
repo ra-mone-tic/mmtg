@@ -2,7 +2,7 @@
 -- MEOW! — Realtime broadcast triggers for all UI tables
 --
 -- При любом INSERT/UPDATE/DELETE на указанных таблицах
--- шлём broadcast-сообщение в канал events:klgd.
+-- шлём broadcast-сообщение в канал realtime:public:events:klgd.
 -- Клиент (assets/js/realtime.js) подписан на этот канал
 -- и перезагружает события с debounce 500ms.
 -- ═══════════════════════════════════════════════════════
@@ -10,20 +10,19 @@
 -- ── Broadcast function ─────────────────────────────────
 -- Отправляет broadcast-событие в канал events:klgd
 -- с информацией об операции и затронутой таблице.
+-- Использует pg_notify (совместимо с новой версией Supabase Realtime).
 CREATE OR REPLACE FUNCTION public.broadcast_events_changed()
 RETURNS TRIGGER
 LANGUAGE plpgsql
 SET search_path = public
 AS $$
 BEGIN
-  PERFORM realtime.send(
-    'events:klgd',                                  -- topic (совпадает с клиентом)
-    'events_changed',                               -- event name
-    jsonb_build_object(                             -- payload
+  PERFORM pg_notify(
+    'realtime:public:events:klgd',
+    jsonb_build_object(
       'op',    TG_OP,
       'table', TG_TABLE_NAME
-    ),
-    jsonb_build_object('private', false)            -- options: public broadcast
+    )::text
   );
   RETURN COALESCE(NEW, OLD);
 END;

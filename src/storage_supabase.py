@@ -25,10 +25,10 @@ def _headers() -> dict:
     }
 
 
-def _storage_headers() -> dict:
+def _storage_headers(content_type: str = "image/jpeg") -> dict:
     return {
         **_headers(),
-        "Content-Type": "application/octet-stream",
+        "Content-Type": content_type,
     }
 
 
@@ -61,7 +61,7 @@ def upload_event_image(event_id: str, image_data: bytes, content_type: str = "im
     try:
         resp = session.post(
             f"{base}/storage/v1/object/{BUCKET}/{file_path}",
-            headers=_storage_headers(),
+            headers=_storage_headers(content_type),
             data=image_data,
             timeout=30,
         )

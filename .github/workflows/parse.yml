@@ -49,63 +49,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: |
-          python -c "
-import json, os, urllib.request
-
-base_url = os.environ['SUPABASE_URL'].rstrip('/')
-api_key = os.environ['SUPABASE_SERVICE_ROLE_KEY']
-headers = {
-    'apikey': api_key,
-    'Authorization': 'Bearer ' + api_key,
-    'Accept': 'application/json',
-}
-
-# Постраничная выгрузка с лимитом 1000 записей на страницу
-all_events = []
-offset = 0
-limit = 1000
-
-while True:
-    url = f'{base_url}/rest/v1/events?select=*&order=date.asc&limit={limit}&offset={offset}'
-    req = urllib.request.Request(url, headers=headers)
-    with urllib.request.urlopen(req, timeout=30) as resp:
-        page = json.loads(resp.read().decode('utf-8'))
-    if not page:
-        break
-    all_events.extend(page)
-    offset += limit
-    if len(page) < limit:
-        break
-
-# Маппим обратно в формат events.json
-output = []
-for e in all_events:
-    output.append({
-        'id': e.get('id', ''),
-        'date': e.get('date', ''),
-        'title': e.get('title', ''),
-        'location': e.get('location', ''),
-        'address': e.get('address', ''),
-        'time': e.get('time', ''),
-        'tags': e.get('tags', []),
-        'short_description': e.get('short_description', ''),
-        'full_description': e.get('full_description', ''),
-        'description_blocks': e.get('description_blocks', []),
-        'contacts': e.get('contacts', ''),
-        'lat': e.get('lat'),
-        'lon': e.get('lon'),
-        'imageUrl': e.get('image_url', ''),
-        'image_url': e.get('image_url', ''),
-        'tg_message_id': e.get('tg_message_id'),
-        'is_active': e.get('is_active', True),
-    })
-
-with open('events.json', 'w', encoding='utf-8') as f:
-    json.dump(output, f, ensure_ascii=False, indent=2)
-
-print(f'Сгенерирован events.json: {len(output)} событий')
-"
+        run: python scripts/generate_events_json.py
 
       - name: Commit events.json
         run: |

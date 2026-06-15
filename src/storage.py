@@ -6,12 +6,11 @@ from __future__ import annotations
 
 import json
 import logging
-import urllib.request
-import urllib.error
 from pathlib import Path
 from typing import Any, List
 
-from .config import OUTPUT_JSON, CACHE_FILE, STATE_FILE, SUPABASE_URL, SUPABASE_SERVICE_KEY
+from .config import OUTPUT_JSON, CACHE_FILE, STATE_FILE
+from .storage_supabase import upsert_event
 
 logger = logging.getLogger(__name__)
 
@@ -71,78 +70,25 @@ def load_existing_events() -> List[dict]:
     return data if isinstance(data, list) else []
 
 
-def save_events(events: List[dict]) -> None:
-    events.sort(key=lambda e: e.get("date", ""))
-    save_json(OUTPUT_JSON, events)
-    logger.info(f"Сохранено {len(events)} событий в events.json")
+# save_events удалена — events.json больше не пишется парсером
 
 
 # ─── Supabase sync ───────────────────────────────────
 
 def sync_to_supabase(events: List[dict]) -> dict:
     """
-    UPSERT events into Supabase events table via REST API.
+    UPSERT events into Supabase events table via storage_supabase.upsert_event().
     Returns {"upserted": N} or {"error": "..."}.
-    Requires SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY env vars.
     """
-    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
-        logger.warning("Supabase не настроен — пропускаем синхронизацию")
-        return {"skipped": True}
+    if not events:
+        return {"upserted": 0}
 
-    url = f"{SUPABASE_URL.rstrip('/')}/rest/v1/events"
-    headers = {
-        "apikey": SUPABASE_SERVICE_KEY,
-        "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
-        "Content-Type": "application/json",
-        "Prefer": "resolution=merge-duplicates",
-    }
+    count = 0
+    for ev in events:
+        result = upsert_event(ev)
+        if result.get("error"):
+            return {"error": result["error"]}
+        count += 1
 
-    # Map events to Supabase schema
-    rows = []
-    for e in events:
-        # Fix tags: ensure it's a list (some events store it as a string)
-        tags = e.get("tags", [])
-        if isinstance(tags, str):
-            tags = [tags] if tags else []
-
-        # Fix description_blocks: flatten nested lists [["a"]] -> ["a"]
-        db = e.get("description_blocks", [])
-        if isinstance(db, list) and db and isinstance(db[0], list):
-            db = [item for sub in db if isinstance(sub, list) for item in sub]
-
-        row = {
-            "id":               e.get("id", ""),
-            "date":             e.get("date", ""),
-            "title":            e.get("title", ""),
-            "location":         e.get("location") or e.get("venue", ""),
-            "address":          e.get("address") or e.get("location", ""),
-            "time":             e.get("time", ""),
-            "tags":             tags,
-            "short_description": e.get("short_description", ""),
-            "full_description": e.get("full_description", ""),
-            "description_blocks": db,
-            "contacts":         e.get("contacts", ""),
-            "lat":              e.get("lat"),
-            "lon":              e.get("lon"),
-            "image_url":        e.get("imageUrl") or e.get("image_url") or f"images/{e.get('id', '')}.jpg",
-            "tg_message_id":    e.get("tg_message_id"),
-            "is_active":        True,
-        }
-        rows.append(row)
-
-    try:
-        data = json.dumps(rows).encode("utf-8")
-        req = urllib.request.Request(url, data=data, headers=headers, method="POST")
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            status = resp.status
-            body = resp.read().decode("utf-8", errors="replace")
-            count = len(rows)
-            logger.info(f"Supabase sync OK: {count} событий (status {status})")
-            return {"upserted": count}
-    except urllib.error.HTTPError as e:
-        err_body = e.read().decode("utf-8", errors="replace") if e.fp else str(e)
-        logger.error(f"Supabase sync error {e.code}: {err_body[:300]}")
-        return {"error": f"HTTP {e.code}: {err_body[:200]}"}
-    except Exception as e:
-        logger.error(f"Supabase sync error: {e}")
-        return {"error": str(e)}
+    logger.info(f"Supabase sync OK: {count} событий")
+    return {"upserted": count}

@@ -8,15 +8,14 @@ import hashlib
 import json
 import logging
 import re
-from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
-from .config       import IMAGES_DIR, BASE_DIR
-from .utils        import parse_date
+from .config       import BASE_DIR
 from .parser       import parse_post
 from .geocoding    import geocode_address
-from .telegram_api import get_file_url, download_image
+from .telegram_api import get_file_url
+from .storage_supabase import upload_event_image
 
 logger = logging.getLogger(__name__)
 
@@ -128,16 +127,31 @@ def _build_event_dict(parsed: dict, msg_id: Optional[int], lat: float, lon: floa
 
 
 def _attach_image(ev: dict, msg: dict) -> None:
-    """Скачивает лучшее фото из сообщения и добавляет imageUrl в событие."""
+    """Скачивает лучшее фото из сообщения и загружает в Supabase Storage."""
+    import tempfile
+    from .telegram_api import download_image
+
     photos = msg.get("photo")
     if not isinstance(photos, list) or not photos:
         return
-    best  = max(photos, key=lambda p: p.get("file_size", 0))
-    url   = get_file_url(best["file_id"])
-    if url:
-        dest = IMAGES_DIR / f"{ev['id']}.jpg"
-        if download_image(url, dest):
-            ev["imageUrl"] = f"images/{dest.name}"
+    best = max(photos, key=lambda p: p.get("file_size", 0))
+    url  = get_file_url(best["file_id"])
+    if not url:
+        return
+
+    tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+    tmp_path = Path(tmp.name)
+    tmp.close()
+    try:
+        if download_image(url, tmp_path):
+            with open(tmp_path, "rb") as f:
+                image_data = f.read()
+            image_url = upload_event_image(ev["id"], image_data)
+            if image_url:
+                ev["imageUrl"] = image_url
+    finally:
+        if tmp_path.exists():
+            tmp_path.unlink()
 
 
 # ─── Одиночное сообщение ────────────────────────────
@@ -223,9 +237,22 @@ def process_media_group(msgs: List[dict], geocache: dict, places: List[dict]) ->
     if best_photo:
         url = get_file_url(best_photo["file_id"])
         if url:
-            dest = IMAGES_DIR / f"{ev['id']}.jpg"
-            if download_image(url, dest):
-                ev["imageUrl"] = f"images/{dest.name}"
+            import tempfile
+            from .telegram_api import download_image
+
+            tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+            tmp_path = Path(tmp.name)
+            tmp.close()
+            try:
+                if download_image(url, tmp_path):
+                    with open(tmp_path, "rb") as f:
+                        image_data = f.read()
+                    image_url = upload_event_image(ev["id"], image_data)
+                    if image_url:
+                        ev["imageUrl"] = image_url
+            finally:
+                if tmp_path.exists():
+                    tmp_path.unlink()
 
     logger.info(f"Обработана медиагруппа: {ev['title']} ({ev['date']})")
     return ev
@@ -281,32 +308,4 @@ def process_messages(
     return list(events_by_id.values()), added, updated
 
 
-# ─── Очистка старых афиш ────────────────────────────
-
-def clean_old_posters(events_list: List[dict], threshold_days: int = 7) -> bool:
-    """
-    Удаляет файлы изображений и ссылки imageUrl для событий,
-    прошедших более threshold_days назад.
-    Возвращает True, если что-то было изменено.
-    """
-    changed  = False
-    today    = datetime.now().date()
-    deadline = today - timedelta(days=threshold_days)
-
-    for ev in events_list:
-        d = parse_date(ev.get("date", ""))
-        if not d or d.date() > deadline:
-            continue
-        img = ev.get("imageUrl")
-        if img:
-            img_path = BASE_DIR / img
-            try:
-                if img_path.exists():
-                    img_path.unlink()
-                    logger.info(f"Удалена афиша: {img_path}")
-            except Exception as e:
-                logger.warning(f"Не удалось удалить {img_path}: {e}")
-            ev.pop("imageUrl", None)
-            changed = True
-
-    return changed
+# clean_old_posters удалена — заменена Edge Function cleanup-old-images на Supabase

@@ -1,0 +1,23 @@
+name: Cleanup old images
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # каждый день в 3:00 UTC
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+
+    steps:
+      - name: Invoke cleanup-old-images Edge Function
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          curl -s -X POST "${SUPABASE_URL}/functions/v1/cleanup-old-images" \
+            -H "Authorization: Bearer ${SUPABASE_SERVICE_ROLE_KEY}" \
+            -H "Content-Type: application/json" \
+            --data '{}'

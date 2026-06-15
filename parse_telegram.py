@@ -15,9 +15,9 @@ import sys
 
 from src.config    import TELEGRAM_BOT_TOKEN
 from src.storage   import (load_existing_events, load_geocache, load_state,
-                           save_events, save_geocache, save_state, sync_to_supabase)
+                           save_geocache, save_state, sync_to_supabase)
 from src.telegram_api import get_channel_messages
-from src.processor    import process_messages, clean_old_posters
+from src.processor    import process_messages
 
 # ─── Logging ────────────────────────────────────────
 logging.basicConfig(
@@ -64,23 +64,16 @@ def main() -> None:
 
     all_events, added, updated = process_messages(messages, existing, geocache)
 
-    cleaned = clean_old_posters(all_events)
-
-    save_events(all_events)
-
-    if added or updated or cleaned:
-        logger.info(
-            f"События обновлены: +{added}, ~{updated}"
-            f"{' (афиши очищены)' if cleaned else ''}"
-        )
-    else:
-        logger.info("Изменений нет, сохранён текущий список событий")
-
     # ── Синхронизация в Supabase (всегда) ────────────
+    if added or updated:
+        logger.info(f"События обновлены: +{added}, ~{updated}")
+    else:
+        logger.info("Изменений нет")
+
     sync_result = sync_to_supabase(all_events)
     if sync_result.get("error"):
         logger.warning(f"Supabase sync failed: {sync_result['error']}")
-    elif not sync_result.get("skipped"):
+    else:
         logger.info(f"Supabase sync: {sync_result.get('upserted', 0)} событий")
 
     save_geocache(geocache)

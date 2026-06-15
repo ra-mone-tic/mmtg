@@ -1,0 +1,28 @@
+-- ═══════════════════════════════════════════════════════
+-- MEOW! — Schedule cleanup-old-images Edge Function via pg_cron
+-- ═══════════════════════════════════════════════════════
+-- Запускать ТОЛЬКО если pg_cron extension включён:
+--   CREATE EXTENSION IF NOT EXISTS pg_cron;
+--   CREATE EXTENSION IF NOT EXISTS pg_net;
+-- 
+-- Проверить статус:
+--   SELECT * FROM cron.job WHERE jobname = 'cleanup-old-images';
+--
+-- Удалить:
+--   SELECT cron.unschedule('cleanup-old-images');
+-- ═══════════════════════════════════════════════════════
+
+-- Запуск каждый день в 3:00 ночи
+-- Требует pg_net для HTTP-вызовов:
+--   CREATE EXTENSION IF NOT EXISTS pg_net;
+
+-- SELECT cron.schedule(
+--   'cleanup-old-images',
+--   '0 3 * * *',
+--   $$
+--     SELECT net.http_post(
+--       url := 'https://<project-ref>.supabase.co/functions/v1/cleanup-old-images',
+--       headers := '{"Authorization": "Bearer <service-role-key>"}'::jsonb
+--     ) AS request_id;
+--   $$
+-- );

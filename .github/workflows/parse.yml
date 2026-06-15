@@ -59,7 +59,7 @@ jobs:
           git add events.json
 
           git diff --cached --quiet || git commit -m "Update events.json [skip ci]"
-          git pull --rebase && git push
+          git pull --rebase --autostash && git push
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

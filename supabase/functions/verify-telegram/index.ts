@@ -20,13 +20,16 @@ serve(async (req) => {
     if (!botToken) throw new Error("TELEGRAM_BOT_TOKEN not set");
 
     // ── Verify HMAC-SHA256 ────────────────────────────
-    // Per Telegram documentation: data-check-string is built from ALL params
-    // (URL-decoded), sorted by key, joined by \n. ONLY "hash" is excluded.
-    // "signature" MUST be included in the data-check-string!
+    // Per Telegram docs: data_check_string is built from all params EXCEPT
+    // "hash" and "signature". Both must be removed before building the string.
+    // "signature" is an Ed25519 field added in newer Telegram Desktop versions —
+    // it is NOT part of what hash was computed over.
     const params = new URLSearchParams(initData);
     const hash   = params.get("hash");
     params.delete("hash");
-    // NOTE: we do NOT delete "signature" — it must be in the data-check-string
+    params.delete("signature"); // ← tdesktop adds this; must be excluded from HMAC check
+
+    if (!hash) throw new Error("No hash in initData");
 
     const dataCheckStr = [...params.entries()]
       .sort(([a], [b]) => a.localeCompare(b))

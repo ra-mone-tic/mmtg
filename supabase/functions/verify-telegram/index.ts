@@ -92,17 +92,21 @@ serve(async (req) => {
     const email = `tg_${tgUser.id}@meow.app`;
 
     // ── Create auth user if not exists ────────────────
+    // NOTE: Supabase JS v2 never throws — always returns { data, error }.
+    // So we check the error field explicitly instead of relying on try/catch.
     let authUserId: string | undefined;
-    try {
-      const { data: created } = await admin.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
-        user_metadata: { telegram_id: tgUser.id },
-      });
-      authUserId = created?.user?.id;
-    } catch (_) {
-      // User already exists — find by email
+    const { data: created, error: createErr } = await admin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { telegram_id: tgUser.id },
+    });
+    if (created?.user?.id) {
+      // Fresh user — just created successfully
+      authUserId = created.user.id;
+    } else {
+      // User already exists (or other non-fatal error) — look up by email
+      console.warn("[verify-telegram] createUser did not return user, looking up existing:", createErr?.message);
       const { data: list } = await admin.auth.admin.listUsers({ perPage: 1000 });
       authUserId = list?.users?.find(u => u.email === email)?.id;
     }

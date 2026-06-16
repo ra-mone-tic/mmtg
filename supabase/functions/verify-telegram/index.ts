@@ -23,6 +23,7 @@ serve(async (req) => {
     const params = new URLSearchParams(initData);
     const hash   = params.get("hash");
     params.delete("hash");
+    params.delete("signature");
 
     const dataCheckStr = [...params.entries()]
       .sort(([a], [b]) => a.localeCompare(b))

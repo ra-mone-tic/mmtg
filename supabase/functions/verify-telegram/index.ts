@@ -12,33 +12,41 @@ const CORS = {
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
 
+  console.log("[verify-telegram] handler started");
+
   try {
-    const { initData } = await req.json();
+    const body = await req.json();
+    const { initData } = body;
+
+    console.log("[verify-telegram] initData received, length:", initData?.length ?? 0);
+    console.log("[verify-telegram] initData raw:", initData?.slice(0, 300));
+
     if (!initData) throw new Error("initData required");
 
     const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
     if (!botToken) throw new Error("TELEGRAM_BOT_TOKEN not set");
+    console.log("[verify-telegram] botToken length:", botToken.length);
 
-    // ── Verify HMAC-SHA256 ────────────────────────────
-    // Per Telegram docs: data_check_string is built from all params EXCEPT
-    // "hash" and "signature". Both must be removed before building the string.
-    // "signature" is an Ed25519 field added in newer Telegram Desktop versions —
-    // it is NOT part of what hash was computed over.
     const params = new URLSearchParams(initData);
-    const hash   = params.get("hash");
-    params.delete("hash");
-    params.delete("signature"); // ← tdesktop adds this; must be excluded from HMAC check
 
-    if (!hash) throw new Error("No hash in initData");
+    console.log("[verify-telegram] all keys from URLSearchParams:", [...params.keys()]);
+
+    const hash = params.get("hash");
+    params.delete("hash");
+    params.delete("signature");
+
+    console.log("[verify-telegram] keys after deleting hash+signature:", [...params.keys()]);
+    console.log("[verify-telegram] expected hash:", hash);
 
     const dataCheckStr = [...params.entries()]
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([k, v]) => `${k}=${v}`)   // URLSearchParams auto-decodes — correct per Telegram spec
+      .map(([k, v]) => `${k}=${v}`)
       .join("\n");
+
+    console.log("[verify-telegram] dataCheckStr:", dataCheckStr.slice(0, 500));
 
     const enc = new TextEncoder();
 
-    // secret = HMAC-SHA256("WebAppData", bot_token)
     const webAppDataKey = await crypto.subtle.importKey(
       "raw", enc.encode("WebAppData"),
       { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
@@ -53,16 +61,20 @@ serve(async (req) => {
     const computed = Array.from(new Uint8Array(sigBuf))
       .map(b => b.toString(16).padStart(2, "0")).join("");
 
-    const isValid = computed === hash;
-    // auth_date check — allow up to 7 days (Telegram Desktop may have stale initData)
+    console.log("[verify-telegram] computed:", computed);
+    console.log("[verify-telegram] isValid:", computed === hash);
+
     const authDate = parseInt(params.get("auth_date") ?? "0");
-    const stale    = authDate > 0 && (Date.now() / 1000 - authDate) > 604800; // 7 days
+    const stale    = authDate > 0 && (Date.now() / 1000 - authDate) > 604800;
+
+    console.log("[verify-telegram] authDate:", authDate, "stale:", stale);
+
+    const isValid = computed === hash;
 
     if (!isValid || stale) {
+      console.log("[verify-telegram] REJECTED — isValid:", isValid, "stale:", stale);
       return new Response(
-        JSON.stringify({
-          error: !isValid ? "Invalid signature" : "initData expired (>7 days)",
-        }),
+        JSON.stringify({ error: !isValid ? "Invalid signature" : "initData expired (>7 days)" }),
         { status: 401, headers: { ...CORS, "Content-Type": "application/json" } }
       );
     }
@@ -92,8 +104,6 @@ serve(async (req) => {
     const email = `tg_${tgUser.id}@meow.app`;
 
     // ── Create auth user if not exists ────────────────
-    // NOTE: Supabase JS v2 never throws — always returns { data, error }.
-    // So we check the error field explicitly instead of relying on try/catch.
     let authUserId: string | undefined;
     const { data: created, error: createErr } = await admin.auth.admin.createUser({
       email,
@@ -102,10 +112,8 @@ serve(async (req) => {
       user_metadata: { telegram_id: tgUser.id },
     });
     if (created?.user?.id) {
-      // Fresh user — just created successfully
       authUserId = created.user.id;
     } else {
-      // User already exists (or other non-fatal error) — look up by email
       console.warn("[verify-telegram] createUser did not return user, looking up existing:", createErr?.message);
       const { data: list } = await admin.auth.admin.listUsers({ perPage: 1000 });
       authUserId = list?.users?.find(u => u.email === email)?.id;
@@ -138,13 +146,15 @@ serve(async (req) => {
     const { data: adminRow } = await admin
       .from("admin_roles").select("role").eq("user_id", authUserId).single();
 
+    console.log("[verify-telegram] success, userId:", authUserId);
+
     return new Response(JSON.stringify({
       session: signIn.session,
       profile: { ...profile, is_admin: !!adminRow },
     }), { headers: { ...CORS, "Content-Type": "application/json" } });
 
   } catch (err) {
-    console.error("[verify-telegram]", err);
+    console.error("[verify-telegram] ERROR:", String(err?.message ?? err));
     return new Response(
       JSON.stringify({ error: String(err?.message ?? err) }),
       { status: 500, headers: { ...CORS, "Content-Type": "application/json" } }

@@ -20,14 +20,30 @@ serve(async (req) => {
     if (!botToken) throw new Error("TELEGRAM_BOT_TOKEN not set");
 
     // ── Verify HMAC-SHA256 ────────────────────────────
-    const params = new URLSearchParams(initData);
-    const hash   = params.get("hash");
-    params.delete("hash");
-    params.delete("signature");
+    // IMPORTANT: Parse initData manually to preserve RAW URL-encoded values.
+    // URLSearchParams auto-decodes (%7B → {), which breaks HMAC verification
+    // because Telegram signs the RAW encoded string.
+    const rawPairs  = initData.split("&").filter(Boolean);
+    const rawParams = new Map<string, string>();
+    let hash: string | null = null;
 
-    const dataCheckStr = [...params.entries()]
+    for (const pair of rawPairs) {
+      const eqIdx = pair.indexOf("=");
+      if (eqIdx === -1) continue;
+      const key = pair.slice(0, eqIdx);
+      const rawVal = pair.slice(eqIdx + 1); // keep URL-encoded as-is
+      if (key === "hash") {
+        hash = decodeURIComponent(rawVal);
+      } else if (key !== "signature") {
+        rawParams.set(key, rawVal);
+      }
+    }
+
+    if (!hash) throw new Error("No hash in initData");
+
+    const dataCheckStr = [...rawParams.entries()]
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([k, v]) => `${k}=${v}`)
+      .map(([k, v]) => `${k}=${v}`)   // raw encoded values – matches Telegram signature
       .join("\n");
 
     const enc = new TextEncoder();
@@ -49,7 +65,7 @@ serve(async (req) => {
 
     const isValid = computed === hash;
     // auth_date check — allow up to 7 days (Telegram Desktop may have stale initData)
-    const authDate = parseInt(params.get("auth_date") ?? "0");
+    const authDate = parseInt(decodeURIComponent(rawParams.get("auth_date") ?? "0"));
     const stale    = authDate > 0 && (Date.now() / 1000 - authDate) > 604800; // 7 days
 
     if (!isValid || stale) {
@@ -64,9 +80,9 @@ serve(async (req) => {
     }
 
     // ── Parse Telegram user ───────────────────────────
-    const userStr = params.get("user");
-    if (!userStr) throw new Error("No user data in initData");
-    const tgUser = JSON.parse(userStr) as {
+    const userRaw = rawParams.get("user");
+    if (!userRaw) throw new Error("No user data in initData");
+    const tgUser = JSON.parse(decodeURIComponent(userRaw)) as {
       id: number; username?: string; first_name?: string; last_name?: string; photo_url?: string;
     };
 

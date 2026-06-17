@@ -1155,32 +1155,6 @@
     "is_active": true
   },
   {
-    "id": "e19861ce45cb",
-    "date": "19.06.2026",
-    "title": "Тренировка на закрытом воздухе",
-    "location": "Видеосалон, Ленинский 18к1",
-    "address": "Видеосалон, Ленинский 18к1",
-    "time": "",
-    "tags": [
-      "Концерт",
-      "Бесплатно"
-    ],
-    "short_description": "Концерт андеграунд репа.\nГромкие, кричащие, злые, пошлые, лиричные выступления.\n\nВход свободный",
-    "full_description": "Концерт андеграунд репа.\nГромкие, кричащие, злые, пошлые, лиричные выступления.\n\nВход свободный",
-    "description_blocks": [
-      "Концерт андеграунд репа.",
-      "Громкие, кричащие, злые, пошлые, лиричные выступления.",
-      "Вход свободный"
-    ],
-    "contacts": "https://t.me/kabaresvetlogorskii",
-    "lat": 54.7069921,
-    "lon": 20.5070364,
-    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e19861ce45cb.jpg",
-    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e19861ce45cb.jpg",
-    "tg_message_id": 7676,
-    "is_active": true
-  },
-  {
     "id": "c3f8a85e3744",
     "date": "20.06.2026",
     "title": "Wizard System 01",
@@ -1202,31 +1176,6 @@
     "lon": 20.467264438266,
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c3f8a85e3744.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c3f8a85e3744.jpg",
-    "tg_message_id": 7677,
-    "is_active": true
-  },
-  {
-    "id": "4ae7fe0130d6",
-    "date": "20.06.2026",
-    "title": "Wizard System 01",
-    "location": "Pure, Каштановая Аллея 1а",
-    "address": "Pure, Каштановая Аллея 1а",
-    "time": "",
-    "tags": [
-      "Вечеринка"
-    ],
-    "short_description": "Первая вечеринка нового проекта.\n\n«Среди зелени и индустриальных» конструкций летнего дворика Pure создадут пространство с глубоким техно и хаус грувом. Винил, лайв, художественные инсталляции от Димы",
-    "full_description": "Первая вечеринка нового проекта.\n\n«Среди зелени и индустриальных» конструкций летнего дворика Pure создадут пространство с глубоким техно и хаус грувом. Винил, лайв, художественные инсталляции от Димы Чайки.\n\nВизитной карточкой первого WIZARD SYSTEM станет live-выступление Muzikalist, собранное вокруг модульной системы, аналоговой ритм-секции и синтезаторов. Компанию ему составят Schneider, Stanley, Yuriy D и Yasya.",
-    "description_blocks": [
-      "Первая вечеринка нового проекта.",
-      "«Среди зелени и индустриальных» конструкций летнего дворика Pure создадут пространство с глубоким техно и хаус грувом. Винил, лайв, художественные инсталляции от Димы Чайки.",
-      "Визитной карточкой первого WIZARD SYSTEM станет live-выступление Muzikalist, собранное вокруг модульной системы, аналоговой ритм-секции и синтезаторов. Компанию ему составят Schneider, Stanley, Yuriy D и Yasya."
-    ],
-    "contacts": "https://t.me/wizardsystems",
-    "lat": 54.710073212492,
-    "lon": 20.467264438266,
-    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4ae7fe0130d6.jpg",
-    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4ae7fe0130d6.jpg",
     "tg_message_id": 7677,
     "is_active": true
   },
@@ -1299,33 +1248,6 @@
     "is_active": true
   },
   {
-    "id": "29f05f112aba",
-    "date": "20.06.2026",
-    "title": "Рок ради жизни",
-    "location": "Пионерский, парковка, Портовая 1а",
-    "address": "Пионерский, парковка, Портовая 1а",
-    "time": "",
-    "tags": [
-      "Фестиваль",
-      "Бесплатно"
-    ],
-    "short_description": "Ежегодный благотворительный фестиваль. Все собранные средства будут перечислены в фонд «Добрые Доктора», который в дальнейшем направит их на целевую помощь в строительстве детского хосписа в Калинингр",
-    "full_description": "Ежегодный благотворительный фестиваль. Все собранные средства будут перечислены в фонд «Добрые Доктора», который в дальнейшем направит их на целевую помощь в строительстве детского хосписа в Калининграде «Дом Фрупполо».\n\nВ этом году на сцене - молодые команды из Калининграда, гости из Санкт-Петербурга и Москвы, а мощной точкой вечера станет трибьют-шоу Muse.\n\nПомимо музыки вас ждут ярмарка, мастер-классы, стритфуд, традиционный аукцион. А также анонсировано участие косплей-комьюнити ANI-K.\n\nВход свободный",
-    "description_blocks": [
-      "Ежегодный благотворительный фестиваль. Все собранные средства будут перечислены в фонд «Добрые Доктора», который в дальнейшем направит их на целевую помощь в строительстве детского хосписа в Калининграде «Дом Фрупполо».",
-      "В этом году на сцене - молодые команды из Калининграда, гости из Санкт-Петербурга и Москвы, а мощной точкой вечера станет трибьют-шоу Muse.",
-      "Помимо музыки вас ждут ярмарка, мастер-классы, стритфуд, традиционный аукцион. А также анонсировано участие косплей-комьюнити ANI-K.",
-      "Вход свободный"
-    ],
-    "contacts": "https://vk.ru/rrj2026kgd",
-    "lat": 54.8629188,
-    "lon": 21.1112987,
-    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/29f05f112aba.jpg",
-    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/29f05f112aba.jpg",
-    "tg_message_id": 7684,
-    "is_active": true
-  },
-  {
     "id": "f795bee10fa7",
     "date": "21.06.2026",
     "title": "Вечеринка у бассейна",
@@ -1347,31 +1269,6 @@
     "lon": 20.5290432,
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/f795bee10fa7.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/f795bee10fa7.jpg",
-    "tg_message_id": 7678,
-    "is_active": true
-  },
-  {
-    "id": "80a600f585e7",
-    "date": "21.06.2026",
-    "title": "Вечеринка у бассейна",
-    "location": "Усадьба, Орловка, Заречная 8",
-    "address": "Усадьба, Орловка, Заречная 8",
-    "time": "12:00",
-    "tags": [
-      "Вечеринка"
-    ],
-    "short_description": "Инстаграмный летний день у красивой водички. Коллаборация парк-отеля «Усадьба» и Bus Station. Музыка, коктейли, еда и никаких забот.\n\nЗа пультом - коты из Meow Records Y.Flava и A.Reut\n\n12.00 - 20.00",
-    "full_description": "Инстаграмный летний день у красивой водички. Коллаборация парк-отеля «Усадьба» и Bus Station. Музыка, коктейли, еда и никаких забот.\n\nЗа пультом - коты из Meow Records Y.Flava и A.Reut\n\n12.00 - 20.00",
-    "description_blocks": [
-      "Инстаграмный летний день у красивой водички. Коллаборация парк-отеля «Усадьба» и Bus Station. Музыка, коктейли, еда и никаких забот.",
-      "За пультом - коты из Meow Records Y.Flava и A.Reut",
-      "12.00 - 20.00"
-    ],
-    "contacts": "https://www.instagram.com/reel/DZfUkQft3sT/?igsh=MXFpc2N2ZHp0d3hjMg==",
-    "lat": 54.7754651,
-    "lon": 20.6254351,
-    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/80a600f585e7.jpg",
-    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/80a600f585e7.jpg",
     "tg_message_id": 7678,
     "is_active": true
   },
@@ -1476,41 +1373,6 @@
     "lon": 20.5401236,
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/5c77a8412c69.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/5c77a8412c69.jpg",
-    "tg_message_id": 7683,
-    "is_active": true
-  },
-  {
-    "id": "58817e86c928",
-    "date": "21.06.2026",
-    "title": "Старт программы «Модный интенсив»",
-    "location": "Советский пр-т 12, студия 809",
-    "address": "Советский пр-т 12, студия 809",
-    "time": "15:00",
-    "tags": [],
-    "short_description": "Два модельных агентства Sofit Model Agency и Michael Model Management объединили свои методики и приглашают на качественное и разностороннее обучение.\n\nЗа время обучения вы получите:\n\n• Более 50 фотог",
-    "full_description": "Два модельных агентства Sofit Model Agency и Michael Model Management объединили свои методики и приглашают на качественное и разностороннее обучение.\n\nЗа время обучения вы получите:\n\n• Более 50 фотографий от известных фотографов Калининграда;\n• Участие в качестве модели в показе мод;\n• Прокачку навыков дефиле, фотопозирования и самопрезентации;\n• Опыт работы с дизайнерами и бутиками;\n• Возможность стать амбассадором популярного бренда;\n• Персональные советы от стилистов;\n• Актуальные знания о мире моды;\n• Повышение самооценки;\n• Сертификат о прохождении обучения в модельном агентстве.\n\nКоличество мест ограничено.\n\nВсем, кто придет на кастинг 21 июня, первое занятие - в подарок.\n\nНачало в 15.00\n\nЗапись на кастинг и подробная информация в ЛС @sssooofit, @michael_model",
-    "description_blocks": [
-      "Два модельных агентства Sofit Model Agency и Michael Model Management объединили свои методики и приглашают на качественное и разностороннее обучение.",
-      "За время обучения вы получите:",
-      "• Более 50 фотографий от известных фотографов Калининграда;",
-      "• Участие в качестве модели в показе мод;",
-      "• Прокачку навыков дефиле, фотопозирования и самопрезентации;",
-      "• Опыт работы с дизайнерами и бутиками;",
-      "• Возможность стать амбассадором популярного бренда;",
-      "• Персональные советы от стилистов;",
-      "• Актуальные знания о мире моды;",
-      "• Повышение самооценки;",
-      "• Сертификат о прохождении обучения в модельном агентстве.",
-      "Количество мест ограничено.",
-      "Всем, кто придет на кастинг 21 июня, первое занятие - в подарок.",
-      "Начало в 15.00",
-      "Запись на кастинг и подробная информация в ЛС @sssooofit, @michael_model"
-    ],
-    "contacts": "https://t.me/sofit_models/126",
-    "lat": 54.7085572,
-    "lon": 20.5401236,
-    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/58817e86c928.jpg",
-    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/58817e86c928.jpg",
     "tg_message_id": 7683,
     "is_active": true
   },

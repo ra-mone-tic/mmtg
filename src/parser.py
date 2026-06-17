@@ -197,24 +197,35 @@ def _extract_dates_fallback(
         text,
     ):
         d1, m1, d2, m2 = int(m.group(1)), int(m.group(2)), int(m.group(3)), int(m.group(4))
-        # Преобразуем обе даты в объекты datetime
-        dt1 = _normalize(d1, m1)
-        dt2 = _normalize(d2, m2)
+        # Валидация: месяц 1..12, день 1..31
+        if not (1 <= m1 <= 12 and 1 <= m2 <= 12 and 1 <= d1 <= 31 and 1 <= d2 <= 31):
+            continue
+        try:
+            dt1 = _normalize(d1, m1)
+            dt2 = _normalize(d2, m2)
+        except (ValueError, OverflowError):
+            continue
+        start_dt = datetime.strptime(dt1, "%d.%m.%Y")
+        end_dt = datetime.strptime(dt2, "%d.%m.%Y")
+        delta = (end_dt - start_dt).days
 
-        # Пропускаем, если это тот же диапазон, что и основная дата
-        if dt1 == first_date or dt2 == first_date:
-            start_dt = datetime.strptime(dt1, "%d.%m.%Y")
-            end_dt = datetime.strptime(dt2, "%d.%m.%Y")
-            delta = (end_dt - start_dt).days
+        # Пропускаем, если это тот же диапазон, что и основная дата (расширяем)
+        if dt1 == first_date:
             for i in range(1, delta + 1):
                 nd = start_dt + timedelta(days=i)
                 extra.append(nd.strftime("%d.%m.%Y"))
             continue
+        if dt2 == first_date:
+            # Диапазон заканчивается на основную дату — добавляем предыдущие
+            for i in range(delta):
+                nd = start_dt + timedelta(days=i)
+                ds = nd.strftime("%d.%m.%Y")
+                if ds not in seen:
+                    seen.add(ds)
+                    extra.append(ds)
+            continue
 
         # Иначе добавляем обе границы + промежуточные
-        start_dt = datetime.strptime(dt1, "%d.%m.%Y")
-        end_dt = datetime.strptime(dt2, "%d.%m.%Y")
-        delta = (end_dt - start_dt).days
         if 0 < delta < 31:  # защита от бесконечности
             for i in range(delta + 1):
                 nd = start_dt + timedelta(days=i)
@@ -223,18 +234,24 @@ def _extract_dates_fallback(
                     seen.add(ds)
                     extra.append(ds)
 
-    # 2. Формат "DD.MM.YYYY" или "DD.MM" (точки)
-    for m in re.finditer(r'(?<!\d)(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?', text):
+    # 2. Формат "DD.MM.YYYY" или "DD.MM" (точки).
+    #    Требуем, чтобы после второй группы не шли буквы — чтобы не ловить "21. автобус".
+    for m in re.finditer(r'(?<!\d)(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?(?![.\d])', text):
         d, mon = int(m.group(1)), int(m.group(2))
+        # Валидация ДО вызова _normalize
+        if not (1 <= d <= 31 and 1 <= mon <= 12):
+            continue
         if m.group(3):
             y = int(m.group(3))
             ds = f"{d:02d}.{mon:02d}.{y}"
         else:
-            ds = _normalize(d, mon)
-        if 0 < d <= 31 and 0 < mon <= 12:
-            if ds not in seen:
-                seen.add(ds)
-                extra.append(ds)
+            try:
+                ds = _normalize(d, mon)
+            except (ValueError, OverflowError):
+                continue
+        if ds not in seen:
+            seen.add(ds)
+            extra.append(ds)
 
     # Фильтруем: оставляем только даты, отличные от первой, и сортируем
     extra = [e for e in extra if e != first_date]

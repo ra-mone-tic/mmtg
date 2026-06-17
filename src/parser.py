@@ -68,13 +68,7 @@ def parse_post(
     if hour is not None and minute is not None:
         time_str = f"{int(hour):02d}:{int(minute):02d}"
     else:
-        tm = re.search(r'в\s+(\d{1,2}):(\d{2})', text, re.IGNORECASE) \
-          or re.search(r'\b(\d{1,2}):(\d{2})\b', text)
-        if tm:
-            h, mn = int(tm.group(1)), int(tm.group(2))
-            time_str = f"{h:02d}:{mn:02d}" if 0 <= h <= 23 and 0 <= mn <= 59 else ""
-        else:
-            time_str = ""
+        time_str = _parse_time_from_text(text)
 
     # ── Адрес ────────────────────────────────────────
     addr_m = re.search(r"📍\s*(.+)", text)
@@ -101,6 +95,9 @@ def parse_post(
         "\n".join(blk) for blk in description_blocks
     ).strip()
 
+    # ── Дополнительные даты (многодневные) ───────────
+    extra_dates = _extract_dates_fallback(text, date_str, day, month, year)
+
     # ── Контакты ─────────────────────────────────────
     contacts = _extract_contacts(text, entities)
 
@@ -118,10 +115,133 @@ def parse_post(
         "description_blocks": description_blocks,
         "contacts"          : contacts,
         "tags"              : tags,
+        "extra_dates"       : extra_dates,
     }
 
 
 # ─── Вспомогательные функции ─────────────────────────
+
+def _parse_time_from_text(text: str) -> str:
+    """
+    Ищет время во всём тексте: варианты с точкой (в 19.00, 19.00 - 23:00, 11.00),
+    с двоеточием (19:00, в 19:00), а также диапазоны (извлекает только начало).
+    Возвращает "ЧЧ:ММ" или "".
+    """
+    # 1. Конструкция "в ЧЧ.ММ" или "в ЧЧ:ММ"
+    m = re.search(r'в\s+(\d{1,2})[.:](\d{2})', text, re.IGNORECASE)
+    if m:
+        h, mn = int(m.group(1)), int(m.group(2))
+        if 0 <= h <= 23 and 0 <= mn <= 59:
+            return f"{h:02d}:{mn:02d}"
+
+    # 2. "Старт в / начало в / cтарт / начало ЧЧ.ММ" или ЧЧ:ММ
+    m = re.search(r'(?:старт|начало)\s+в\s+(\d{1,2})[.:](\d{2})', text, re.IGNORECASE)
+    if m:
+        h, mn = int(m.group(1)), int(m.group(2))
+        if 0 <= h <= 23 and 0 <= mn <= 59:
+            return f"{h:02d}:{mn:02d}"
+
+    # 3. Диапазон "ЧЧ.ММ - ЧЧ.ММ" или "ЧЧ:ММ-ЧЧ:ММ" — берём начало
+    m = re.search(r'(\d{1,2})[.:](\d{2})\s*[-–—]\s*(\d{1,2})[.:](\d{2})', text)
+    if m:
+        h, mn = int(m.group(1)), int(m.group(2))
+        if 0 <= h <= 23 and 0 <= mn <= 59:
+            return f"{h:02d}:{mn:02d}"
+
+    # 4. Просто "ЧЧ.ММ" или "ЧЧ:ММ" как слово
+    m = re.search(r'(?<!\d)(\d{1,2})[.:](\d{2})(?!\s*[-–—]\s*\d)', text)
+    if m:
+        h, mn = int(m.group(1)), int(m.group(2))
+        if 0 <= h <= 23 and 0 <= mn <= 59:
+            return f"{h:02d}:{mn:02d}"
+
+    return ""
+
+
+def _extract_dates_fallback(
+    text: str,
+    first_date: str,
+    first_day: int,
+    first_month: int,
+    first_year: int,
+) -> List[str]:
+    """
+    Ищет в тексте поста дополнительные даты событий.
+    Распознаёт форматы:
+      - "02.06", "02.06.2026"
+      - "02.06—05.06" (диапазон — возвращает список всех дат между)
+      - "12 июня", "12 июня 2026"
+    Возвращает список строк "DD.MM.YYYY" без первой (основной) даты.
+    """
+    now = datetime.now()
+    extra: List[str] = []
+    seen: set = {first_date}
+
+    def _normalize(d: int, m: int) -> str:
+        """Приводит день/месяц к строке DD.MM.YYYY с коррекцией года."""
+        y = first_year
+        dt = datetime(y, m, d)
+        if dt < now - timedelta(days=30):
+            y += 1
+        return f"{d:02d}.{m:02d}.{y}"
+
+    def _try_add(d: int, m: int) -> None:
+        ds = _normalize(d, m)
+        if ds not in seen:
+            seen.add(ds)
+            extra.append(ds)
+
+    # 1. Диапазон "DD.MM—DD.MM" или "DD.MM - DD.MM" или "DD.MM–DD.MM"
+    for m in re.finditer(
+        r'(\d{1,2})\.(\d{1,2})\s*[-–—]\s*(\d{1,2})\.(\d{1,2})',
+        text,
+    ):
+        d1, m1, d2, m2 = int(m.group(1)), int(m.group(2)), int(m.group(3)), int(m.group(4))
+        # Преобразуем обе даты в объекты datetime
+        dt1 = _normalize(d1, m1)
+        dt2 = _normalize(d2, m2)
+
+        # Пропускаем, если это тот же диапазон, что и основная дата
+        if dt1 == first_date or dt2 == first_date:
+            start_dt = datetime.strptime(dt1, "%d.%m.%Y")
+            end_dt = datetime.strptime(dt2, "%d.%m.%Y")
+            delta = (end_dt - start_dt).days
+            for i in range(1, delta + 1):
+                nd = start_dt + timedelta(days=i)
+                extra.append(nd.strftime("%d.%m.%Y"))
+            continue
+
+        # Иначе добавляем обе границы + промежуточные
+        start_dt = datetime.strptime(dt1, "%d.%m.%Y")
+        end_dt = datetime.strptime(dt2, "%d.%m.%Y")
+        delta = (end_dt - start_dt).days
+        if 0 < delta < 31:  # защита от бесконечности
+            for i in range(delta + 1):
+                nd = start_dt + timedelta(days=i)
+                ds = nd.strftime("%d.%m.%Y")
+                if ds not in seen:
+                    seen.add(ds)
+                    extra.append(ds)
+
+    # 2. Формат "DD.MM.YYYY" или "DD.MM" (точки)
+    for m in re.finditer(r'(?<!\d)(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?', text):
+        d, mon = int(m.group(1)), int(m.group(2))
+        if m.group(3):
+            y = int(m.group(3))
+            ds = f"{d:02d}.{mon:02d}.{y}"
+        else:
+            ds = _normalize(d, mon)
+        if 0 < d <= 31 and 0 < mon <= 12:
+            if ds not in seen:
+                seen.add(ds)
+                extra.append(ds)
+
+    # Фильтруем: оставляем только даты, отличные от первой, и сортируем
+    extra = [e for e in extra if e != first_date]
+    # Убираем дубликаты (на случай пересечений)
+    extra = list(dict.fromkeys(extra))
+    return extra
+
 
 def _extract_contacts(text: str, entities: Optional[List[dict]]) -> str:
     # 1. Telegram entities (приоритет — точные гиперссылки)

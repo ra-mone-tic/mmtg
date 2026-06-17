@@ -83,6 +83,31 @@ def get_file_url(file_id: str) -> Optional[str]:
     return None
 
 
+def get_thumbnail_url(msg: dict) -> Optional[str]:
+    """
+    Если сообщение содержит video или animation, извлекает thumbnail
+    и возвращает URL для скачивания.
+    """
+    if not TELEGRAM_BOT_TOKEN:
+        return None
+
+    # Приоритет: video > animation
+    media = msg.get("video") or msg.get("animation")
+    if not media:
+        return None
+
+    # Telegram возвращает thumbnail в поле "thumbnail" (новое API) или "thumb" (старое)
+    thumb = media.get("thumbnail") or media.get("thumb")
+    if not thumb:
+        return None
+
+    file_id = thumb.get("file_id")
+    if not file_id:
+        return None
+
+    return get_file_url(file_id)
+
+
 def download_image(url: str, dest: Path) -> bool:
     try:
         resp = session.get(url, timeout=30)

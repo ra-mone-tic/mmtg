@@ -123,6 +123,7 @@ def _build_event_dict(parsed: dict, msg_id: Optional[int], lat: float, lon: floa
         "lat"              : lat,
         "lon"              : lon,
         "tg_message_id"    : msg_id,
+        "extra_dates"      : parsed.get("extra_dates", []),
     }
 
 
@@ -152,6 +153,46 @@ def _attach_image(ev: dict, msg: dict) -> None:
     finally:
         if tmp_path.exists():
             tmp_path.unlink()
+
+
+def _attach_thumbnail(ev: dict, msg: dict) -> None:
+    """
+    Скачивает thumbnail из видео/анимации и загружает в Supabase Storage.
+    Аналогично _attach_image, но для video/animation.
+    """
+    import tempfile
+    from .telegram_api import download_image, get_thumbnail_url
+
+    url = get_thumbnail_url(msg)
+    if not url:
+        return
+
+    tmp = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+    tmp_path = Path(tmp.name)
+    tmp.close()
+    try:
+        if download_image(url, tmp_path):
+            with open(tmp_path, "rb") as f:
+                image_data = f.read()
+            image_url = upload_event_image(ev["id"], image_data)
+            if image_url:
+                ev["imageUrl"] = image_url
+                logger.info(f"Thumbnail прикреплён к событию {ev['id']}")
+    finally:
+        if tmp_path.exists():
+            tmp_path.unlink()
+
+
+def _clone_event_for_date(ev: dict, new_date: str) -> dict:
+    """Создаёт копию события с новой датой и пересчитывает ID."""
+    import copy
+    new_ev = copy.deepcopy(ev)
+    new_ev["date"] = new_date
+    new_ev["id"] = make_event_id(new_date, new_ev["title"], new_ev["location"])
+    # Не копируем imageUrl — будет загружен заново для каждого дня
+    new_ev.pop("imageUrl", None)
+    new_ev.pop("image_url", None)
+    return new_ev
 
 
 # ─── Одиночное сообщение ────────────────────────────
@@ -187,6 +228,7 @@ def process_single_message(msg: dict, geocache: dict, places: List[dict]) -> Opt
 
     ev = _build_event_dict(parsed, msg.get("message_id"), lat, lon)
     _attach_image(ev, msg)
+    _attach_thumbnail(ev, msg)
     logger.info(f"Обработано: {ev['title']} ({ev['date']}) @ {parsed['address']}")
     return ev
 
@@ -225,6 +267,9 @@ def process_media_group(msgs: List[dict], geocache: dict, places: List[dict]) ->
         )
 
     ev = _build_event_dict(parsed, text_msg.get("message_id"), lat, lon)
+
+    # Thumbnail из видео
+    _attach_thumbnail(ev, text_msg)
 
     # Лучшее фото из всех сообщений группы
     best_photo, best_size = None, 0
@@ -298,11 +343,22 @@ def process_messages(
             events_by_id[eid] = ev
             added += 1
 
+    def _upsert_multi_day(ev: Optional[dict]) -> None:
+        """Создаёт копии события для каждой extra_dates."""
+        nonlocal added
+        if not ev:
+            return
+        extra_dates = ev.pop("extra_dates", [])
+        _upsert(ev)
+        for new_date in extra_dates:
+            clone = _clone_event_for_date(ev, new_date)
+            _upsert(clone)
+
     for msg in solo:
-        _upsert(process_single_message(msg, geocache, places))
+        _upsert_multi_day(process_single_message(msg, geocache, places))
 
     for group_msgs in media_groups.values():
-        _upsert(process_media_group(group_msgs, geocache, places))
+        _upsert_multi_day(process_media_group(group_msgs, geocache, places))
 
     logger.info(f"Обработано: добавлено {added}, обновлено {updated}")
     return list(events_by_id.values()), added, updated

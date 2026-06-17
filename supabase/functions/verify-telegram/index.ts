@@ -33,11 +33,15 @@ serve(async (req) => {
     const { initData } = await req.json();
     if (!initData) throw new Error("initData required");
 
-    const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
-    if (!botToken) throw new Error("TELEGRAM_BOT_TOKEN not set");
+    const botTokenRaw = Deno.env.get("TELEGRAM_BOT_TOKEN");
+    if (!botTokenRaw) throw new Error("TELEGRAM_BOT_TOKEN not set");
+    const botToken = botTokenRaw.trim(); // убираем невидимые символы по краям
 
-    // ── Parse: extract hash and build two candidate dataCheckStrings ──────────
-    // Variant A: URLSearchParams (auto-decodes %XX → chars, including %5C%2F → \/)
+    console.log("[verify-telegram] token raw_len:", botTokenRaw.length, "trimmed_len:", botToken.length);
+    console.log("[verify-telegram] token first10:", JSON.stringify(botToken.slice(0, 10)));
+    console.log("[verify-telegram] token last5:", JSON.stringify(botToken.slice(-5)));
+
+    // ── Variant A: URLSearchParams (auto-decodes) ─────────────────────────────
     const params = new URLSearchParams(initData);
     const hash = params.get("hash");
     params.delete("hash");
@@ -49,7 +53,7 @@ serve(async (req) => {
       .map(([k, v]) => `${k}=${v}`)
       .join("\n");
 
-    // Variant B: raw pairs, keep URL-encoded values as-is
+    // ── Variant B: raw URL-encoded values ─────────────────────────────────────
     const rawPairs = initData.split("&").filter(Boolean);
     const rawMap = new Map<string, string>();
     for (const pair of rawPairs) {
@@ -64,10 +68,10 @@ serve(async (req) => {
       .map(([k, v]) => `${k}=${v}`)
       .join("\n");
 
-    // Variant C: decoded but with \/ normalized to /
+    // ── Variant C: decoded, \/ → / ────────────────────────────────────────────
     const dataCheckStr_C = dataCheckStr_A.replace(/\\\//g, "/");
 
-    // ── Compute all three ──────────────────────────────────────────────────────
+    // ── Compute all three ─────────────────────────────────────────────────────
     const [computed_A, computed_B, computed_C] = await Promise.all([
       computeHmac(dataCheckStr_A, botToken),
       computeHmac(dataCheckStr_B, botToken),
@@ -79,7 +83,6 @@ serve(async (req) => {
     console.log("[verify-telegram] computed_B (raw URL-encoded):  ", computed_B, "match:", computed_B === hash);
     console.log("[verify-telegram] computed_C (decoded, / fixed): ", computed_C, "match:", computed_C === hash);
 
-    // Accept whichever matches
     const isValid = computed_A === hash || computed_B === hash || computed_C === hash;
 
     const authDate = parseInt(params.get("auth_date") ?? "0");
@@ -110,7 +113,6 @@ serve(async (req) => {
 
     const enc = new TextEncoder();
 
-    // Derive deterministic password: HMAC(botToken, "meow_tg_{id}")
     const pwKey = await crypto.subtle.importKey(
       "raw", enc.encode(botToken),
       { name: "HMAC", hash: "SHA-256" }, false, ["sign"]

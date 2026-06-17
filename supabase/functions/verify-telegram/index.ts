@@ -9,89 +9,106 @@ const CORS = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+async function computeHmac(dataCheckStr: string, botToken: string): Promise<string> {
+  const enc = new TextEncoder();
+  const webAppDataKey = await crypto.subtle.importKey(
+    "raw", enc.encode("WebAppData"),
+    { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+  );
+  const secretBuf = await crypto.subtle.sign("HMAC", webAppDataKey, enc.encode(botToken));
+  const hmacKey = await crypto.subtle.importKey(
+    "raw", secretBuf,
+    { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+  );
+  const sigBuf = await crypto.subtle.sign("HMAC", hmacKey, enc.encode(dataCheckStr));
+  return Array.from(new Uint8Array(sigBuf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
 
   console.log("[verify-telegram] handler started");
 
   try {
-    const body = await req.json();
-    const { initData } = body;
-
-    console.log("[verify-telegram] initData received, length:", initData?.length ?? 0);
-    console.log("[verify-telegram] initData raw:", initData?.slice(0, 300));
-
+    const { initData } = await req.json();
     if (!initData) throw new Error("initData required");
 
     const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
     if (!botToken) throw new Error("TELEGRAM_BOT_TOKEN not set");
-    console.log("[verify-telegram] botToken length:", botToken.length);
 
+    // ── Parse: extract hash and build two candidate dataCheckStrings ──────────
+    // Variant A: URLSearchParams (auto-decodes %XX → chars, including %5C%2F → \/)
     const params = new URLSearchParams(initData);
-
-    console.log("[verify-telegram] all keys from URLSearchParams:", [...params.keys()]);
-
     const hash = params.get("hash");
     params.delete("hash");
     params.delete("signature");
+    if (!hash) throw new Error("No hash in initData");
 
-    console.log("[verify-telegram] keys after deleting hash+signature:", [...params.keys()]);
-    console.log("[verify-telegram] expected hash:", hash);
-
-    const dataCheckStr = [...params.entries()]
+    const dataCheckStr_A = [...params.entries()]
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([k, v]) => `${k}=${v}`)
       .join("\n");
 
-    console.log("[verify-telegram] dataCheckStr:", dataCheckStr.slice(0, 500));
+    // Variant B: raw pairs, keep URL-encoded values as-is
+    const rawPairs = initData.split("&").filter(Boolean);
+    const rawMap = new Map<string, string>();
+    for (const pair of rawPairs) {
+      const eq = pair.indexOf("=");
+      if (eq === -1) continue;
+      const k = pair.slice(0, eq);
+      const v = pair.slice(eq + 1);
+      if (k !== "hash" && k !== "signature") rawMap.set(k, v);
+    }
+    const dataCheckStr_B = [...rawMap.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([k, v]) => `${k}=${v}`)
+      .join("\n");
 
-    const enc = new TextEncoder();
+    // Variant C: decoded but with \/ normalized to /
+    const dataCheckStr_C = dataCheckStr_A.replace(/\\\//g, "/");
 
-    const webAppDataKey = await crypto.subtle.importKey(
-      "raw", enc.encode("WebAppData"),
-      { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
-    );
-    const secretBuf = await crypto.subtle.sign("HMAC", webAppDataKey, enc.encode(botToken));
+    // ── Compute all three ──────────────────────────────────────────────────────
+    const [computed_A, computed_B, computed_C] = await Promise.all([
+      computeHmac(dataCheckStr_A, botToken),
+      computeHmac(dataCheckStr_B, botToken),
+      computeHmac(dataCheckStr_C, botToken),
+    ]);
 
-    const hmacKey = await crypto.subtle.importKey(
-      "raw", secretBuf,
-      { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
-    );
-    const sigBuf = await crypto.subtle.sign("HMAC", hmacKey, enc.encode(dataCheckStr));
-    const computed = Array.from(new Uint8Array(sigBuf))
-      .map(b => b.toString(16).padStart(2, "0")).join("");
+    console.log("[verify-telegram] expected hash:  ", hash);
+    console.log("[verify-telegram] computed_A (decoded):          ", computed_A, "match:", computed_A === hash);
+    console.log("[verify-telegram] computed_B (raw URL-encoded):  ", computed_B, "match:", computed_B === hash);
+    console.log("[verify-telegram] computed_C (decoded, / fixed): ", computed_C, "match:", computed_C === hash);
 
-    console.log("[verify-telegram] computed:", computed);
-    console.log("[verify-telegram] isValid:", computed === hash);
+    // Accept whichever matches
+    const isValid = computed_A === hash || computed_B === hash || computed_C === hash;
 
     const authDate = parseInt(params.get("auth_date") ?? "0");
     const stale    = authDate > 0 && (Date.now() / 1000 - authDate) > 604800;
 
-    console.log("[verify-telegram] authDate:", authDate, "stale:", stale);
-
-    const isValid = computed === hash;
+    console.log("[verify-telegram] isValid:", isValid, "stale:", stale);
 
     if (!isValid || stale) {
-      console.log("[verify-telegram] REJECTED — isValid:", isValid, "stale:", stale);
       return new Response(
         JSON.stringify({ error: !isValid ? "Invalid signature" : "initData expired (>7 days)" }),
         { status: 401, headers: { ...CORS, "Content-Type": "application/json" } }
       );
     }
 
-    // ── Parse Telegram user ───────────────────────────
+    // ── Parse Telegram user ───────────────────────────────────────────────────
     const userStr = params.get("user");
     if (!userStr) throw new Error("No user data in initData");
     const tgUser = JSON.parse(userStr) as {
       id: number; username?: string; first_name?: string; last_name?: string; photo_url?: string;
     };
 
-    // ── Supabase admin client ─────────────────────────
+    // ── Supabase admin client ─────────────────────────────────────────────────
     const admin = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
+
+    const enc = new TextEncoder();
 
     // Derive deterministic password: HMAC(botToken, "meow_tg_{id}")
     const pwKey = await crypto.subtle.importKey(
@@ -103,7 +120,7 @@ serve(async (req) => {
       .map(b => b.toString(16).padStart(2, "0")).join("").slice(0, 32);
     const email = `tg_${tgUser.id}@meow.app`;
 
-    // ── Create auth user if not exists ────────────────
+    // ── Create auth user if not exists ────────────────────────────────────────
     let authUserId: string | undefined;
     const { data: created, error: createErr } = await admin.auth.admin.createUser({
       email,
@@ -114,13 +131,13 @@ serve(async (req) => {
     if (created?.user?.id) {
       authUserId = created.user.id;
     } else {
-      console.warn("[verify-telegram] createUser did not return user, looking up existing:", createErr?.message);
+      console.warn("[verify-telegram] createUser lookup fallback:", createErr?.message);
       const { data: list } = await admin.auth.admin.listUsers({ perPage: 1000 });
       authUserId = list?.users?.find(u => u.email === email)?.id;
     }
     if (!authUserId) throw new Error("Could not resolve auth user");
 
-    // ── Sign in to get session ────────────────────────
+    // ── Sign in to get session ────────────────────────────────────────────────
     const regular = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_ANON_KEY")!
@@ -128,18 +145,17 @@ serve(async (req) => {
     const { data: signIn, error: signInErr } = await regular.auth.signInWithPassword({ email, password });
     if (signInErr || !signIn?.session) throw signInErr ?? new Error("Sign-in failed");
 
-    // ── Upsert profile ────────────────────────────────
+    // ── Upsert profile ────────────────────────────────────────────────────────
     await admin.from("profiles").upsert({
-      id:         authUserId,
+      id:          authUserId,
       telegram_id: tgUser.id,
-      username:   tgUser.username   ?? null,
-      first_name: tgUser.first_name ?? "",
-      last_name:  tgUser.last_name  ?? null,
-      photo_url:  tgUser.photo_url  ?? null,
-      updated_at: new Date().toISOString(),
+      username:    tgUser.username   ?? null,
+      first_name:  tgUser.first_name ?? "",
+      last_name:   tgUser.last_name  ?? null,
+      photo_url:   tgUser.photo_url  ?? null,
+      updated_at:  new Date().toISOString(),
     }, { onConflict: "id" });
 
-    // ── Load full profile ─────────────────────────────
     const { data: profile } = await admin
       .from("profiles").select("*").eq("id", authUserId).single();
 

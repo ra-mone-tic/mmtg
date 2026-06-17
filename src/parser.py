@@ -46,17 +46,29 @@ def parse_post(
         return None
 
     # ── Дата и заголовок ────────────────────────────
-    m = re.search(
-        r"(\d{1,2})\.(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?\s*[|–—\-]\s*(.+)$",
-        first_lines[0],
-    )
-    if not m:
-        logger.debug(f"Не удалось распарсить первую строку: {first_lines[0]!r}")
-        return None
+    first_line = first_lines[0]
 
-    day, month = int(m.group(1)), int(m.group(2))
-    hour, minute = m.group(3), m.group(4)
-    title = m.group(5).strip()
+    # Проверяем на диапазон дат в первой строке: "DD.MM - DD.MM | Title" → берём первую дату
+    m_range = re.match(
+        r"(\d{1,2})\.(\d{1,2})\s*[-–—]\s*\d{1,2}\.\d{1,2}\s*[|–—\-]\s*(.+)$",
+        first_line,
+    )
+    if m_range:
+        day, month = int(m_range.group(1)), int(m_range.group(2))
+        hour, minute = None, None
+        title = m_range.group(3).strip()
+    else:
+        m = re.search(
+            r"(\d{1,2})\.(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?\s*[|–—\-]\s*(.+)$",
+            first_line,
+        )
+        if not m:
+            logger.debug(f"Не удалось распарсить первую строку: {first_line!r}")
+            return None
+
+        day, month = int(m.group(1)), int(m.group(2))
+        hour, minute = m.group(3), m.group(4)
+        title = m.group(5).strip()
 
     now  = datetime.now()
     year = now.year
@@ -228,7 +240,7 @@ def _extract_dates_fallback(
             continue
 
         # Иначе добавляем обе границы + промежуточные
-        if 0 < delta < 31:  # защита от бесконечности
+        if 0 < delta <= 14:  # максимум 14 дней — защита от бесконечных серий
             for i in range(delta + 1):
                 nd = start_dt + timedelta(days=i)
                 ds = nd.strftime("%d.%m.%Y")

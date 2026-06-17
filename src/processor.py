@@ -95,8 +95,13 @@ def _find_matching_place(event_location: str, places: List[dict]) -> Optional[di
 
 # ─── ID события ─────────────────────────────────────
 
-def make_event_id(date: str, title: str, location: str) -> str:
-    source = f"{date}|{title}|{location}"
+def make_event_id(date: str, title: str, location: str | None = None) -> str:
+    """
+    Генерирует стабильный ID на основе даты и названия.
+    Адрес (location) НЕ участвует — он может меняться при геокодинге,
+    а ID должен оставаться неизменным между запусками.
+    """
+    source = f"{date}|{title}"
     return hashlib.md5(source.encode("utf-8")).hexdigest()[:12]
 
 
@@ -184,11 +189,11 @@ def _attach_thumbnail(ev: dict, msg: dict) -> None:
 
 
 def _clone_event_for_date(ev: dict, new_date: str) -> dict:
-    """Создаёт копию события с новой датой и пересчитывает ID."""
+    """Создаёт копию события с новой датой и пересчитывает ID (только по date+title)."""
     import copy
     new_ev = copy.deepcopy(ev)
     new_ev["date"] = new_date
-    new_ev["id"] = make_event_id(new_date, new_ev["title"], new_ev["location"])
+    new_ev["id"] = make_event_id(new_date, new_ev["title"])
     # Не копируем imageUrl — будет загружен заново для каждого дня
     new_ev.pop("imageUrl", None)
     new_ev.pop("image_url", None)

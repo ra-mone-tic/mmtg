@@ -68,7 +68,9 @@ def parse_post(
     if hour is not None and minute is not None:
         time_str = f"{int(hour):02d}:{int(minute):02d}"
     else:
-        time_str = _parse_time_from_text(text)
+        # Ищем время в тексте, исключая первую строку (там дата, а не время)
+        text_without_first_line = "\n".join(text.strip().split("\n")[1:])
+        time_str = _parse_time_from_text(text_without_first_line)
 
     # ── Адрес ────────────────────────────────────────
     addr_m = re.search(r"📍\s*(.+)", text)

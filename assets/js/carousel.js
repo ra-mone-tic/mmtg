@@ -24,10 +24,21 @@ export function renderCarousel() {
   state.carouselLoadedCount = 12;
 
   const today = new Date(); today.setHours(0, 0, 0, 0);
-  window._allUpcoming = state.rawAllEvents
+  const sorted = state.rawAllEvents
     .map(normalizeEvent)
     .filter(e => { const d = parseDate(e.date); return d && d >= today; })
     .sort((a, b) => parseDate(a.date) - parseDate(b.date));
+
+  // Группируем многодневные: показываем только первое событие из группы (одинаковый title)
+  const seenTitles = new Set();
+  window._allUpcoming = [];
+  for (const ev of sorted) {
+    const key = ev.title.toLowerCase().trim();
+    if (!seenTitles.has(key)) {
+      seenTitles.add(key);
+      window._allUpcoming.push(ev);
+    }
+  }
 
   if (!window._allUpcoming.length) return;
   track.innerHTML = '';

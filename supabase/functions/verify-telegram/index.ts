@@ -43,34 +43,20 @@ serve(async (req) => {
 
     // ── Telegram initData verification ─────────────────────────────────────────
     // Telegram Bot API requires:
-    //   1. Sort all key=value pairs alphabetically by key (except "hash")
-    //   2. Join with \n into data_check_string
-    //   3. Compute HMAC-SHA256(data_check_string, secret_key)
+    //   1. Parse initData as URLSearchParams (decodes %XX sequences)
+    //   2. Remove "hash" parameter only (keep "signature" — it's part of WebApp data)
+    //   3. Sort remaining parameters alphabetically by key
+    //   4. Build data_check_string: key=value\nkey=value\n...
+    //   5. Compute HMAC-SHA256(data_check_string, secret_key)
     //      where secret_key = HMAC-SHA256("WebAppData", botToken)
-    //   4. Compare computed hash with the "hash" parameter
-    //
-    // IMPORTANT: All parameters EXCEPT "hash" must be included.
-    // Previously "signature" was excluded, causing hash mismatch.
+    //   6. Compare computed hash with the "hash" parameter
 
-    const pairs = initData.split("&").filter(Boolean);
-    const paramMap = new Map<string, string>();
-    let hash: string | null = null;
-
-    for (const pair of pairs) {
-      const eq = pair.indexOf("=");
-      if (eq === -1) continue;
-      const k = pair.slice(0, eq);
-      const v = pair.slice(eq + 1);
-      if (k === "hash") {
-        hash = v;
-      } else {
-        paramMap.set(k, v);
-      }
-    }
-
+    const params = new URLSearchParams(initData);
+    const hash = params.get("hash");
+    params.delete("hash");              // keep "signature" — it's part of the data
     if (!hash) throw new Error("No hash in initData");
 
-    const dataCheckStr = [...paramMap.entries()]
+    const dataCheckStr = [...params.entries()]
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([k, v]) => `${k}=${v}`)
       .join("\n");
@@ -79,12 +65,10 @@ serve(async (req) => {
 
     console.log("[verify-telegram] expected hash:", hash);
     console.log("[verify-telegram] computed hash: ", computed, "match:", computed === hash);
-    console.log("[verify-telegram] dataCheckStr:", dataCheckStr);
 
     const isValid = computed === hash;
 
-    const authDateRaw = paramMap.get("auth_date");
-    const authDate = authDateRaw ? parseInt(decodeURIComponent(authDateRaw), 10) : 0;
+    const authDate = parseInt(params.get("auth_date") ?? "0", 10);
     const stale    = authDate > 0 && (Date.now() / 1000 - authDate) > 604800;
 
     console.log("[verify-telegram] isValid:", isValid, "stale:", stale);
@@ -97,9 +81,8 @@ serve(async (req) => {
     }
 
     // ── Parse Telegram user ───────────────────────────────────────────────────
-    const userStrRaw = paramMap.get("user");
-    if (!userStrRaw) throw new Error("No user data in initData");
-    const userStr = decodeURIComponent(userStrRaw);
+    const userStr = params.get("user");
+    if (!userStr) throw new Error("No user data in initData");
     const tgUser = JSON.parse(userStr) as {
       id: number; username?: string; first_name?: string; last_name?: string; photo_url?: string;
     };

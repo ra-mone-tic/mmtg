@@ -41,51 +41,50 @@ serve(async (req) => {
     console.log("[verify-telegram] token first10:", JSON.stringify(botToken.slice(0, 10)));
     console.log("[verify-telegram] token last5:", JSON.stringify(botToken.slice(-5)));
 
-    // ── Variant A: URLSearchParams (auto-decodes) ─────────────────────────────
-    const params = new URLSearchParams(initData);
-    const hash = params.get("hash");
-    params.delete("hash");
-    params.delete("signature");
-    if (!hash) throw new Error("No hash in initData");
+    // ── Telegram initData verification ─────────────────────────────────────────
+    // Telegram Bot API requires:
+    //   1. Sort all key=value pairs alphabetically by key (except "hash")
+    //   2. Join with \n into data_check_string
+    //   3. Compute HMAC-SHA256(data_check_string, secret_key)
+    //      where secret_key = HMAC-SHA256("WebAppData", botToken)
+    //   4. Compare computed hash with the "hash" parameter
+    //
+    // IMPORTANT: All parameters EXCEPT "hash" must be included.
+    // Previously "signature" was excluded, causing hash mismatch.
 
-    const dataCheckStr_A = [...params.entries()]
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([k, v]) => `${k}=${v}`)
-      .join("\n");
+    const pairs = initData.split("&").filter(Boolean);
+    const paramMap = new Map<string, string>();
+    let hash: string | null = null;
 
-    // ── Variant B: raw URL-encoded values ─────────────────────────────────────
-    const rawPairs = initData.split("&").filter(Boolean);
-    const rawMap = new Map<string, string>();
-    for (const pair of rawPairs) {
+    for (const pair of pairs) {
       const eq = pair.indexOf("=");
       if (eq === -1) continue;
       const k = pair.slice(0, eq);
       const v = pair.slice(eq + 1);
-      if (k !== "hash" && k !== "signature") rawMap.set(k, v);
+      if (k === "hash") {
+        hash = v;
+      } else {
+        paramMap.set(k, v);
+      }
     }
-    const dataCheckStr_B = [...rawMap.entries()]
+
+    if (!hash) throw new Error("No hash in initData");
+
+    const dataCheckStr = [...paramMap.entries()]
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([k, v]) => `${k}=${v}`)
       .join("\n");
 
-    // ── Variant C: decoded, \/ → / ────────────────────────────────────────────
-    const dataCheckStr_C = dataCheckStr_A.replace(/\\\//g, "/");
+    const computed = await computeHmac(dataCheckStr, botToken);
 
-    // ── Compute all three ─────────────────────────────────────────────────────
-    const [computed_A, computed_B, computed_C] = await Promise.all([
-      computeHmac(dataCheckStr_A, botToken),
-      computeHmac(dataCheckStr_B, botToken),
-      computeHmac(dataCheckStr_C, botToken),
-    ]);
+    console.log("[verify-telegram] expected hash:", hash);
+    console.log("[verify-telegram] computed hash: ", computed, "match:", computed === hash);
+    console.log("[verify-telegram] dataCheckStr:", dataCheckStr);
 
-    console.log("[verify-telegram] expected hash:  ", hash);
-    console.log("[verify-telegram] computed_A (decoded):          ", computed_A, "match:", computed_A === hash);
-    console.log("[verify-telegram] computed_B (raw URL-encoded):  ", computed_B, "match:", computed_B === hash);
-    console.log("[verify-telegram] computed_C (decoded, / fixed): ", computed_C, "match:", computed_C === hash);
+    const isValid = computed === hash;
 
-    const isValid = computed_A === hash || computed_B === hash || computed_C === hash;
-
-    const authDate = parseInt(params.get("auth_date") ?? "0");
+    const authDateRaw = paramMap.get("auth_date");
+    const authDate = authDateRaw ? parseInt(decodeURIComponent(authDateRaw), 10) : 0;
     const stale    = authDate > 0 && (Date.now() / 1000 - authDate) > 604800;
 
     console.log("[verify-telegram] isValid:", isValid, "stale:", stale);
@@ -98,8 +97,9 @@ serve(async (req) => {
     }
 
     // ── Parse Telegram user ───────────────────────────────────────────────────
-    const userStr = params.get("user");
-    if (!userStr) throw new Error("No user data in initData");
+    const userStrRaw = paramMap.get("user");
+    if (!userStrRaw) throw new Error("No user data in initData");
+    const userStr = decodeURIComponent(userStrRaw);
     const tgUser = JSON.parse(userStr) as {
       id: number; username?: string; first_name?: string; last_name?: string; photo_url?: string;
     };

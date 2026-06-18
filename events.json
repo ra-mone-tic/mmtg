@@ -1129,6 +1129,35 @@
     "is_active": true
   },
   {
+    "id": "e8fdbb755057",
+    "date": "19.06.2026",
+    "title": "ОТКРЫТИЕ",
+    "location": "ЭФИР, пос. Клюквенное, пер. Озёрный 6",
+    "address": "ЭФИР, пос. Клюквенное, пер. Озёрный 6",
+    "time": "16:00",
+    "tags": [
+      "Выставка",
+      "Бесплатно"
+    ],
+    "short_description": "Открытие первой выставки в новом пространстве «ЭФИР» - Полины Гисич и Евгения Малышева (JÖN).\n\nВ экспозиции представлены графика, живопись и скульптурные объекты, повествующие о красоте, созерцании и ",
+    "full_description": "Открытие первой выставки в новом пространстве «ЭФИР» - Полины Гисич и Евгения Малышева (JÖN).\n\nВ экспозиции представлены графика, живопись и скульптурные объекты, повествующие о красоте, созерцании и взаимопроникающих силах природы.\n\nРаботы объединены темами стихий, внутреннего внимания и пространства перехода, а сама выставка становится частью окружающего ландшафта «ЭФИРА».\n\nВ программе вечера - знакомство с авторами, кураторская экскурсия, прогулка по территории пространства.\n\nНачало в 16.00\nВход свободный",
+    "description_blocks": [
+      "Открытие первой выставки в новом пространстве «ЭФИР» - Полины Гисич и Евгения Малышева (JÖN).",
+      "В экспозиции представлены графика, живопись и скульптурные объекты, повествующие о красоте, созерцании и взаимопроникающих силах природы.",
+      "Работы объединены темами стихий, внутреннего внимания и пространства перехода, а сама выставка становится частью окружающего ландшафта «ЭФИРА».",
+      "В программе вечера - знакомство с авторами, кураторская экскурсия, прогулка по территории пространства.",
+      "Начало в 16.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://www.instagram.com/p/DZpz0aDgN3l/?img_index=11&igsh=MXN5ZjdjaHJsOHNzbA==",
+    "lat": 54.7213423,
+    "lon": 20.6255601,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e8fdbb755057.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e8fdbb755057.jpg",
+    "tg_message_id": 7686,
+    "is_active": true
+  },
+  {
     "id": "ab047ea80901",
     "date": "19.06.2026",
     "title": "Тренировка на закрытом воздухе",
@@ -1180,6 +1209,34 @@
     "is_active": true
   },
   {
+    "id": "788d951c0c15",
+    "date": "20.06.2026",
+    "title": "КРЕАТОРЫ, НА ВЫХОД!",
+    "location": "Дом молодёжи, Октябрьская 76",
+    "address": "Дом молодёжи, Октябрьская 76",
+    "time": "11:30",
+    "tags": [
+      "Лекция",
+      "Бесплатно"
+    ],
+    "short_description": "Кофейный рейв от Центра креативных индустрий | Центр «Мой бизнес».\n\nПриглашают «создателей визуального контента» - дизайнеров, фотографов, видеографов, смм-щиков.\n\n11:30 - 13:00 DJ-сет, напитки, нетво",
+    "full_description": "Кофейный рейв от Центра креативных индустрий | Центр «Мой бизнес».\n\nПриглашают «создателей визуального контента» - дизайнеров, фотографов, видеографов, смм-щиков.\n\n11:30 - 13:00 DJ-сет, напитки, нетворкинг.\n\n13:00 Лекция Константина Морылёва, CEO IT-компании MapNT), где расскажут, «какую работу лучше оставить себе, а какую смело делегировать нейросетям».\n\nВход бесплатный, по регистрации",
+    "description_blocks": [
+      "Кофейный рейв от Центра креативных индустрий | Центр «Мой бизнес».",
+      "Приглашают «создателей визуального контента» - дизайнеров, фотографов, видеографов, смм-щиков.",
+      "11:30 - 13:00 DJ-сет, напитки, нетворкинг.",
+      "13:00 Лекция Константина Морылёва, CEO IT-компании MapNT), где расскажут, «какую работу лучше оставить себе, а какую смело делегировать нейросетям».",
+      "Вход бесплатный, по регистрации"
+    ],
+    "contacts": "https://mb-kaliningrad.timepad.ru/event/3999846/",
+    "lat": 54.6964389,
+    "lon": 20.5163352,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/788d951c0c15.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/788d951c0c15.jpg",
+    "tg_message_id": 7692,
+    "is_active": true
+  },
+  {
     "id": "b6a5621d9ef9",
     "date": "20.06.2026",
     "title": "Калининградская музыкальная ночь",
@@ -1221,6 +1278,40 @@
     "is_active": true
   },
   {
+    "id": "2781e7efe3fe",
+    "date": "20.06.2026",
+    "title": "Летний вайб",
+    "location": "Суспирия, Коперника 21",
+    "address": "Суспирия, Коперника 21",
+    "time": "20:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Суспирия продолжает серию летних вечеринок. Вечером - винил в белом зале и посиделки на импровизированной летке, ночью - танцы в чёрном зале.\n\nНачинают:\nNilson\nDP/DT\n\nПродолжают и растанцовывают:\nBig ",
+    "full_description": "Суспирия продолжает серию летних вечеринок. Вечером - винил в белом зале и посиделки на импровизированной летке, ночью - танцы в чёрном зале.\n\nНачинают:\nNilson\nDP/DT\n\nПродолжают и растанцовывают:\nBig El Cat\nV.Kan\nArsenio\nSelectica\n\nАнонсированы гость из Лондона, disco, house, ethnical, deeptech, ebm, electro etc.\n\nНачало в 20.00\nВход свободный",
+    "description_blocks": [
+      "Суспирия продолжает серию летних вечеринок. Вечером - винил в белом зале и посиделки на импровизированной летке, ночью - танцы в чёрном зале.",
+      "Начинают:",
+      "Nilson",
+      "DP/DT",
+      "Продолжают и растанцовывают:",
+      "Big El Cat",
+      "V.Kan",
+      "Arsenio",
+      "Selectica",
+      "Анонсированы гость из Лондона, disco, house, ethnical, deeptech, ebm, electro etc.",
+      "Начало в 20.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/suspiriabar/1300",
+    "lat": 54.710566319856,
+    "lon": 20.504079014298,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/2781e7efe3fe.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/2781e7efe3fe.jpg",
+    "tg_message_id": 7695,
+    "is_active": true
+  },
+  {
     "id": "29f05f112aba",
     "date": "20.06.2026",
     "title": "Рок ради жизни",
@@ -1245,6 +1336,28 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/29f05f112aba.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/29f05f112aba.jpg",
     "tg_message_id": 7684,
+    "is_active": true
+  },
+  {
+    "id": "ca472933d2cb",
+    "date": "20.06.2026",
+    "title": "ХАУС-2000",
+    "location": "Локация, Юбилейная 18",
+    "address": "Локация, Юбилейная 18",
+    "time": "",
+    "tags": [],
+    "short_description": "Команда Red Room снова делают вечеринку электронной музыки из 2000 и 2010-х. Вас ждут хиты Казантипа, тектоник и прочая танцевальная ностальгия.\n\nВсё пройдёт на новой концертной площадке - в стендап-к",
+    "full_description": "Команда Red Room снова делают вечеринку электронной музыки из 2000 и 2010-х. Вас ждут хиты Казантипа, тектоник и прочая танцевальная ностальгия.\n\nВсё пройдёт на новой концертной площадке - в стендап-клубе «Локация».",
+    "description_blocks": [
+      "Команда Red Room снова делают вечеринку электронной музыки из 2000 и 2010-х. Вас ждут хиты Казантипа, тектоник и прочая танцевальная ностальгия.",
+      "Всё пройдёт на новой концертной площадке - в стендап-клубе «Локация»."
+    ],
+    "contacts": "https://t.me/locostandup/3565",
+    "lat": 54.660277,
+    "lon": 20.6446167,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/ca472933d2cb.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/ca472933d2cb.jpg",
+    "tg_message_id": 7691,
     "is_active": true
   },
   {
@@ -1374,6 +1487,39 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/58817e86c928.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/58817e86c928.jpg",
     "tg_message_id": 7683,
+    "is_active": true
+  },
+  {
+    "id": "9b3dc357a6a8",
+    "date": "25.06.2026",
+    "title": "Berlinka",
+    "location": "The Room, Яналова 17д",
+    "address": "The Room, Яналова 17д",
+    "time": "21:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Приглашают друзей и друзей друзей разделить ночь техно.\n\nLine up:\n21:00 ArTech\n22:00 Milenko\n23:00 Shogetta\n00:00 Anna Breathe\n01:00 Shogetta B2B ArTech\n\nЖанры: Techno / RAW / Hypnotic / Hardgroove / ",
+    "full_description": "Приглашают друзей и друзей друзей разделить ночь техно.\n\nLine up:\n21:00 ArTech\n22:00 Milenko\n23:00 Shogetta\n00:00 Anna Breathe\n01:00 Shogetta B2B ArTech\n\nЖанры: Techno / RAW / Hypnotic / Hardgroove / Hard Techno\n\nВход:\nБесплатно для подписчиков канала Berlinka.\nНе подписчикам - 100р.",
+    "description_blocks": [
+      "Приглашают друзей и друзей друзей разделить ночь техно.",
+      "Line up:",
+      "21:00 ArTech",
+      "22:00 Milenko",
+      "23:00 Shogetta",
+      "00:00 Anna Breathe",
+      "01:00 Shogetta B2B ArTech",
+      "Жанры: Techno / RAW / Hypnotic / Hardgroove / Hard Techno",
+      "Вход:",
+      "Бесплатно для подписчиков канала Berlinka.",
+      "Не подписчикам - 100р."
+    ],
+    "contacts": "https://t.me/berlinka_kld",
+    "lat": 54.729252,
+    "lon": 20.475423,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/9b3dc357a6a8.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/9b3dc357a6a8.jpg",
+    "tg_message_id": 7693,
     "is_active": true
   }
 ]

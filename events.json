@@ -1655,6 +1655,88 @@
     "is_active": true
   },
   {
+    "id": "6628ef9d62d2",
+    "date": "26.06.2026",
+    "title": "Decadance",
+    "location": "Душевный сад, Верхнеозёрная 2а",
+    "address": "Душевный сад, Верхнеозёрная 2а",
+    "time": "18:00",
+    "tags": [
+      "Вечеринка"
+    ],
+    "short_description": "На этот раз прогноз погоды подвести не должен, и вечеринка точно состоится.\n\nИзящные танцы на закате с коктейлями в красивой локации на Верхнем озере в окружении красивых нарядных людей.\n\nDJ Valery от",
+    "full_description": "На этот раз прогноз погоды подвести не должен, и вечеринка точно состоится.\n\nИзящные танцы на закате с коктейлями в красивой локации на Верхнем озере в окружении красивых нарядных людей.\n\nDJ Valery отыграет большой деньрожденческий сет. Остальные резиденты проекта естественно поддержат.\n\n18.00 - 23.00",
+    "description_blocks": [
+      "На этот раз прогноз погоды подвести не должен, и вечеринка точно состоится.",
+      "Изящные танцы на закате с коктейлями в красивой локации на Верхнем озере в окружении красивых нарядных людей.",
+      "DJ Valery отыграет большой деньрожденческий сет. Остальные резиденты проекта естественно поддержат.",
+      "18.00 - 23.00"
+    ],
+    "contacts": "https://t.me/decadancekld",
+    "lat": 54.7300393,
+    "lon": 20.519091,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/6628ef9d62d2.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/6628ef9d62d2.jpg",
+    "tg_message_id": 7743,
+    "is_active": true
+  },
+  {
+    "id": "d320c9d4f0a0",
+    "date": "26.06.2026",
+    "title": "Латино вечер",
+    "location": "Форма, Гаражная 2б",
+    "address": "Форма, Гаражная 2б",
+    "time": "",
+    "tags": [],
+    "short_description": "«Город достаточно нагрелся для жарких Латиноамериканских ритмов»\n\nJazz quartet Kalinin Rad исполнит известные джазовые стандарты и авторские композиции в латинском стиле.\n\nАльт саксофон - Григорий Лат",
+    "full_description": "«Город достаточно нагрелся для жарких Латиноамериканских ритмов»\n\nJazz quartet Kalinin Rad исполнит известные джазовые стандарты и авторские композиции в латинском стиле.\n\nАльт саксофон - Григорий Латышов\nПиано - Евгений Коробицын\nУдарные - Людмила Сиркачик\nБас - Дмитрий Донской",
+    "description_blocks": [
+      "«Город достаточно нагрелся для жарких Латиноамериканских ритмов»",
+      "Jazz quartet Kalinin Rad исполнит известные джазовые стандарты и авторские композиции в латинском стиле.",
+      "Альт саксофон - Григорий Латышов",
+      "Пиано - Евгений Коробицын",
+      "Ударные - Людмила Сиркачик",
+      "Бас - Дмитрий Донской"
+    ],
+    "contacts": "https://t.me/forma_pizzabar/1571",
+    "lat": 54.7244567540289,
+    "lon": 20.5053160508956,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/d320c9d4f0a0.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/d320c9d4f0a0.jpg",
+    "tg_message_id": 7748,
+    "is_active": true
+  },
+  {
+    "id": "bd498221f564",
+    "date": "27.06.2026",
+    "title": "Morrison - Рок Пикник",
+    "location": "Браво Италия, Правая Набережная 9",
+    "address": "Браво Италия, Правая Набережная 9",
+    "time": "20:00",
+    "tags": [
+      "Вечеринка"
+    ],
+    "short_description": "Вечеринка от бара «Morrison». Фуд-корт, несколько баров, вид на порт.\n\n20:00 - Выступление группы «El Rodriguez» с главными хитами зарубежного рока\n\n22:00 - Рок дискотека под открытым небом.  На сцене",
+    "full_description": "Вечеринка от бара «Morrison». Фуд-корт, несколько баров, вид на порт.\n\n20:00 - Выступление группы «El Rodriguez» с главными хитами зарубежного рока\n\n22:00 - Рок дискотека под открытым небом.  На сцене - все резиденты бара Morrison:\n\nLexus\nLana Mo\nHaldej\nAlex Strokes\nSmolique",
+    "description_blocks": [
+      "Вечеринка от бара «Morrison». Фуд-корт, несколько баров, вид на порт.",
+      "20:00 - Выступление группы «El Rodriguez» с главными хитами зарубежного рока",
+      "22:00 - Рок дискотека под открытым небом.  На сцене - все резиденты бара Morrison:",
+      "Lexus",
+      "Lana Mo",
+      "Haldej",
+      "Alex Strokes",
+      "Smolique"
+    ],
+    "contacts": "https://www.instagram.com/morrisonbar_kenig?igsh=MXF3b25nOXdsN3Y1eg==",
+    "lat": 54.7063895,
+    "lon": 20.4713978,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bd498221f564.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bd498221f564.jpg",
+    "tg_message_id": 7745,
+    "is_active": true
+  },
+  {
     "id": "d0e6a4bb2c44",
     "date": "27.06.2026",
     "title": "Кино у моря",

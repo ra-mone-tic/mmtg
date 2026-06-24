@@ -1966,29 +1966,5 @@
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a4c6f15a7bd2.jpg",
     "tg_message_id": 7738,
     "is_active": true
-  },
-  {
-    "id": "27b2a61c2dd6",
-    "date": "28.06.2026",
-    "title": "LAST SOS",
-    "location": "Балтйская коса",
-    "address": "Балтйская коса",
-    "time": "",
-    "tags": [
-      "Вечеринка"
-    ],
-    "short_description": "Настолько нишево, что даже не думай что-то уточнять.\n\nБольшая вылазка на Балтийскую косу с комьюнити Плохого охотника. Вечеринка SOS будет длиться три дня, 50 диджеев, палатки, никаких обязательств и ",
-    "full_description": "Настолько нишево, что даже не думай что-то уточнять.\n\nБольшая вылазка на Балтийскую косу с комьюнити Плохого охотника. Вечеринка SOS будет длиться три дня, 50 диджеев, палатки, никаких обязательств и входных билетов.",
-    "description_blocks": [
-      "Настолько нишево, что даже не думай что-то уточнять.",
-      "Большая вылазка на Балтийскую косу с комьюнити Плохого охотника. Вечеринка SOS будет длиться три дня, 50 диджеев, палатки, никаких обязательств и входных билетов."
-    ],
-    "contacts": "https://t.me/ploxoioxotnik/2556",
-    "lat": 54.6169838,
-    "lon": 19.8615898,
-    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/27b2a61c2dd6.jpg",
-    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/27b2a61c2dd6.jpg",
-    "tg_message_id": 7746,
-    "is_active": true
   }
 ]

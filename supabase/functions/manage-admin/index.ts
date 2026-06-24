@@ -23,16 +23,16 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { action, target_user_id } = body; // action: "add" | "remove"
+    const { action, target_user_id } = body; // action: "add" | "remove" | "list"
 
-    if (!action || !target_user_id) {
-      return new Response(JSON.stringify({ error: "action and target_user_id required" }), {
+    if (!action) {
+      return new Response(JSON.stringify({ error: "action required" }), {
         status: 400, headers: { ...CORS, "Content-Type": "application/json" },
       });
     }
 
-    if (!["add", "remove"].includes(action)) {
-      return new Response(JSON.stringify({ error: "action must be 'add' or 'remove'" }), {
+    if (!["add", "remove", "list"].includes(action)) {
+      return new Response(JSON.stringify({ error: "action must be 'add', 'remove', or 'list'" }), {
         status: 400, headers: { ...CORS, "Content-Type": "application/json" },
       });
     }
@@ -68,6 +68,31 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: "Only admins can manage roles" }), {
         status: 403, headers: { ...CORS, "Content-Type": "application/json" },
       });
+    }
+
+    // ── List all admins with profiles ───────────────
+    if (action === "list") {
+      const { data: adminRoles, error: listErr } = await admin
+        .from("admin_roles")
+        .select("user_id, role, created_at");
+
+      if (listErr) throw listErr;
+
+      const adminIds = (adminRoles || []).map(a => a.user_id);
+      let adminProfiles = [];
+      if (adminIds.length) {
+        const { data: profiles } = await admin
+          .from("profiles")
+          .select("id, first_name, last_name, username, photo_url")
+          .in("id", adminIds);
+        adminProfiles = profiles || [];
+      }
+
+      return new Response(JSON.stringify({
+        ok: true,
+        admins: adminRoles || [],
+        profiles: adminProfiles,
+      }), { headers: { ...CORS, "Content-Type": "application/json" } });
     }
 
     // Verify target user exists in profiles

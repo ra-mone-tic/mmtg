@@ -1,7 +1,7 @@
 // ─── Admin Panel — CRUD Events & Reports ───────────────
 import { $, posterGrad, renderTags, ICONS, TG } from './helpers.js';
 import { state } from './state.js';
-import { supabase } from './supabase.js';
+import { supabase, callEdge } from './supabase.js';
 import { isAdmin, isAuthed } from './auth.js';
 import { showToast } from './toast.js';
 import { loadAllEvents, normalizeDate, parseDate } from './data.js';
@@ -119,11 +119,12 @@ async function _renderAdminList(modal) {
       ➕ Создать мероприятие
     </button>`;
 
-    // Tabs: active / inactive / reports
+    // Tabs: active / inactive / reports / admins
     html += `<div class="admin-tabs">
       <button class="admin-tab active" data-tab="active">Активные (${events.filter(e => e.is_active).length})</button>
       <button class="admin-tab" data-tab="inactive">Неактивные (${events.filter(e => !e.is_active).length})</button>
       <button class="admin-tab" data-tab="reports">Отчёты</button>
+      <button class="admin-tab" data-tab="admins">🔑 Админы</button>
     </div>`;
 
     // Events list
@@ -136,6 +137,11 @@ async function _renderAdminList(modal) {
     // Reports section (hidden by default)
     html += `<div id="admin-reports-section" style="display:none">
       <p style="padding:12px 0;color:var(--c-t2);font-size:13px;">Загрузка отчётов…</p>
+    </div>`;
+
+    // Admins management section (hidden by default)
+    html += `<div id="admin-admins-section" style="display:none">
+      <p style="padding:12px 0;color:var(--c-t2);font-size:13px;">Загрузка…</p>
     </div>`;
 
     body.innerHTML = html;
@@ -151,10 +157,12 @@ async function _renderAdminList(modal) {
         body.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
         tab.classList.add('active');
         const tabName = tab.dataset.tab;
-        body.querySelector('#admin-events-list').style.display = (tabName === 'reports') ? 'none' : '';
+        body.querySelector('#admin-events-list').style.display = (tabName === 'reports' || tabName === 'admins') ? 'none' : '';
         body.querySelector('#admin-events-inactive').style.display = (tabName === 'inactive') ? '' : 'none';
         body.querySelector('#admin-reports-section').style.display = (tabName === 'reports') ? '' : 'none';
+        body.querySelector('#admin-admins-section').style.display = (tabName === 'admins') ? '' : 'none';
         if (tabName === 'reports') _loadReports(body.querySelector('#admin-reports-section'));
+        if (tabName === 'admins') _loadAdminsSection(body.querySelector('#admin-admins-section'));
       });
     });
 
@@ -768,6 +776,217 @@ async function _submitEvent(modal, isEdit) {
   } catch (err) {
     console.error('[MEOW] Admin save error:', err);
     showToast('Ошибка: ' + (err.message || 'Неизвестная'));
+  }
+}
+
+// ── Admins Management Section ────────────────────────
+
+async function _loadAdminsSection(container) {
+  if (!container) return;
+  container.innerHTML = '<p style="padding:12px 0;color:var(--c-t2);font-size:13px;">Загрузка…</p>';
+
+  try {
+    // Load current admins with profiles via Edge Function (uses service_role — bypasses RLS)
+    const result = await callEdge('manage-admin', { action: 'list' });
+
+    const adminRoles = result.admins || [];
+    const adminProfiles = result.profiles || [];
+    const adminMap = {};
+    adminRoles.forEach(a => { adminMap[a.user_id] = a; });
+
+    // Count total users for the search
+    const { count: totalUsers } = await supabase
+      .from('profiles')
+      .select('*', { count: 'exact', head: true });
+
+    let html = '';
+
+    // ── Current admins list ─────────────────────────
+    html += `<div style="margin-bottom:12px">
+      <div class="admin-label" style="margin-bottom:8px;font-size:12px">
+        👑 Текущие админы (${adminProfiles.length})
+      </div>`;
+
+    if (!adminProfiles.length) {
+      html += `<p class="admin-empty">Нет назначенных админов</p>`;
+    } else {
+      html += adminProfiles.map(p => {
+        const role = adminMap[p.id]?.role || 'admin';
+        const initials = ((p.first_name?.[0] ?? '') + (p.last_name?.[0] ?? '')).toUpperCase() || '?';
+        const isSelf = p.id === state.user?.id;
+        return `
+          <div class="admin-event-row" data-uid="${p.id}">
+            <div style="width:34px;height:34px;border-radius:50%;background:var(--c-accent-d);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;color:var(--c-accent)">
+              ${initials}
+            </div>
+            <div class="admin-event-info">
+              <div class="admin-event-title">${_esc(p.first_name || '')} ${_esc(p.last_name || '')}</div>
+              <div class="admin-event-date">@${_esc(p.username || '—')} · ${role === 'super_admin' ? '⭐ Супер-админ' : '🔑 Админ'}</div>
+            </div>
+            <div class="admin-event-badges">
+              ${isSelf ? '<span class="admin-badge active" style="font-size:10px">Это вы</span>' : ''}
+            </div>
+            <div class="admin-event-actions">
+              ${!isSelf
+                ? `<button class="btn-admin-sm delete admin-remove-admin" data-uid="${p.id}" title="Убрать админа">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                  </button>`
+                : ''
+              }
+            </div>
+          </div>`;
+      }).join('');
+    }
+    html += `</div>`;
+
+    // ── Add new admin ───────────────────────────────
+    html += `<div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--c-soft-br)">
+      <div class="admin-label" style="margin-bottom:8px;font-size:12px">
+        🔍 Назначить админа
+      </div>
+      <div style="position:relative">
+        <input class="admin-input" id="admin-user-search-input"
+               placeholder="Введите имя, фамилию или @username..."
+               autocomplete="off" style="margin-bottom:4px">
+        <div id="admin-user-search-results" style="max-height:240px;overflow-y:auto"></div>
+      </div>
+      <p style="font-size:11px;color:var(--c-t2);margin-top:6px">
+        Всего пользователей в сервисе: <strong>${totalUsers ?? '—'}</strong>
+      </p>
+    </div>`;
+
+    container.innerHTML = html;
+
+    // ── Bind remove buttons ──────────────────────────
+    container.querySelectorAll('.admin-remove-admin').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const uid = btn.dataset.uid;
+        if (!confirm('Убрать этого пользователя из админов?')) return;
+        try {
+          await callEdge('manage-admin', { action: 'remove', target_user_id: uid });
+          showToast('✅ Админ удалён');
+          _loadAdminsSection(container);
+        } catch (err) {
+          showToast('Ошибка: ' + (err.message || err));
+        }
+      });
+    });
+
+    // ── User search ─────────────────────────────────
+    _initUserSearch(container);
+
+  } catch (err) {
+    console.error('[MEOW] Admins section error:', err);
+    container.innerHTML = '<p style="padding:12px 0;text-align:center;color:var(--c-t2);font-size:13px;">Ошибка загрузки</p>';
+  }
+}
+
+// ── Cached admin IDs (loaded from Edge Function to bypass RLS) ──
+let _cachedAdminIds = new Set();
+
+// ── User search for admin promotion ──────────────────
+
+let _userSearchTimer = null;
+
+function _initUserSearch(container) {
+  // Ensure we have current admin IDs cached from the section load
+  (async () => {
+    try {
+      const result = await callEdge('manage-admin', { action: 'list' });
+      _cachedAdminIds = new Set((result.admins || []).map(a => a.user_id));
+    } catch {}
+  })();
+  const input = container.querySelector('#admin-user-search-input');
+  const results = container.querySelector('#admin-user-search-results');
+  if (!input || !results) return;
+
+  input.addEventListener('input', () => {
+    clearTimeout(_userSearchTimer);
+    const val = input.value.trim();
+    if (val.length < 2) {
+      results.innerHTML = '';
+      return;
+    }
+    _userSearchTimer = setTimeout(() => {
+      _searchUsers(val, results, container);
+    }, 300);
+  });
+}
+
+async function _searchUsers(query, resultsEl, container) {
+  const q = query.toLowerCase().trim();
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, first_name, last_name, username, photo_url')
+      .or(`first_name.ilike.%${q}%,last_name.ilike.%${q}%,username.ilike.%${q}%`)
+      .limit(20);
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      resultsEl.innerHTML = '<p style="padding:8px 0;color:var(--c-t2);font-size:12px">Ничего не найдено</p>';
+      return;
+    }
+
+    // Check which are already admins (using cached IDs from Edge Function)
+    const adminIds = _cachedAdminIds;
+
+    resultsEl.innerHTML = data.map(p => {
+      const isAlreadyAdmin = adminIds.has(p.id);
+      const initials = ((p.first_name?.[0] ?? '') + (p.last_name?.[0] ?? '')).toUpperCase() || '?';
+      return `
+        <div class="admin-event-row" data-uid="${p.id}" style="cursor:pointer;margin-bottom:4px">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--c-accent-d);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0;color:var(--c-accent)">
+            ${initials}
+          </div>
+          <div class="admin-event-info">
+            <div class="admin-event-title">${_esc(p.first_name || '')} ${_esc(p.last_name || '')}</div>
+            <div class="admin-event-date">@${_esc(p.username || '—')}</div>
+          </div>
+          <div class="admin-event-badges">
+            ${isAlreadyAdmin
+              ? '<span class="admin-badge active">👑 Админ</span>'
+              : ''
+            }
+          </div>
+          <div class="admin-event-actions">
+            ${!isAlreadyAdmin
+              ? `<button class="btn-admin-sm edit admin-promote-btn" data-uid="${p.id}" title="Сделать админом" style="width:auto;padding:0 10px;font-size:11px;font-weight:700;color:var(--c-accent)">
+                  + Назначить
+                </button>`
+              : ''
+            }
+          </div>
+        </div>`;
+    }).join('');
+
+    // Bind promote buttons
+    resultsEl.querySelectorAll('.admin-promote-btn').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const uid = btn.dataset.uid;
+        try {
+          await callEdge('manage-admin', { action: 'add', target_user_id: uid });
+          showToast('✅ Админ назначен');
+          // Clear search
+          const input = container.querySelector('#admin-user-search-input');
+          if (input) input.value = '';
+          resultsEl.innerHTML = '';
+          // Reload admins section
+          const adminsSection = container;
+          _loadAdminsSection(adminsSection);
+        } catch (err) {
+          showToast('Ошибка: ' + (err.message || err));
+        }
+      });
+    });
+
+  } catch (err) {
+    console.error('[MEOW] User search error:', err);
+    resultsEl.innerHTML = '<p style="padding:8px 0;color:var(--c-t2);font-size:12px">Ошибка поиска</p>';
   }
 }
 

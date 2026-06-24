@@ -48,27 +48,37 @@ def parse_post(
     # ── Дата и заголовок ────────────────────────────
     first_line = first_lines[0]
 
-    # Проверяем на диапазон дат в первой строке: "DD.MM - DD.MM | Title" → берём первую дату
-    m_range = re.match(
-        r"(\d{1,2})\.(\d{1,2})\s*[-–—]\s*\d{1,2}\.\d{1,2}\s*[|–—\-]\s*(.+)$",
+    # Проверяем на диапазон дат "DD-DD.MM | Title" (без точки после первого дня), например "26-28.06 | LAST SOS"
+    m_range_no_dot = re.match(
+        r"(?<!\.)(\d{1,2})\s*[-–—]\s*(\d{1,2})\.(\d{1,2})\s*[|–—\-]\s*(.+)$",
         first_line,
     )
-    if m_range:
-        day, month = int(m_range.group(1)), int(m_range.group(2))
+    if m_range_no_dot:
+        day, month = int(m_range_no_dot.group(1)), int(m_range_no_dot.group(3))
         hour, minute = None, None
-        title = m_range.group(3).strip()
+        title = m_range_no_dot.group(4).strip()
     else:
-        m = re.search(
-            r"(\d{1,2})\.(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?\s*[|–—\-]\s*(.+)$",
+        # Проверяем на диапазон дат в первой строке: "DD.MM - DD.MM | Title" → берём первую дату
+        m_range = re.match(
+            r"(\d{1,2})\.(\d{1,2})\s*[-–—]\s*\d{1,2}\.\d{1,2}\s*[|–—\-]\s*(.+)$",
             first_line,
         )
-        if not m:
-            logger.debug(f"Не удалось распарсить первую строку: {first_line!r}")
-            return None
+        if m_range:
+            day, month = int(m_range.group(1)), int(m_range.group(2))
+            hour, minute = None, None
+            title = m_range.group(3).strip()
+        else:
+            m = re.search(
+                r"(\d{1,2})\.(\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?\s*[|–—\-]\s*(.+)$",
+                first_line,
+            )
+            if not m:
+                logger.debug(f"Не удалось распарсить первую строку: {first_line!r}")
+                return None
 
-        day, month = int(m.group(1)), int(m.group(2))
-        hour, minute = m.group(3), m.group(4)
-        title = m.group(5).strip()
+            day, month = int(m.group(1)), int(m.group(2))
+            hour, minute = m.group(3), m.group(4)
+            title = m.group(5).strip()
 
     now  = datetime.now()
     year = now.year
@@ -205,7 +215,28 @@ def _extract_dates_fallback(
             seen.add(ds)
             extra.append(ds)
 
-    # 1. Диапазон "DD.MM—DD.MM" или "DD.MM - DD.MM" или "DD.MM–DD.MM"
+    # 1. Диапазон "DD-DD.MM" (без точки после первого числа), например "26-28.06"
+    for m in re.finditer(
+        r'(?<!\.)(\d{1,2})\s*[-–—]\s*(\d{1,2})\.(\d{1,2})',
+        text,
+    ):
+        d1, d2, mon = int(m.group(1)), int(m.group(2)), int(m.group(3))
+        if not (1 <= mon <= 12 and 1 <= d1 <= 31 and 1 <= d2 <= 31) or d1 > d2:
+            continue
+        try:
+            dt1 = datetime.strptime(_normalize(d1, mon), "%d.%m.%Y")
+        except (ValueError, OverflowError):
+            continue
+        delta = d2 - d1
+        if 0 <= delta <= 14:
+            for i in range(delta + 1):
+                nd = dt1 + timedelta(days=i)
+                ds = nd.strftime("%d.%m.%Y")
+                if ds not in seen:
+                    seen.add(ds)
+                    extra.append(ds)
+
+    # 1b. Диапазон "DD.MM—DD.MM" или "DD.MM - DD.MM" или "DD.MM–DD.MM"
     for m in re.finditer(
         r'(\d{1,2})\.(\d{1,2})\s*[-–—]\s*(\d{1,2})\.(\d{1,2})',
         text,

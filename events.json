@@ -1855,6 +1855,32 @@
     "is_active": true
   },
   {
+    "id": "73e7518aca09",
+    "date": "26.06.2026",
+    "title": "Выходные в Лесу",
+    "location": "Лес, Светлогорск, Ленина 27 а-б",
+    "address": "Лес, Светлогорск, Ленина 27 а-б",
+    "time": "",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Два музыкальных вечера в барчике на холме.\n\nСегодня - «диско трамвай» с Сашей SBGTK, проедут по стилям soviet wave, italo, dark disco, new vawe.\n\nВ субботу свою виниловую коллекцию покажут Андрэ и Ann",
+    "full_description": "Два музыкальных вечера в барчике на холме.\n\nСегодня - «диско трамвай» с Сашей SBGTK, проедут по стилям soviet wave, italo, dark disco, new vawe.\n\nВ субботу свою виниловую коллекцию покажут Андрэ и Anngre.\n\nВход свободный",
+    "description_blocks": [
+      "Два музыкальных вечера в барчике на холме.",
+      "Сегодня - «диско трамвай» с Сашей SBGTK, проедут по стилям soviet wave, italo, dark disco, new vawe.",
+      "В субботу свою виниловую коллекцию покажут Андрэ и Anngre.",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/vlessbar",
+    "lat": 54.9437013,
+    "lon": 20.1616697,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/73e7518aca09.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/73e7518aca09.jpg",
+    "tg_message_id": 7779,
+    "is_active": true
+  },
+  {
     "id": "d320c9d4f0a0",
     "date": "26.06.2026",
     "title": "Латино вечер",
@@ -1927,8 +1953,8 @@
       "Dress Code: мафия, острые козырьки, черные и белые цвета"
     ],
     "contacts": "https://t.me/netusaevent",
-    "lat": 54.6813922,
-    "lon": 20.4843937,
+    "lat": 54.6807097,
+    "lon": 20.4896101,
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/796667c6e011.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/796667c6e011.jpg",
     "tg_message_id": 7772,
@@ -1984,6 +2010,32 @@
     "imageUrl": "",
     "image_url": "",
     "tg_message_id": 7771,
+    "is_active": true
+  },
+  {
+    "id": "77dcb2e8b622",
+    "date": "27.06.2026",
+    "title": "Выходные в Лесу",
+    "location": "Лес, Светлогорск, Ленина 27 а-б",
+    "address": "Лес, Светлогорск, Ленина 27 а-б",
+    "time": "",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Два музыкальных вечера в барчике на холме.\n\nСегодня - «диско трамвай» с Сашей SBGTK, проедут по стилям soviet wave, italo, dark disco, new vawe.\n\nВ субботу свою виниловую коллекцию покажут Андрэ и Ann",
+    "full_description": "Два музыкальных вечера в барчике на холме.\n\nСегодня - «диско трамвай» с Сашей SBGTK, проедут по стилям soviet wave, italo, dark disco, new vawe.\n\nВ субботу свою виниловую коллекцию покажут Андрэ и Anngre.\n\nВход свободный",
+    "description_blocks": [
+      "Два музыкальных вечера в барчике на холме.",
+      "Сегодня - «диско трамвай» с Сашей SBGTK, проедут по стилям soviet wave, italo, dark disco, new vawe.",
+      "В субботу свою виниловую коллекцию покажут Андрэ и Anngre.",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/vlessbar",
+    "lat": 54.9437013,
+    "lon": 20.1616697,
+    "imageUrl": "",
+    "image_url": "",
+    "tg_message_id": 7779,
     "is_active": true
   },
   {
@@ -2102,8 +2154,8 @@
       "Вход свободный"
     ],
     "contacts": "https://www.instagram.com/reel/DZ45I7dt15J/?igsh=Y201bzMyeDU4eHM1",
-    "lat": 54.7066624,
-    "lon": 20.4572576,
+    "lat": 54.7050428,
+    "lon": 20.4792893,
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/16db79bc6985.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/16db79bc6985.jpg",
     "tg_message_id": 7774,

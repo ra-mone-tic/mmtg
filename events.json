@@ -1515,35 +1515,6 @@
     "is_active": true
   },
   {
-    "id": "6317f5489fa7",
-    "date": "21.06.2026",
-    "title": "Праздник жизни",
-    "location": "Бэкъярд, Бассейная 81",
-    "address": "Бэкъярд, Бассейная 81",
-    "time": "14:00",
-    "tags": [],
-    "short_description": "В день летнего солнцестояния состоится тизер-событие фестиваля «Тихая Сила», который пройдёт в июле в пространстве Бэкъярд.\n\n• 14.00 - 16.00 Дневная программа:\n\nБарбекю\nПоказ документального фильма «К",
-    "full_description": "В день летнего солнцестояния состоится тизер-событие фестиваля «Тихая Сила», который пройдёт в июле в пространстве Бэкъярд.\n\n• 14.00 - 16.00 Дневная программа:\n\nБарбекю\nПоказ документального фильма «Кояанискатси» Годфри Реджио\nГаба-чаепитие\n\n• 16.00 - 23.00 Вечерняя программа:\n\nАудио спа с DJ’s Yasya и Sha99y Танцы с DJ Step Rock\nКостёр\nКакао-церемония",
-    "description_blocks": [
-      "В день летнего солнцестояния состоится тизер-событие фестиваля «Тихая Сила», который пройдёт в июле в пространстве Бэкъярд.",
-      "• 14.00 - 16.00 Дневная программа:",
-      "Барбекю",
-      "Показ документального фильма «Кояанискатси» Годфри Реджио",
-      "Габа-чаепитие",
-      "• 16.00 - 23.00 Вечерняя программа:",
-      "Аудио спа с DJ’s Yasya и Sha99y Танцы с DJ Step Rock",
-      "Костёр",
-      "Какао-церемония"
-    ],
-    "contacts": "https://t.me/quitestrongspace",
-    "lat": 54.7291918,
-    "lon": 20.450601,
-    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/6317f5489fa7.jpg",
-    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/6317f5489fa7.jpg",
-    "tg_message_id": 7705,
-    "is_active": true
-  },
-  {
     "id": "66327ca00c80",
     "date": "21.06.2026",
     "title": "Праздник жизни",
@@ -1584,6 +1555,35 @@
     "imageUrl": "images/66327ca00c80.jpg",
     "image_url": "images/66327ca00c80.jpg",
     "tg_message_id": 7642,
+    "is_active": true
+  },
+  {
+    "id": "6317f5489fa7",
+    "date": "21.06.2026",
+    "title": "Праздник жизни",
+    "location": "Бэкъярд, Бассейная 81",
+    "address": "Бэкъярд, Бассейная 81",
+    "time": "14:00",
+    "tags": [],
+    "short_description": "В день летнего солнцестояния состоится тизер-событие фестиваля «Тихая Сила», который пройдёт в июле в пространстве Бэкъярд.\n\n• 14.00 - 16.00 Дневная программа:\n\nБарбекю\nПоказ документального фильма «К",
+    "full_description": "В день летнего солнцестояния состоится тизер-событие фестиваля «Тихая Сила», который пройдёт в июле в пространстве Бэкъярд.\n\n• 14.00 - 16.00 Дневная программа:\n\nБарбекю\nПоказ документального фильма «Кояанискатси» Годфри Реджио\nГаба-чаепитие\n\n• 16.00 - 23.00 Вечерняя программа:\n\nАудио спа с DJ’s Yasya и Sha99y Танцы с DJ Step Rock\nКостёр\nКакао-церемония",
+    "description_blocks": [
+      "В день летнего солнцестояния состоится тизер-событие фестиваля «Тихая Сила», который пройдёт в июле в пространстве Бэкъярд.",
+      "• 14.00 - 16.00 Дневная программа:",
+      "Барбекю",
+      "Показ документального фильма «Кояанискатси» Годфри Реджио",
+      "Габа-чаепитие",
+      "• 16.00 - 23.00 Вечерняя программа:",
+      "Аудио спа с DJ’s Yasya и Sha99y Танцы с DJ Step Rock",
+      "Костёр",
+      "Какао-церемония"
+    ],
+    "contacts": "https://t.me/quitestrongspace",
+    "lat": 54.7291918,
+    "lon": 20.450601,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/6317f5489fa7.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/6317f5489fa7.jpg",
+    "tg_message_id": 7705,
     "is_active": true
   },
   {
@@ -1761,6 +1761,27 @@
     "is_active": true
   },
   {
+    "id": "37d241ef7b17",
+    "date": "26.06.2026",
+    "title": "DJ FUNKY DUCK",
+    "location": "Грецкий, Озёрная 1а",
+    "address": "Грецкий, Озёрная 1а",
+    "time": "",
+    "tags": [],
+    "short_description": "Танцевальный вечер с «Drams и Rock-n-roll» от Бубы. «О этот томный взгляд из под длинных ресниц , о эти локоны страсти».",
+    "full_description": "Танцевальный вечер с «Drams и Rock-n-roll» от Бубы. «О этот томный взгляд из под длинных ресниц , о эти локоны страсти».",
+    "description_blocks": [
+      "Танцевальный вечер с «Drams и Rock-n-roll» от Бубы. «О этот томный взгляд из под длинных ресниц , о эти локоны страсти»."
+    ],
+    "contacts": "https://www.instagram.com/gretskiy.bar?igsh=b3g0Mmx2Ym1nYmYw",
+    "lat": 54.7359499,
+    "lon": 20.5089976,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/37d241ef7b17.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/37d241ef7b17.jpg",
+    "tg_message_id": 7773,
+    "is_active": true
+  },
+  {
     "id": "6628ef9d62d2",
     "date": "26.06.2026",
     "title": "Decadance",
@@ -1810,6 +1831,27 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/43ad6cf91972.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/43ad6cf91972.jpg",
     "tg_message_id": 7757,
+    "is_active": true
+  },
+  {
+    "id": "db150a155bb9",
+    "date": "26.06.2026",
+    "title": "Выпускник 2026",
+    "location": "W Double U, Мира 31, 4 этаж",
+    "address": "W Double U, Мира 31, 4 этаж",
+    "time": "",
+    "tags": [],
+    "short_description": "Уикенд студенческих вечеринок. «Физики, лирики, технари и гуманитарии — под одной крышей»",
+    "full_description": "Уикенд студенческих вечеринок. «Физики, лирики, технари и гуманитарии — под одной крышей»",
+    "description_blocks": [
+      "Уикенд студенческих вечеринок. «Физики, лирики, технари и гуманитарии — под одной крышей»"
+    ],
+    "contacts": "https://t.me/doubleu39",
+    "lat": 54.9445575,
+    "lon": 20.1769774,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/db150a155bb9.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/db150a155bb9.jpg",
+    "tg_message_id": 7771,
     "is_active": true
   },
   {
@@ -1869,6 +1911,30 @@
     "is_active": true
   },
   {
+    "id": "796667c6e011",
+    "date": "27.06.2026",
+    "title": "NETOSYA BIRTHDAY PARTY",
+    "location": "THE WELL, Понарт, Судостроительная 4п",
+    "address": "THE WELL, Понарт, Судостроительная 4п",
+    "time": "",
+    "tags": [],
+    "short_description": "Объединяют день рождения Netosy и вечеринку в честь Дня молодежи в\nПонарт.\n\nВ программе - welcome drink, барбекю, выступление Анны Медведевой и артистов проекта «Культура Века», DJ сет от ILB, сюрприз",
+    "full_description": "Объединяют день рождения Netosy и вечеринку в честь Дня молодежи в\nПонарт.\n\nВ программе - welcome drink, барбекю, выступление Анны Медведевой и артистов проекта «Культура Века», DJ сет от ILB, сюрпризы, интерактивы.\n\nDress Code: мафия, острые козырьки, черные и белые цвета",
+    "description_blocks": [
+      "Объединяют день рождения Netosy и вечеринку в честь Дня молодежи в",
+      "Понарт.",
+      "В программе - welcome drink, барбекю, выступление Анны Медведевой и артистов проекта «Культура Века», DJ сет от ILB, сюрпризы, интерактивы.",
+      "Dress Code: мафия, острые козырьки, черные и белые цвета"
+    ],
+    "contacts": "https://t.me/netusaevent",
+    "lat": 54.6813922,
+    "lon": 20.4843937,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/796667c6e011.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/796667c6e011.jpg",
+    "tg_message_id": 7772,
+    "is_active": true
+  },
+  {
     "id": "fd1526903f87",
     "date": "27.06.2026",
     "title": "Open Air",
@@ -1897,6 +1963,27 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/fd1526903f87.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/fd1526903f87.jpg",
     "tg_message_id": 7758,
+    "is_active": true
+  },
+  {
+    "id": "f4d4fa1e4a4a",
+    "date": "27.06.2026",
+    "title": "Выпускник 2026",
+    "location": "W Double U, Мира 31, 4 этаж",
+    "address": "W Double U, Мира 31, 4 этаж",
+    "time": "",
+    "tags": [],
+    "short_description": "Уикенд студенческих вечеринок. «Физики, лирики, технари и гуманитарии — под одной крышей»",
+    "full_description": "Уикенд студенческих вечеринок. «Физики, лирики, технари и гуманитарии — под одной крышей»",
+    "description_blocks": [
+      "Уикенд студенческих вечеринок. «Физики, лирики, технари и гуманитарии — под одной крышей»"
+    ],
+    "contacts": "https://t.me/doubleu39",
+    "lat": 54.9445575,
+    "lon": 20.1769774,
+    "imageUrl": "",
+    "image_url": "",
+    "tg_message_id": 7771,
     "is_active": true
   },
   {
@@ -1995,6 +2082,31 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a4c6f15a7bd2.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a4c6f15a7bd2.jpg",
     "tg_message_id": 7738,
+    "is_active": true
+  },
+  {
+    "id": "16db79bc6985",
+    "date": "28.06.2026",
+    "title": "Пирс Гриль Пати",
+    "location": "ELEVATOR, Правая набережная 21",
+    "address": "ELEVATOR, Правая набережная 21",
+    "time": "14:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Пикник на набережной у кофейни ELEVATOR. Анонсированы авторские коктейли от бара Linch, диджеи, чилл-зона, хот-доги, морепродукты, закуски.\n\n14:00 - 20:00\nВход свободный",
+    "full_description": "Пикник на набережной у кофейни ELEVATOR. Анонсированы авторские коктейли от бара Linch, диджеи, чилл-зона, хот-доги, морепродукты, закуски.\n\n14:00 - 20:00\nВход свободный",
+    "description_blocks": [
+      "Пикник на набережной у кофейни ELEVATOR. Анонсированы авторские коктейли от бара Linch, диджеи, чилл-зона, хот-доги, морепродукты, закуски.",
+      "14:00 - 20:00",
+      "Вход свободный"
+    ],
+    "contacts": "https://www.instagram.com/reel/DZ45I7dt15J/?igsh=Y201bzMyeDU4eHM1",
+    "lat": 54.7066624,
+    "lon": 20.4572576,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/16db79bc6985.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/16db79bc6985.jpg",
+    "tg_message_id": 7774,
     "is_active": true
   },
   {

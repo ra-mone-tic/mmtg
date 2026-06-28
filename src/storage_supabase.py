@@ -138,7 +138,8 @@ def upsert_event(event: Dict[str, Any]) -> dict:
         "lon": event.get("lon"),
         "image_url": event.get("imageUrl") or event.get("image_url") or "",
         "tg_message_id": event.get("tg_message_id"),
-        "is_active": event.get("is_active", True),
+        # is_active не передаётся — синхронизация из Telegram не должна
+        # перезаписывать ручную деактивацию (см. manually_hidden в RLS)
     }
 
     try:

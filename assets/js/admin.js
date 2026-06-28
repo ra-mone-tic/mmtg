@@ -235,10 +235,10 @@ function _bindEventActions(container) {
       try {
         const { error } = await supabase
           .from('events')
-          .update({ is_active: !currentlyActive })
+          .update({ manually_hidden: currentlyActive })
           .eq('id', id);
         if (error) throw error;
-        showToast(currentlyActive ? 'Деактивировано' : 'Активировано');
+        showToast(currentlyActive ? 'Скрыто из ленты' : 'Показано в ленте');
         // Reload events
         await loadAllEvents();
         _renderAdminList($('admin-panel'));
@@ -253,14 +253,14 @@ function _bindEventActions(container) {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
       const id = btn.dataset.id;
-      if (!confirm('Удалить событие? Это действие необратимо.')) return;
+      if (!confirm('Скрыть событие из ленты?')) return;
       try {
         const { error } = await supabase
           .from('events')
-          .delete()
+          .update({ manually_hidden: true })
           .eq('id', id);
         if (error) throw error;
-        showToast('Удалено');
+        showToast('Скрыто из ленты');
         await loadAllEvents();
         _renderAdminList($('admin-panel'));
       } catch (err) {

@@ -36,7 +36,7 @@ limit = 1000
 
 while True:
     # Без order=date.asc — сортируем сами в Python для стабильности
-    url = f"{base_url}/rest/v1/events?select=*&limit={limit}&offset={offset}"
+    url = f"{base_url}/rest/v1/events?select=*&is_active=eq.true&limit={limit}&offset={offset}"
     req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=30) as resp:
         page = json.loads(resp.read().decode("utf-8"))
@@ -70,6 +70,7 @@ for e in all_events:
         "image_url": e.get("image_url", ""),
         "tg_message_id": e.get("tg_message_id"),
         "is_active": e.get("is_active", True),
+        "manually_hidden": e.get("manually_hidden", False),
     })
 
 with open("events.json", "w", encoding="utf-8") as f:

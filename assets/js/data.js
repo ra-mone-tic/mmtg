@@ -75,6 +75,7 @@ export async function loadAllEvents() {
       .from('events')
       .select('*')
       .eq('is_active', true)
+      .eq('manually_hidden', false)
       .order('date', { ascending: true });
 
     if (error) throw error;
@@ -95,8 +96,10 @@ export async function loadAllEvents() {
   // ── Fallback: локальный JSON ───────────────────────
   try {
     const resp = await fetch('events.json');
-    const data = await resp.json();
-    state.rawAllEvents = data.map(e => ({ ...e, date: normalizeDate(e.date) }));
+    const all = await resp.json();
+    state.rawAllEvents = all
+      .filter(e => e.is_active === true && e.manually_hidden !== true)
+      .map(e => ({ ...e, date: normalizeDate(e.date) }));
   } catch (e) {
     console.error('[MEOW] Ошибка загрузки событий:', e);
     state.rawAllEvents = [];

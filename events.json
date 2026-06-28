@@ -447,7 +447,7 @@
     "imageUrl": "images/59e5ea13ad92.jpg",
     "image_url": "images/59e5ea13ad92.jpg",
     "tg_message_id": 7628,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "18d47fb5a7a7",
@@ -471,7 +471,7 @@
     "imageUrl": "images/18d47fb5a7a7.jpg",
     "image_url": "images/18d47fb5a7a7.jpg",
     "tg_message_id": 7620,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "52343f5a535b",
@@ -502,7 +502,7 @@
     "imageUrl": "images/52343f5a535b.jpg",
     "image_url": "images/52343f5a535b.jpg",
     "tg_message_id": 7632,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "b480b1b31c88",
@@ -528,7 +528,7 @@
     "imageUrl": "images/b480b1b31c88.jpg",
     "image_url": "images/b480b1b31c88.jpg",
     "tg_message_id": 7640,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "18c968c4c44e",
@@ -553,7 +553,7 @@
     "imageUrl": "images/18c968c4c44e.jpg",
     "image_url": "images/18c968c4c44e.jpg",
     "tg_message_id": 7624,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "00d11b69eb2c",
@@ -585,7 +585,7 @@
     "imageUrl": "images/00d11b69eb2c.jpg",
     "image_url": "images/00d11b69eb2c.jpg",
     "tg_message_id": 7641,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "bd670b774ec9",
@@ -612,7 +612,7 @@
     "imageUrl": "images/bd670b774ec9.jpg",
     "image_url": "images/bd670b774ec9.jpg",
     "tg_message_id": 7625,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "96ee28374360",
@@ -639,7 +639,7 @@
     "imageUrl": "images/96ee28374360.jpg",
     "image_url": "images/96ee28374360.jpg",
     "tg_message_id": 7639,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "3703f28d0d5a",
@@ -665,7 +665,7 @@
     "imageUrl": "images/3703f28d0d5a.jpg",
     "image_url": "images/3703f28d0d5a.jpg",
     "tg_message_id": 7634,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "1ebcb6f8cdec",
@@ -692,7 +692,7 @@
     "imageUrl": "images/1ebcb6f8cdec.jpg",
     "image_url": "images/1ebcb6f8cdec.jpg",
     "tg_message_id": 7643,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "5bc12fb5b7c5",
@@ -716,7 +716,7 @@
     "imageUrl": "images/5bc12fb5b7c5.jpg",
     "image_url": "images/5bc12fb5b7c5.jpg",
     "tg_message_id": 7630,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "6b0956bc9b58",
@@ -748,7 +748,7 @@
     "imageUrl": "images/6b0956bc9b58.jpg",
     "image_url": "images/6b0956bc9b58.jpg",
     "tg_message_id": 7621,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "deacb42459e5",
@@ -778,7 +778,7 @@
     "imageUrl": "images/deacb42459e5.jpg",
     "image_url": "images/deacb42459e5.jpg",
     "tg_message_id": 7646,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "9596a143cd76",
@@ -801,7 +801,7 @@
     "imageUrl": "images/9596a143cd76.jpg",
     "image_url": "images/9596a143cd76.jpg",
     "tg_message_id": 7637,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "2bcd36b5636a",
@@ -825,7 +825,7 @@
     "imageUrl": "images/2bcd36b5636a.jpg",
     "image_url": "images/2bcd36b5636a.jpg",
     "tg_message_id": 7638,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "2fdda5a55b4e",
@@ -851,7 +851,7 @@
     "imageUrl": "images/2fdda5a55b4e.jpg",
     "image_url": "images/2fdda5a55b4e.jpg",
     "tg_message_id": 7631,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "77a180f61efa",
@@ -877,7 +877,7 @@
     "imageUrl": "images/77a180f61efa.jpg",
     "image_url": "images/77a180f61efa.jpg",
     "tg_message_id": 7647,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "366bd3e048c5",
@@ -902,7 +902,7 @@
     "imageUrl": "images/366bd3e048c5.jpg",
     "image_url": "images/366bd3e048c5.jpg",
     "tg_message_id": 7629,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "fb1cb7278982",
@@ -944,7 +944,7 @@
     "imageUrl": "images/fb1cb7278982.jpg",
     "image_url": "images/fb1cb7278982.jpg",
     "tg_message_id": 7626,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "c8463fd8000b",
@@ -973,7 +973,7 @@
     "imageUrl": "images/c8463fd8000b.jpg",
     "image_url": "images/c8463fd8000b.jpg",
     "tg_message_id": 7648,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "7728c63c294a",
@@ -1000,7 +1000,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/7728c63c294a.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/7728c63c294a.jpg",
     "tg_message_id": 7659,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "647a61b479cc",
@@ -1025,7 +1025,7 @@
     "imageUrl": "images/647a61b479cc.jpg",
     "image_url": "images/647a61b479cc.jpg",
     "tg_message_id": 7622,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "631f807c64f1",
@@ -1052,7 +1052,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/631f807c64f1.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/631f807c64f1.jpg",
     "tg_message_id": 7660,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "b75c67c2b112",
@@ -1073,7 +1073,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b75c67c2b112.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b75c67c2b112.jpg",
     "tg_message_id": 7667,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "76b28d16a4c4",
@@ -1098,7 +1098,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/76b28d16a4c4.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/76b28d16a4c4.jpg",
     "tg_message_id": 7674,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "ad9843bbb866",
@@ -1126,7 +1126,7 @@
     "imageUrl": "",
     "image_url": "",
     "tg_message_id": 7668,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "e8fdbb755057",
@@ -1155,7 +1155,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e8fdbb755057.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e8fdbb755057.jpg",
     "tg_message_id": 7686,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "0b6e328b5ed2",
@@ -1181,7 +1181,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/0b6e328b5ed2.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/0b6e328b5ed2.jpg",
     "tg_message_id": 7698,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "ab047ea80901",
@@ -1207,7 +1207,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/ab047ea80901.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/ab047ea80901.jpg",
     "tg_message_id": 7676,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "93a8183d7d0f",
@@ -1233,7 +1233,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/93a8183d7d0f.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/93a8183d7d0f.jpg",
     "tg_message_id": 7699,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "c3f8a85e3744",
@@ -1258,7 +1258,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c3f8a85e3744.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c3f8a85e3744.jpg",
     "tg_message_id": 7677,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "dedb956e375c",
@@ -1284,7 +1284,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/dedb956e375c.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/dedb956e375c.jpg",
     "tg_message_id": 7696,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "788d951c0c15",
@@ -1312,7 +1312,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/788d951c0c15.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/788d951c0c15.jpg",
     "tg_message_id": 7692,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "b6a5621d9ef9",
@@ -1353,7 +1353,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b6a5621d9ef9.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b6a5621d9ef9.jpg",
     "tg_message_id": 7661,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "2781e7efe3fe",
@@ -1387,7 +1387,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/2781e7efe3fe.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/2781e7efe3fe.jpg",
     "tg_message_id": 7695,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "29f05f112aba",
@@ -1414,7 +1414,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/29f05f112aba.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/29f05f112aba.jpg",
     "tg_message_id": 7684,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "ca472933d2cb",
@@ -1436,7 +1436,7 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/ca472933d2cb.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/ca472933d2cb.jpg",
     "tg_message_id": 7691,
-    "is_active": true
+    "is_active": false
   },
   {
     "id": "80a600f585e7",

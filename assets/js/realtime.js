@@ -1,6 +1,4 @@
-// ─── Realtime broadcast subscription (events:klgd) ────
-import { supabase } from './supabase.js';
-import { state } from './state.js';
+// ─── Перезагрузка событий при возврате в приложение ───
 import { loadAllEvents } from './data.js';
 
 let _reloadTimer = null;
@@ -14,25 +12,16 @@ async function _reloadEventsDebounced() {
 }
 
 export function subscribeToEventsBroadcast() {
-  // избегаем двойной подписки
-  if (state.eventsBroadcastChannel) return;
-
-  const channel = supabase.channel('events:klgd', {
-    config: { private: false },
+  // Вместо Realtime (который не работает — pg_notify ≠ Supabase broadcast)
+  // перезагружаем события при возврате пользователя в приложение
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) {
+      _reloadEventsDebounced();
+    }
   });
 
-  channel
-    .on('broadcast', { event: '*' }, async (payload) => {
-      try {
-        _reloadEventsDebounced();
-      } catch (e) {
-        console.error('Events broadcast handling failed', e);
-      }
-    })
-    .subscribe((status, err) => {
-      if (err) console.error('Realtime subscribe error:', err);
-      else console.log('Realtime subscribe status:', status);
-    });
-
-  state.eventsBroadcastChannel = channel;
+  // Дополнительно: перезагрузка при переходе на вкладку (для десктопа)
+  document.addEventListener('focus', () => {
+    _reloadEventsDebounced();
+  });
 }

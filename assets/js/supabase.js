@@ -54,13 +54,6 @@ export const supabase = createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_K
     detectSessionInUrl: false,
     storage: customStorage,
   },
-  global: {
-    headers: {
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0',
-    },
-  },
 });
 
 // ── Session helpers ───────────────────────────────────

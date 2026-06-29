@@ -5,3 +5,9 @@ verify_jwt = false
 
 [functions.direct-auth]
 verify_jwt = false
+
+[functions.send-notification]
+verify_jwt = true
+
+[functions.report-bug]
+verify_jwt = true

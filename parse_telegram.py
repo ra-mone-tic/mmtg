@@ -20,11 +20,22 @@ from src.telegram_api import get_channel_messages
 from src.processor    import process_messages
 
 # ─── Logging ────────────────────────────────────────
+
+class TokenFilter(logging.Filter):
+    """Маскирует TELEGRAM_BOT_TOKEN в логах."""
+    def filter(self, record):
+        if TELEGRAM_BOT_TOKEN and TELEGRAM_BOT_TOKEN in str(record.msg):
+            record.msg = str(record.msg).replace(TELEGRAM_BOT_TOKEN, 'BOT_TOKEN')
+        return True
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[logging.StreamHandler(sys.stdout)],
 )
+# TokenFilter добавляем на root logger, чтобы он покрывал все дочерние логгеры
+# (src.telegram_api, src.parser, src.processor и т.д.)
+logging.getLogger().addFilter(TokenFilter())
 logger = logging.getLogger(__name__)
 
 

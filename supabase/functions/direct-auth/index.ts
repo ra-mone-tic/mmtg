@@ -2,6 +2,7 @@
 // Direct sign-in for Telegram Desktop where initData may be missing.
 // Only allows sign-in with Telegram user data from Mini App SDK.
 // Uses service role to create/find user and return session.
+// Rate-limited: 5 attempts/min per IP + telegram_id.
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -10,6 +11,44 @@ const CORS = {
   "Access-Control-Allow-Origin":  "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// ── Rate limiting (in-memory) ────────────────────────
+const RATE_LIMIT = 5;            // max attempts per window
+const WINDOW_MS  = 60_000;       // 1 minute
+const rateMap    = new Map<string, { count: number; resetAt: number }>();
+
+function getClientIp(req: Request): string {
+  return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    ?? req.headers.get("x-real-ip")
+    ?? "unknown";
+}
+
+function checkRateLimit(ip: string, telegramId: string): boolean {
+  const key = `${ip}:${telegramId}`;
+  const now = Date.now();
+  const entry = rateMap.get(key);
+
+  if (!entry || now >= entry.resetAt) {
+    rateMap.set(key, { count: 1, resetAt: now + WINDOW_MS });
+    return true;
+  }
+
+  if (entry.count >= RATE_LIMIT) {
+    return false;
+  }
+
+  entry.count++;
+  return true;
+}
+
+// ── Periodic cleanup to prevent memory leak ──────────
+// Run every 2 minutes; keep only entries that haven't expired
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of rateMap) {
+    if (now >= entry.resetAt) rateMap.delete(key);
+  }
+}, 120_000);
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
@@ -21,6 +60,15 @@ serve(async (req) => {
     if (!telegram_id) {
       return new Response(JSON.stringify({ error: "telegram_id required" }), {
         status: 400, headers: { ...CORS, "Content-Type": "application/json" },
+      });
+    }
+
+    // ── Rate limiting check ──────────────────────────
+    const ip = getClientIp(req);
+    if (!checkRateLimit(ip, String(telegram_id))) {
+      console.log(`[AUTH_DIAG:direct-auth] rate limit exceeded | ip=${ip} | telegram_id=${telegram_id}`);
+      return new Response(JSON.stringify({ error: "Too many requests. Try again later." }), {
+        status: 429, headers: { ...CORS, "Content-Type": "application/json", "Retry-After": "60" },
       });
     }
 

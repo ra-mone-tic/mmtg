@@ -8,16 +8,6 @@ env/
 venv/
 .env
 
-# Generated data (парсер)
-events.json
-geocode_cache.json
-state.json
-images/
-*.jpg
-*.jpeg
-*.png
-*.webp
-
 # IDE
 .vscode/
 .idea/

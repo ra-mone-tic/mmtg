@@ -217,7 +217,7 @@ def _extract_dates_fallback(
 
     # 1. Диапазон "DD-DD.MM" (без точки после первого числа), например "26-28.06"
     for m in re.finditer(
-        r'(?<!\.)(\d{1,2})\s*[-–—]\s*(\d{1,2})\.(\d{1,2})',
+        r'(?<!\.)(\d{1,2})\s*[-–—]\s*(\d{1,2})\.(\d{1,2})(?![.\d]|\s*руб|\s*%|\s*к\b)',
         text,
     ):
         d1, d2, mon = int(m.group(1)), int(m.group(2)), int(m.group(3))
@@ -238,7 +238,7 @@ def _extract_dates_fallback(
 
     # 1b. Диапазон "DD.MM—DD.MM" или "DD.MM - DD.MM" или "DD.MM–DD.MM"
     for m in re.finditer(
-        r'(\d{1,2})\.(\d{1,2})\s*[-–—]\s*(\d{1,2})\.(\d{1,2})',
+        r'(\d{1,2})\.(\d{1,2})\s*[-–—]\s*(\d{1,2})\.(\d{1,2})(?![.\d]|\s*руб|\s*%|\s*к\b)',
         text,
     ):
         d1, m1, d2, m2 = int(m.group(1)), int(m.group(2)), int(m.group(3)), int(m.group(4))
@@ -281,7 +281,7 @@ def _extract_dates_fallback(
 
     # 2. Формат "DD.MM.YYYY" или "DD.MM" (точки).
     #    Требуем, чтобы после второй группы не шли буквы — чтобы не ловить "21. автобус".
-    for m in re.finditer(r'(?<!\d)(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?(?![.\d])', text):
+    for m in re.finditer(r'(?<!\d)(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?(?![.\d]|\s*руб|\s*%|\s*к\b)', text):
         d, mon = int(m.group(1)), int(m.group(2))
         # Валидация ДО вызова _normalize
         if not (1 <= d <= 31 and 1 <= mon <= 12):

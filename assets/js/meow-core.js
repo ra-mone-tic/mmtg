@@ -42,7 +42,7 @@ import { loadFavorites }                            from './favorites.js';
 import { loadGoing, loadFollowing }                 from './social.js';
 import { openProfile, closeProfile }                from './profile.js';
 import { closeReport }                              from './report.js';
-import { openAdminPanel, closeAdminPanel }           from './admin.js';
+// admin.js — динамический импорт, см. обработчики ниже
 
 // ─── Внутренние хелперы ──────────────────────────────
 
@@ -263,7 +263,9 @@ export async function boot() {
   }
 
   // Admin panel back button
-  $('admin-panel-back-btn')?.addEventListener('click', closeAdminPanel);
+  $('admin-panel-back-btn')?.addEventListener('click', () => {
+    import('./admin.js').then(mod => mod.closeAdminPanel());
+  });
   $('admin-panel')?.addEventListener('click', e => e.stopPropagation());
 
   // Custom event: events changed (e.g. after admin create/edit/delete)

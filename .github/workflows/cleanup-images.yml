@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
+    concurrency:
+      group: "cleanup"
+      cancel-in-progress: false
 
     steps:
       - name: Invoke cleanup-old-images Edge Function

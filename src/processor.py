@@ -194,9 +194,7 @@ def _clone_event_for_date(ev: dict, new_date: str) -> dict:
     new_ev = copy.deepcopy(ev)
     new_ev["date"] = new_date
     new_ev["id"] = make_event_id(new_date, new_ev["title"])
-    # Не копируем imageUrl — будет загружен заново для каждого дня
-    new_ev.pop("imageUrl", None)
-    new_ev.pop("image_url", None)
+    # Оставляем imageUrl/image_url для всех дней (одна афиша на multiday-событие)
     return new_ev
 
 

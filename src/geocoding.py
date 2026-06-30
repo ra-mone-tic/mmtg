@@ -17,6 +17,23 @@ logger = logging.getLogger(__name__)
 _last_nominatim_call: float = 0.0
 
 
+# ─── Нормализация адреса для поиска в кэше ─────────
+
+_RE_STREET_PREFIX = re.compile(
+    r'\b(?:пр-т|проспект|пр-д|проезд|ул|улица|д|дом|пер|переулок|б-р|бульвар|наб|набережная|пл|площадь|ш|шоссе)\.?\s*',
+    re.I
+)
+
+def _normalize_cache_key(addr: str) -> str:
+    """
+    Убирает сокращения улиц ('пр-т', 'ул.', 'д.', 'наб.' и т.п.)
+    и нормализует пробелы
+    """
+    s = _RE_STREET_PREFIX.sub('', addr)
+    s = re.sub(r'\s+', ' ', s).strip()
+    return s.lower()
+
+
 # ─── Построение вариантов запроса ───────────────────
 
 def _build_geocode_queries(address: str) -> List[str]:
@@ -121,6 +138,7 @@ def geocode_address(
     if not addr:
         return None, None
 
+    # ── Поиск по точному ключу ──────────────────────────
     if addr in cache:
         coords = cache[addr]
         if isinstance(coords, list) and len(coords) == 2 and None not in coords:
@@ -128,6 +146,15 @@ def geocode_address(
             return float(coords[0]), float(coords[1])
         logger.debug(f"[CACHE] Промах (уже пробовали): {addr!r}")
         return None, None
+
+    # ── Поиск по нормализованному ключу ─────────────────
+    norm_addr = _normalize_cache_key(addr)
+    for cached_key, coords in cache.items():
+        if not isinstance(coords, list) or len(coords) != 2 or None in coords:
+            continue
+        if _normalize_cache_key(cached_key) == norm_addr:
+            logger.info(f"[CACHE] HIT (normalized): {addr!r} → {cached_key!r}")
+            return float(coords[0]), float(coords[1])
 
     for query in _build_geocode_queries(addr):
         result = _nominatim_request(query)

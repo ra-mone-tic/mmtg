@@ -82,13 +82,13 @@ async function _doInit() {
     const existing = await getSession();
     logStep('restore_session', { found: !!existing?.user?.id });
     if (existing?.user?.id) {
-      const { data: profile, error: profErr } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', existing.user.id)
-        .single();
+      // profile и is_admin параллельно — экономим один RTT
+      const [{ data: profile, error: profErr }, isAdmin] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', existing.user.id).single(),
+        _checkAdmin(),
+      ]);
       if (profile) {
-        state.user = { ...profile, is_admin: await _checkAdmin() };
+        state.user = { ...profile, is_admin: isAdmin };
         logStep('restore_ok', { userId: existing.user.id });
         return state.user;
       }

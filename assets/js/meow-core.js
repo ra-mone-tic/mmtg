@@ -133,11 +133,40 @@ export async function boot() {
   // Social и notifications загружаем ПОСЛЕ карты (fire & forget).
   // initAvatar() перенесён внутрь onMapReady (см. ниже) — аватар после auth.
 
+  // ── Карта стартует ПАРАЛЛЕЛЬНО с auth/events/places ──────────────────────
+  // Пока MapLibre загружает тайлы CARTO (~1-2 сек), получаем данные из Supabase.
+  // webapp.ready() вызываем как только данные готовы — не ждём рендер тайлов.
+  let _mapReady = false;
+  const mapReadyPromise = new Promise(resolve => {
+    mapInit({
+      theme     : state.theme,
+      center    : CFG.MAP_CENTER,
+      zoom      : CFG.MAP_ZOOM,
+      bbox      : CFG.BBOX,
+      onMapReady: () => {
+        _mapReady = true;
+        initAvatar();
+        addPlaceDots(state.rawPlaces, p => {
+          closeCard();
+          openPlaceCard(p.id);
+          flyToPlace(p);
+        });
+        renderMarkers();
+        resolve();
+      },
+      onMapClick: () => { closeCard(); closePlaceCard(); },
+    });
+  });
+
   await Promise.all([
     initAuth(),
     loadAllEvents(),
     loadPlaces(),
   ]);
+
+  // ── Данные готовы — показываем UI немедленно, карту не ждём ─────────────
+  webapp?.ready();
+  $('loading')?.classList.add('gone');
 
   // ── Realtime broadcast подписка на изменения событий ──
   subscribeToEventsBroadcast();
@@ -166,41 +195,18 @@ export async function boot() {
   initPlaceCard({ onOpenDetail: openPlaceDetail });
   initPlaceDetail({ onOpenEventCard: _onOpenEventFromPlace });
 
-  // Карта
-  mapInit({
-    theme     : state.theme,
-    center    : CFG.MAP_CENTER,
-    zoom      : CFG.MAP_ZOOM,
-    bbox      : CFG.BBOX,
-    onMapReady: () => {
-      $('loading')?.classList.add('gone');
-
-      // ✅ UI готов — теперь можно сообщить Telegram
-      webapp?.ready();
-
-      // Аватар — после auth (initAuth уже завершён)
-      initAvatar();
-
-      addPlaceDots(state.rawPlaces, p => {
-        closeCard();
-        openPlaceCard(p.id);
-        flyToPlace(p);
-      });
-      renderMarkers();
-    },
-    onMapClick: () => { closeCard(); closePlaceCard(); },
-  });
-
   requestAnimationFrame(() => requestAnimationFrame(() => shiftControls(false)));
 
-  // Загружаем события стартовой даты
+  // Карусель и список показываем сразу после данных
+  renderCarousel();
   await fetchEvents(fmt(state.currentDate));
+
+  // Маркеры — если карта уже готова, onMapReady их уже добавил
+  // Если ещё грузится — добавим когда будет готова
+  if (!_mapReady) mapReadyPromise.then(() => renderMarkers());
 
   // ── Deferred: social (after UI ready) ──
   Promise.all([loadFavorites(), loadGoing(), loadFollowing()]).catch(() => {});
-
-  // Карусель
-  renderCarousel();
 
   // ── Deep linking: ?event=ID ──────────────────────────
   const eventId = new URLSearchParams(window.location.search).get('event');

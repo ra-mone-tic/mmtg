@@ -271,19 +271,18 @@ def process_media_group(msgs: List[dict], geocache: dict, places: List[dict]) ->
 
     ev = _build_event_dict(parsed, text_msg.get("message_id"), lat, lon)
 
-    # Thumbnail из видео
+    # Thumbnail из видео (фоллбэк, если в группе нет фото)
     _attach_thumbnail(ev, text_msg)
 
-    # Лучшее фото из всех сообщений группы
-    best_photo, best_size = None, 0
-    for m in msgs:
-        for ps in m.get("photo", []):
-            if ps.get("file_size", 0) > best_size:
-                best_size  = ps["file_size"]
-                best_photo = ps
-
-    if best_photo:
-        url = get_file_url(best_photo["file_id"])
+    # Одна афиша для всего события (без сравнения "лучшего" фото по всем
+    # сообщениям альбома) — берём первое сообщение группы, где есть фото,
+    # и внутри него — самый качественный размер (это разные разрешения
+    # ОДНОЙ фотографии, а не разные фото, поэтому max по file_size корректен).
+    photo_msg = next((m for m in msgs if m.get("photo")), None)
+    if photo_msg:
+        sizes = photo_msg["photo"]
+        best = max(sizes, key=lambda p: p.get("file_size", 0))
+        url = get_file_url(best["file_id"])
         if url:
             import tempfile
             from .telegram_api import download_image

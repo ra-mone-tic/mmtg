@@ -46,6 +46,26 @@ function makeStorage() {
 
 const customStorage = makeStorage();
 
+// ── Fetch с retry ─────────────────────────────────────
+// Telegram Desktop (встроенный WebView) при холодном старте мини-аппа иногда
+// обрывает самое первое соединение к новому домену (ERR_CONNECTION_CLOSED) —
+// race condition в самом клиенте, а не в коде. Без ретрая это превращается
+// в пустой экран. На мобильном это не воспроизводится — цена в норме нулевая.
+async function fetchWithRetry(url, options, attempts = 3) {
+  let lastErr;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fetch(url, options);
+    } catch (err) {
+      lastErr = err;
+      if (i < attempts - 1) {
+        await new Promise(r => setTimeout(r, 300 * (i + 1))); // 300ms, 600ms
+      }
+    }
+  }
+  throw lastErr;
+}
+
 // ── Client singleton ─────────────────────────────────
 export const supabase = createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_KEY, {
   auth: {
@@ -53,6 +73,9 @@ export const supabase = createClient(SUPABASE_CONFIG.URL, SUPABASE_CONFIG.ANON_K
     autoRefreshToken: true,
     detectSessionInUrl: false,
     storage: customStorage,
+  },
+  global: {
+    fetch: fetchWithRetry,
   },
 });
 

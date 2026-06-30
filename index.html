@@ -3,6 +3,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <title>MEOW!</title>
+<!-- Preconnect: убирает DNS+TLS handshake из критического пути первых запросов к Supabase
+     и к тайлам карты — особенно заметно на холодном старте в Telegram Desktop -->
+<link rel="preconnect" href="https://mefppvaqkzldnljsmqrd.supabase.co" crossorigin>
+<link rel="preconnect" href="https://basemaps.cartocdn.com" crossorigin>
+<link rel="preconnect" href="https://telegram.org" crossorigin>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
 <link rel="icon" type="image/png" href="assets/Group%2027.png">
 <link rel="shortcut icon" type="image/png" href="assets/Group%2027.png">
 <link rel="apple-touch-icon" href="assets/Group%2027.png">

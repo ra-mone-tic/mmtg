@@ -137,6 +137,16 @@ export async function boot() {
   // Пока MapLibre загружает тайлы CARTO (~1-2 сек), получаем данные из Supabase.
   // webapp.ready() вызываем как только данные готовы — не ждём рендер тайлов.
   let _mapReady = false;
+  let _placeDotsAdded = false;
+  const attachPlaceDotsOnce = () => {
+    if (_placeDotsAdded || !state.rawPlaces?.length) return;
+    _placeDotsAdded = true;
+    addPlaceDots(state.rawPlaces, p => {
+      closeCard();
+      openPlaceCard(p.id);
+      flyToPlace(p);
+    });
+  };
   const mapReadyPromise = new Promise(resolve => {
     mapInit({
       theme     : state.theme,
@@ -146,11 +156,7 @@ export async function boot() {
       onMapReady: () => {
         _mapReady = true;
         initAvatar();
-        addPlaceDots(state.rawPlaces, p => {
-          closeCard();
-          openPlaceCard(p.id);
-          flyToPlace(p);
-        });
+        attachPlaceDotsOnce();
         renderMarkers();
         resolve();
       },
@@ -165,13 +171,7 @@ export async function boot() {
   ]);
 
   // ── Если карта уже готова, а places загрузились позже — добавляем точки ──
-  if (_mapReady && state.rawPlaces?.length) {
-    addPlaceDots(state.rawPlaces, p => {
-      closeCard();
-      openPlaceCard(p.id);
-      flyToPlace(p);
-    });
-  }
+  if (_mapReady) attachPlaceDotsOnce();
 
   // ── Данные готовы — показываем UI немедленно, карту не ждём ─────────────
   webapp?.ready();

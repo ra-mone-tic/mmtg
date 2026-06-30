@@ -215,21 +215,21 @@ def process_single_message(msg: dict, geocache: dict, places: List[dict]) -> Opt
         logger.warning(f"Не удалось распарсить пост:\n{text[:500]}")
         return None
 
-    lat, lon = geocode_address(parsed["location"], geocache)
-    if lat is None:
-        logger.warning(f"Не удалось геокодировать: {parsed['location']!r} — пропускаем")
-        return None
-
-    # Сопоставляем с местом из справочника
+    # Сначала проверяем places.json — если место найдено, Nominatim не нужен
     matched_place = _find_matching_place(parsed["location"], places)
     if matched_place:
-        old_lat, old_lon = lat, lon
         lat = matched_place["lat"]
         lon = matched_place["lng"]
         logger.info(
-            f"Координаты скорректированы по месту «{matched_place['name']}»: "
-            f"({old_lat:.6f}, {old_lon:.6f}) → ({lat:.6f}, {lon:.6f})"
+            f"Координаты из places.json «{matched_place['name']}»: "
+            f"({lat:.6f}, {lon:.6f})"
         )
+    else:
+        # Геокодируем через Nominatim только если место не найдено в справочнике
+        lat, lon = geocode_address(parsed["location"], geocache)
+        if lat is None:
+            logger.warning(f"Не удалось геокодировать: {parsed['location']!r} — пропускаем")
+            return None
 
     ev = _build_event_dict(parsed, msg.get("message_id"), lat, lon)
     _attach_image(ev, msg)
@@ -255,21 +255,21 @@ def process_media_group(msgs: List[dict], geocache: dict, places: List[dict]) ->
     if not parsed:
         return None
 
-    lat, lon = geocode_address(parsed["location"], geocache)
-    if lat is None:
-        logger.warning(f"Не удалось геокодировать (медиагруппа): {parsed['location']!r} — пропускаем")
-        return None
-
-    # Сопоставляем с местом из справочника
+    # Сначала проверяем places.json — если место найдено, Nominatim не нужен
     matched_place = _find_matching_place(parsed["location"], places)
     if matched_place:
-        old_lat, old_lon = lat, lon
         lat = matched_place["lat"]
         lon = matched_place["lng"]
         logger.info(
-            f"Координаты скорректированы по месту «{matched_place['name']}»: "
-            f"({old_lat:.6f}, {old_lon:.6f}) → ({lat:.6f}, {lon:.6f})"
+            f"Координаты из places.json «{matched_place['name']}»: "
+            f"({lat:.6f}, {lon:.6f})"
         )
+    else:
+        # Геокодируем через Nominatim только если место не найдено в справочнике
+        lat, lon = geocode_address(parsed["location"], geocache)
+        if lat is None:
+            logger.warning(f"Не удалось геокодировать (медиагруппа): {parsed['location']!r} — пропускаем")
+            return None
 
     ev = _build_event_dict(parsed, text_msg.get("message_id"), lat, lon)
 

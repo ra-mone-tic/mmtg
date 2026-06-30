@@ -1,11 +1,15 @@
 // Supabase Edge Function: direct-auth
 // Direct sign-in for Telegram Desktop where initData may be missing.
-// Only allows sign-in with Telegram user data from Mini App SDK.
-// Uses service role to create/find user and return session.
+// SECURITY: telegram_id/first_name/etc here are CLIENT-SUPPLIED and UNVERIFIED
+// (no HMAC signature, unlike verify-telegram). Anyone who knows/guesses a
+// telegram_id can reach this far. To prevent privilege escalation, this
+// endpoint NEVER issues a session for an account that is in admin_roles —
+// a valid Supabase JWT would let the caller hit `is_admin()` RPC directly
+// themselves, bypassing whatever the frontend does with the JSON body.
+// Regular (non-admin) accounts still get a working session, so Desktop
+// keeps functioning for normal browsing even without initData.
+// Real admin access must always go through verify-telegram (signed initData).
 // Rate-limited: 5 attempts/min per IP + telegram_id.
-
-/// <reference no-default-lib="true" />
-/// <reference lib="deno.unstable" />
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -68,7 +72,6 @@ serve(async (req) => {
     }
 
     // ── Rate limiting check ──────────────────────────
-    const rateKey = `${ip}:${telegram_id}`;
     const rateAllowed = checkRateLimit(ip, String(telegram_id));
     console.log(`[AUTH_DIAG:direct-auth] rate_limit | ip=${ip} | telegram_id=${telegram_id} | result=${rateAllowed ? 'allowed' : 'blocked'}`);
     if (!rateAllowed) {
@@ -127,7 +130,24 @@ serve(async (req) => {
       });
     }
 
-    // ── Sign in ────────────────────────────────────────
+    // ── SECURITY GATE: refuse BEFORE signing in if this account is an admin.
+    // We must not issue any session/JWT for an admin account through this
+    // unverified path — once a valid token exists, the caller can call
+    // is_admin() RPC directly and there is nothing the JSON body can do
+    // to prevent that. So the only safe option is: no token, ever.
+    console.log(`[AUTH_DIAG:direct-auth] pre-check admin_roles before issuing any session`);
+    const { data: adminRow } = await admin
+      .from("admin_roles").select("role").eq("user_id", authUserId).single();
+
+    if (adminRow) {
+      console.log(`[AUTH_DIAG:direct-auth] REFUSED | telegram_id=${telegram_id} resolves to an admin account, unverified login blocked`);
+      return new Response(JSON.stringify({
+        error: "Admin accounts require verified Telegram initData. Unverified desktop fallback is not permitted for this account.",
+        unverified: true,
+      }), { status: 403, headers: { ...CORS, "Content-Type": "application/json" } });
+    }
+
+    // ── Sign in (non-admin accounts only) ──────────────
     console.log(`[AUTH_DIAG:direct-auth] signing in | authUserId=${authUserId}`);
     const regular = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -160,18 +180,12 @@ serve(async (req) => {
       .from("profiles").select("*").eq("id", authUserId).single();
     console.log(`[AUTH_DIAG:direct-auth] profile loaded | hasProfile=!!${!!profile}`);
 
-    console.log(`[AUTH_DIAG:direct-auth] checking admin_roles`);
-    const { data: adminRow } = await admin
-      .from("admin_roles").select("role").eq("user_id", authUserId).single();
+    console.log(`[AUTH_DIAG:direct-auth] success_unverified | telegram_id=${telegram_id} | is_admin=false (forced, unverified path)`);
 
-    console.log(`[AUTH_DIAG:direct-auth] success_unverified | telegram_id=${telegram_id} | is_admin=${!!adminRow}`);
-
-    // direct-auth работает без cryptographic proof (initData отсутствует).
-    // Возвращаем профиль, но НЕ сессию — клиент не получит JWT,
-    // поэтому злоумышленник не сможет использовать украденный telegram_id.
     return new Response(JSON.stringify({
+      session: signIn.session,
+      profile: { ...profile, is_admin: false },
       unverified: true,
-      profile: { ...profile, is_admin: !!adminRow },
     }), { headers: { ...CORS, "Content-Type": "application/json" } });
 
   } catch (err) {
@@ -180,8 +194,5 @@ serve(async (req) => {
       JSON.stringify({ error: String(err?.message ?? err) }),
       { status: 500, headers: { ...CORS, "Content-Type": "application/json" } }
     );
-  } finally {
-    // Никогда не логируем чувствительные данные (токены, пароли, подписи).
-    // Всё что логируется выше — safe: telegram_id, username, ip, initData=absent, rate_limit результат.
   }
 });

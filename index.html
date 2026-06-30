@@ -3,14 +3,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
 <title>MEOW!</title>
+<!-- Preconnect: убирает DNS+TLS handshake из критического пути первых запросов к Supabase
+     и к тайлам карты — особенно заметно на холодном старте в Telegram Desktop -->
+<link rel="preconnect" href="https://mefppvaqkzldnljsmqrd.supabase.co" crossorigin>
+<link rel="preconnect" href="https://basemaps.cartocdn.com" crossorigin>
+<link rel="preconnect" href="https://telegram.org" crossorigin>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
 <link rel="icon" type="image/png" href="assets/Group%2027.png">
 <link rel="shortcut icon" type="image/png" href="assets/Group%2027.png">
 <link rel="apple-touch-icon" href="assets/Group%2027.png">
 <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css" integrity="sha384-m6tadjb5ohv1Fw3GJynIWn5c1scKfW7kxSXuDrhlq1gdXPn7I7UL0sSKDfCUErOb" crossorigin="anonymous">
-<link rel="stylesheet" href="assets/css/social.css?v=753f3d15">
-<link rel="stylesheet" href="assets/css/admin.css?v=753f3d15" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="assets/css/admin.css?v=753f3d15"></noscript>
+<link rel="stylesheet" href="assets/css/social.css?v=e3ca5db5">
+<link rel="stylesheet" href="assets/css/admin.css?v=e3ca5db5" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="assets/css/admin.css?v=e3ca5db5"></noscript>
 <script src="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js" defer integrity="sha384-tadmmhpxUhgmddNivAQUc2SdFDDOC4r7Ic5ULA6gpBezkqTK7abjgq3D/lHO+qfm" crossorigin="anonymous"></script>
 <style>
 @font-face{font-family:'NT Somic';src:url('assets/fonts/NTSomic-VF.ttf') format('truetype');font-weight:400 900;font-display:swap}
@@ -992,7 +998,7 @@ svg{display:block;flex-shrink:0}
 
 <!-- Main Application Script (Module) -->
 <script type="module">
-import { boot } from './dist/js/meow-core.js?v=753f3d15';
+import { boot } from './dist/js/meow-core.js?v=e3ca5db5';
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot);

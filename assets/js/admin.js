@@ -235,10 +235,10 @@ function _bindEventActions(container) {
       try {
         const { error } = await supabase
           .from('events')
-          .update({ manually_hidden: currentlyActive })
+          .update({ is_active: !currentlyActive })
           .eq('id', id);
         if (error) throw error;
-        showToast(currentlyActive ? 'Скрыто из ленты' : 'Показано в ленте');
+        showToast(currentlyActive ? 'Деактивировано' : 'Активировано');
         // Reload events
         await loadAllEvents();
         _renderAdminList($('admin-panel'));

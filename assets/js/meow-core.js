@@ -164,6 +164,15 @@ export async function boot() {
     loadPlaces(),
   ]);
 
+  // ── Если карта уже готова, а places загрузились позже — добавляем точки ──
+  if (_mapReady && state.rawPlaces?.length) {
+    addPlaceDots(state.rawPlaces, p => {
+      closeCard();
+      openPlaceCard(p.id);
+      flyToPlace(p);
+    });
+  }
+
   // ── Данные готовы — показываем UI немедленно, карту не ждём ─────────────
   webapp?.ready();
   $('loading')?.classList.add('gone');

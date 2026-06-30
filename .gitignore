@@ -13,6 +13,9 @@ venv/
 .idea/
 *.swp
 
+# Build output
+dist/
+
 # OS
 .DS_Store
 Thumbs.db

@@ -1,0 +1,46 @@
+name: Mini JS
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  minify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install esbuild
+        run: npm install esbuild
+
+      - name: Create dist directories
+        run: mkdir -p dist/js dist/css dist/fonts dist/images
+
+      - name: Minify JS
+        run: npx esbuild assets/js/*.js --minify --outdir=dist/js
+
+      - name: Copy assets & static files
+        run: |
+          cp index.html dist/
+          cp -r assets dist/
+
+      - name: Rewrite JS paths in HTML
+        run: |
+          python -c "import pathlib; p=pathlib.Path('dist/index.html'); t=p.read_text(encoding='utf-8'); t=t.replace(\"'./assets/js/\", \"'./dist/js/\"); p.write_text(t, encoding='utf-8')"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist

@@ -4,6 +4,9 @@
 // Uses service role to create/find user and return session.
 // Rate-limited: 5 attempts/min per IP + telegram_id.
 
+/// <reference no-default-lib="true" />
+/// <reference lib="deno.unstable" />
+
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -55,7 +58,8 @@ serve(async (req) => {
 
   try {
     const { telegram_id, first_name, last_name, username, photo_url } = await req.json();
-    console.log(`[AUTH_DIAG:direct-auth] start | telegram_id=${telegram_id} | username=${username ?? 'null'}`);
+    const ip = getClientIp(req);
+    console.log(`[AUTH_DIAG:direct-auth] start | telegram_id=${telegram_id} | username=${username ?? 'null'} | ip=${ip} | initData=absent`);
 
     if (!telegram_id) {
       return new Response(JSON.stringify({ error: "telegram_id required" }), {
@@ -64,9 +68,10 @@ serve(async (req) => {
     }
 
     // ── Rate limiting check ──────────────────────────
-    const ip = getClientIp(req);
-    if (!checkRateLimit(ip, String(telegram_id))) {
-      console.log(`[AUTH_DIAG:direct-auth] rate limit exceeded | ip=${ip} | telegram_id=${telegram_id}`);
+    const rateKey = `${ip}:${telegram_id}`;
+    const rateAllowed = checkRateLimit(ip, String(telegram_id));
+    console.log(`[AUTH_DIAG:direct-auth] rate_limit | ip=${ip} | telegram_id=${telegram_id} | result=${rateAllowed ? 'allowed' : 'blocked'}`);
+    if (!rateAllowed) {
       return new Response(JSON.stringify({ error: "Too many requests. Try again later." }), {
         status: 429, headers: { ...CORS, "Content-Type": "application/json", "Retry-After": "60" },
       });
@@ -159,10 +164,13 @@ serve(async (req) => {
     const { data: adminRow } = await admin
       .from("admin_roles").select("role").eq("user_id", authUserId).single();
 
-    console.log(`[AUTH_DIAG:direct-auth] success | is_admin=${!!adminRow}`);
+    console.log(`[AUTH_DIAG:direct-auth] success_unverified | telegram_id=${telegram_id} | is_admin=${!!adminRow}`);
 
+    // direct-auth работает без cryptographic proof (initData отсутствует).
+    // Возвращаем профиль, но НЕ сессию — клиент не получит JWT,
+    // поэтому злоумышленник не сможет использовать украденный telegram_id.
     return new Response(JSON.stringify({
-      session: signIn.session,
+      unverified: true,
       profile: { ...profile, is_admin: !!adminRow },
     }), { headers: { ...CORS, "Content-Type": "application/json" } });
 
@@ -172,5 +180,8 @@ serve(async (req) => {
       JSON.stringify({ error: String(err?.message ?? err) }),
       { status: 500, headers: { ...CORS, "Content-Type": "application/json" } }
     );
+  } finally {
+    // Никогда не логируем чувствительные данные (токены, пароли, подписи).
+    // Всё что логируется выше — safe: telegram_id, username, ip, initData=absent, rate_limit результат.
   }
 });

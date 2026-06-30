@@ -128,7 +128,15 @@ async function _doInit() {
             }),
           });
           const result = await res.json();
-          logStep('direct_auth_response', { ok: res.ok, status: res.status, hasSession: !!result.session, error: result.error });
+          logStep('direct_auth_response', { ok: res.ok, status: res.status, hasSession: !!result.session, unverified: !!result.unverified, error: result.error });
+
+          if (result.unverified) {
+            logStep('direct_auth_unverified', { reason: 'initData absent, no cryptographic proof' });
+            console.warn('[MEOW] direct-auth: authentication without initData (unverified). Limited session.');
+            // Пока неполноценная сессия — можно показать UI с ограничениями
+            // или переадресовать на верификацию через initData
+          }
+
           if (!res.ok || !result.session) {
             logStep('direct_auth_failed', { error: result.error });
           } else {

@@ -76,7 +76,7 @@ export async function loadAllEvents() {
       .select('*')
       .eq('is_active', true)
       .eq('manually_hidden', false)
-      .order('date', { ascending: true });
+      .order('id', { ascending: true });
 
     if (error) throw error;
     if (data?.length) {
@@ -86,6 +86,8 @@ export async function loadAllEvents() {
         imageUrl: e.image_url,
         date: normalizeDate(e.date),
       }));
+      // Сортируем по реальной дате, а не лексикографически
+      state.rawAllEvents.sort((a, b) => parseDate(b.date) - parseDate(a.date));
       state.usingSupabase = true;
       return state.rawAllEvents;
     }

@@ -651,6 +651,33 @@
     "manually_hidden": false
   },
   {
+    "id": "97a8c30baace",
+    "date": "03.07.2026",
+    "title": "Код Красный",
+    "location": "Терапия, Мира 31",
+    "address": "Терапия, Мира 31",
+    "time": "23:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Победители в номинации «самостёб недели» - Smolique и Dave Ju👏🏻\n\nЗумер на микрофоне, миллениал - за пультом. В динамиках - разного рода хаус и хип-хоп.\n\nСтарт в 23.00\nВход свободный",
+    "full_description": "Победители в номинации «самостёб недели» - Smolique и Dave Ju👏🏻\n\nЗумер на микрофоне, миллениал - за пультом. В динамиках - разного рода хаус и хип-хоп.\n\nСтарт в 23.00\nВход свободный",
+    "description_blocks": [
+      "Победители в номинации «самостёб недели» - Smolique и Dave Ju👏🏻",
+      "Зумер на микрофоне, миллениал - за пультом. В динамиках - разного рода хаус и хип-хоп.",
+      "Старт в 23.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://www.instagram.com/terapia.kld?igsh=emF6a2I5cW8zZnFs",
+    "lat": 54.7196919,
+    "lon": 20.485015,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/97a8c30baace.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/97a8c30baace.jpg",
+    "tg_message_id": 7805,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "45b0729d0765",
     "date": "03.07.2026",
     "title": "Моя нежность — Твоя нежность",
@@ -734,6 +761,35 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/39b57a66b3c0.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/39b57a66b3c0.jpg",
     "tg_message_id": 7802,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "e0fbb9ac0a51",
+    "date": "04.07.2026",
+    "title": "Инди-дискотека",
+    "location": "Суспирия, Коперника 21",
+    "address": "Суспирия, Коперника 21",
+    "time": "21:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Суспирия возвращает полюбившийся формат. «Все оттенки настроения, погоды и атмосферы в один вечер» Композиции от Fontaines DC Hero's Death до Murder on the Dancefloor группы Royel Otis.\n\nУправляют веч",
+    "full_description": "Суспирия возвращает полюбившийся формат. «Все оттенки настроения, погоды и атмосферы в один вечер» Композиции от Fontaines DC Hero's Death до Murder on the Dancefloor группы Royel Otis.\n\nУправляют вечером:\nMRRSN\nA.REUT\n\nСтарт в 21.00\nВход свободный",
+    "description_blocks": [
+      "Суспирия возвращает полюбившийся формат. «Все оттенки настроения, погоды и атмосферы в один вечер» Композиции от Fontaines DC Hero's Death до Murder on the Dancefloor группы Royel Otis.",
+      "Управляют вечером:",
+      "MRRSN",
+      "A.REUT",
+      "Старт в 21.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/suspiriabar/1323",
+    "lat": 54.710566319856,
+    "lon": 20.504079014298,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e0fbb9ac0a51.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e0fbb9ac0a51.jpg",
+    "tg_message_id": 7808,
     "is_active": true,
     "manually_hidden": false
   },

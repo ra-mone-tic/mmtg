@@ -301,6 +301,39 @@
 .admin-preview-remove:hover { background:rgba(231,76,111,.8) }
 .admin-preview-remove:active { transform:scale(.88) }
 
+/* ── Date rows (multi-day) ──────────────────────────── */
+.admin-dates-list {
+  display:flex;flex-direction:column;gap:8px;
+}
+.admin-date-row {
+  display:flex;gap:8px;align-items:center;
+}
+.admin-date-row .admin-date-input {
+  flex:1;min-width:0;
+}
+.admin-date-row .admin-time-input {
+  width:100px;flex-shrink:0;
+}
+.btn-admin-remove-date {
+  width:34px;height:34px;border-radius:10px;flex-shrink:0;
+  background:var(--c-glass);border:1.5px solid var(--c-glass-br);
+  color:var(--c-t2);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .13s var(--ease-s);
+}
+.btn-admin-remove-date:hover { border-color:#e74c6f;color:#e74c6f }
+.btn-admin-remove-date:active { transform:scale(.9) }
+
+.btn-admin-add-date {
+  height:34px;border-radius:var(--r-b);
+  padding:0 14px;margin-top:2px;
+  background:var(--c-accent-d);color:var(--c-accent);
+  font-size:12px;font-weight:700;
+  display:inline-flex;align-items:center;gap:5px;
+  transition:transform .13s var(--ease-s);
+}
+.btn-admin-add-date:active { transform:scale(.95) }
+
 /* ── Form actions ────────────────────────────────────── */
 .admin-actions {
   display:flex;gap:10px;padding-top:8px;padding-bottom:12px;

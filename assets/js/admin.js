@@ -414,7 +414,7 @@ async function _ensureGeocodeCache() {
 
 // ── Event Form (create / edit) ────────────────────────
 
-function _renderEventForm(modal, event) {
+async function _renderEventForm(modal, event) {
   const body = modal.querySelector('.admin-body');
   if (!body) return;
 
@@ -424,8 +424,6 @@ function _renderEventForm(modal, event) {
 
   const isEdit = !!event;
   const title = event?.title || '';
-  const date = event?.date || fmt(new Date());
-  const time = event?.time || '';
   const location = event?.location || '';
   const address = event?.address || '';
   const tags = Array.isArray(event?.tags)
@@ -438,6 +436,27 @@ function _renderEventForm(modal, event) {
   const lon = event?.lon ?? '';
   const imageUrl = event?.image_url || event?.imageUrl || '';
   const isActive = event?.is_active !== undefined ? event.is_active : true;
+
+  // Collect all dates for this event group
+  let dateRows = [];
+  if (isEdit && event?.multi_day_group_id) {
+    // Load all dates of the group from Supabase
+    try {
+      const { data } = await supabase
+        .from('events')
+        .select('id, date, time')
+        .eq('multi_day_group_id', event.multi_day_group_id)
+        .order('date');
+      if (data?.length) {
+        dateRows = data.map(d => ({ date: d.date, time: d.time || '' }));
+      }
+    } catch { /* ignore */ }
+  }
+
+  // If no group dates found, use the event's own date
+  if (!dateRows.length) {
+    dateRows = [{ date: event?.date || fmt(new Date()), time: event?.time || '' }];
+  }
 
   const header = modal.querySelector('.admin-header');
   if (header) {
@@ -465,15 +484,22 @@ function _renderEventForm(modal, event) {
         <label class="admin-label" for="admin-f-title">Название *</label>
         <input class="admin-input" id="admin-f-title" value="${_esc(title)}" placeholder="Название мероприятия" required>
       </div>
-      <div class="admin-row-2">
-        <div class="admin-field">
-          <label class="admin-label" for="admin-f-date">Дата (ДД.ММ.ГГГГ) *</label>
-          <input class="admin-input" id="admin-f-date" value="${_esc(date)}" placeholder="01.01.2026" required>
+      <div class="admin-field">
+        <label class="admin-label">Даты проведения *</label>
+        <div id="admin-f-dates-list" class="admin-dates-list">
+          ${dateRows.map((dr, i) => `
+            <div class="admin-date-row">
+              <input class="admin-input admin-date-input" value="${_esc(dr.date)}" placeholder="01.01.2026" required>
+              <input class="admin-input admin-time-input" value="${_esc(dr.time)}" placeholder="19:00">
+              ${i > 0 ? `<button type="button" class="btn-admin-remove-date" title="Удалить дату">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>` : ''}
+            </div>
+          `).join('')}
         </div>
-        <div class="admin-field">
-          <label class="admin-label" for="admin-f-time">Время</label>
-          <input class="admin-input" id="admin-f-time" value="${_esc(time)}" placeholder="19:00">
-        </div>
+        <button type="button" class="btn-admin-add-date" id="btn-admin-add-date">➕ Добавить дату</button>
       </div>
       <div class="admin-field" style="position:relative">
         <label class="admin-label" for="admin-f-location">Место / Локация
@@ -609,6 +635,35 @@ function _renderEventForm(modal, event) {
     }
   });
 
+  // ── Add date row ──────────────────────────────────────
+  const datesList = body.querySelector('#admin-f-dates-list');
+  const addDateBtn = body.querySelector('#btn-admin-add-date');
+
+  addDateBtn?.addEventListener('click', () => {
+    const row = document.createElement('div');
+    row.className = 'admin-date-row';
+    row.innerHTML = `
+      <input class="admin-input admin-date-input" placeholder="01.01.2026" required>
+      <input class="admin-input admin-time-input" placeholder="19:00">
+      <button type="button" class="btn-admin-remove-date" title="Удалить дату">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    `;
+    row.querySelector('.btn-admin-remove-date')?.addEventListener('click', () => {
+      row.remove();
+    });
+    datesList?.appendChild(row);
+  });
+
+  // Remove date buttons (for existing rows)
+  datesList?.querySelectorAll('.btn-admin-remove-date').forEach(btn => {
+    btn.addEventListener('click', () => {
+      btn.closest('.admin-date-row')?.remove();
+    });
+  });
+
   // ── Active toggle ─────────────────────────────────────
   body.querySelector('#admin-f-active')?.addEventListener('click', (e) => {
     e.currentTarget.classList.toggle('active');
@@ -707,25 +762,63 @@ function _renderEventForm(modal, event) {
   _initLocationAutocomplete();
 }
 
+function _generateEventId(dateStr, title) {
+  // Stable ID like the Python backend: md5(date|title)[:12]
+  const src = `${dateStr}|${title}`;
+  let hash = 0;
+  for (let i = 0; i < src.length; i++) {
+    const chr = src.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0;
+  }
+  // Convert to hex string
+  const h = (hash >>> 0).toString(16);
+  return h.padStart(12, '0').slice(0, 12);
+}
+
 async function _submitEvent(modal, isEdit) {
   const body = modal.querySelector('.admin-body');
   if (!body) return;
 
   const title = body.querySelector('#admin-f-title')?.value?.trim();
-  const date = body.querySelector('#admin-f-date')?.value?.trim();
-  if (!title || !date) {
-    showToast('Название и дата обязательны');
+  if (!title) {
+    showToast('Название обязательно');
     return;
+  }
+
+  // Collect all date rows
+  const dateRows = body.querySelectorAll('#admin-f-dates-list .admin-date-row');
+  if (!dateRows.length) {
+    showToast('Добавьте хотя бы одну дату');
+    return;
+  }
+
+  // Validate dates
+  const dates = [];
+  for (const row of dateRows) {
+    const d = row.querySelector('.admin-date-input')?.value?.trim();
+    if (!d) {
+      showToast('Заполните все даты');
+      return;
+    }
+    const normalized = normalizeDate(d);
+    if (!normalized) {
+      showToast(`Некорректная дата: ${d}`);
+      return;
+    }
+    dates.push({
+      date: normalized,
+      time: row.querySelector('.admin-time-input')?.value?.trim() || '',
+    });
   }
 
   // Collect selected tags
   const tags = [];
   body.querySelectorAll('.admin-tag.selected').forEach(btn => tags.push(btn.dataset.tag));
 
-  const payload = {
+  // Common fields shared by all dates
+  const commonFields = {
     title,
-    date: normalizeDate(date),
-    time: body.querySelector('#admin-f-time')?.value?.trim() || '',
     location: body.querySelector('#admin-f-location')?.value?.trim() || '',
     address: body.querySelector('#admin-f-address')?.value?.trim() || '',
     tags,
@@ -738,41 +831,109 @@ async function _submitEvent(modal, isEdit) {
     is_active: body.querySelector('#admin-f-active')?.classList.contains('active') ?? true,
   };
 
-  // If creating new event, generate a short random ID
-  if (!isEdit) {
-    payload.id = _generateId();
-    payload.created_by = state.user?.id || null;
-    // Compute lat/lon from address if missing and location is set
-    if (!payload.lat && payload.location) {
-      // Use geocode cache if available
-      try {
-        const gcResp = await fetch(`geocode_cache.json`);
-        const gcCache = await gcResp.json();
-        // Simple check if location matches any cached place
-        const match = gcCache.find(c => c.query?.toLowerCase().includes(payload.location.toLowerCase()));
-        if (match) {
-          payload.lat = match.lat;
-          payload.lon = match.lon;
-        }
-      } catch { /* ignore */ }
-    }
+  // Compute lat/lon if missing
+  if (!commonFields.lat && commonFields.location) {
+    try {
+      const gcResp = await fetch(`geocode_cache.json`);
+      const gcCache = await gcResp.json();
+      const match = Object.entries(gcCache).find(([key]) =>
+        key.toLowerCase().includes(commonFields.location.toLowerCase())
+      );
+      if (match) {
+        commonFields.lat = match[1]?.[0] ?? null;
+        commonFields.lon = match[1]?.[1] ?? null;
+      }
+    } catch { /* ignore */ }
   }
 
-  const elId = body.querySelector('#admin-f-id')?.value;
-  const eventId = isEdit ? elId : payload.id;
-
   try {
-    let result;
     if (isEdit) {
-      result = await supabase.from('events').update(payload).eq('id', eventId);
+      // ── Editing ──────────────────────────────────────
+      const existingId = body.querySelector('#admin-f-id')?.value;
+      const existingEvent = state.rawAllEvents.find(e => e.id === existingId);
+      const groupId = existingEvent?.multi_day_group_id || existingId; // use existing ID as group if no group yet
+
+      // Get all current rows in this group from DB
+      let groupRows = [];
+      if (existingEvent?.multi_day_group_id) {
+        const { data } = await supabase
+          .from('events')
+          .select('id, date')
+          .eq('multi_day_group_id', existingEvent.multi_day_group_id);
+        groupRows = data || [];
+      } else {
+        // Single event being edited — just this one row
+        groupRows = [{ id: existingId }];
+      }
+
+      const existingDateSet = new Set(groupRows.map(r => r.date));
+
+      // Update common fields for ALL existing rows in group
+      for (const row of groupRows) {
+        // Find matching new date
+        const newDate = dates.find(d => d.date === row.date);
+        if (newDate) {
+          // Update existing row
+          await supabase.from('events').update({
+            ...commonFields,
+            date: newDate.date,
+            time: newDate.time,
+            multi_day_group_id: groupId,
+          }).eq('id', row.id);
+        } else {
+          // This date was removed — delete the row
+          await supabase.from('events').delete().eq('id', row.id);
+        }
+      }
+
+      // Add new dates that don't exist yet
+      for (const d of dates) {
+        if (!existingDateSet.has(d.date)) {
+          const newId = _generateEventId(d.date, title);
+          await supabase.from('events').insert({
+            ...commonFields,
+            id: newId,
+            date: d.date,
+            time: d.time,
+            multi_day_group_id: groupId,
+            created_by: existingEvent?.created_by || state.user?.id || null,
+          });
+        }
+      }
+
     } else {
-      result = await supabase.from('events').insert(payload);
+      // ── Creating ─────────────────────────────────────
+      if (dates.length === 1) {
+        // Single date — no group ID needed
+        const eventId = _generateEventId(dates[0].date, title);
+        const { error } = await supabase.from('events').insert({
+          ...commonFields,
+          id: eventId,
+          date: dates[0].date,
+          time: dates[0].time,
+          created_by: state.user?.id || null,
+        });
+        if (error) throw error;
+      } else {
+        // Multiple dates — create with shared group ID
+        const groupId = _generateId();
+        for (const d of dates) {
+          const eventId = _generateEventId(d.date, title);
+          const { error } = await supabase.from('events').insert({
+            ...commonFields,
+            id: eventId,
+            date: d.date,
+            time: d.time,
+            multi_day_group_id: groupId,
+            created_by: state.user?.id || null,
+          });
+          if (error) throw error;
+        }
+      }
     }
-    if (result.error) throw result.error;
 
     showToast(isEdit ? '✅ Сохранено' : '✅ Создано');
     await loadAllEvents();
-    // Trigger re-render of markers on map
     document.dispatchEvent(new CustomEvent('meow:events-changed'));
     _renderAdminList(modal);
   } catch (err) {

@@ -39,6 +39,7 @@ export function normalizeEvent(e) {
     contacts      : e.contacts || '',
     tags          : e.tags || [],
     tg_message_id : e.tg_message_id || null,
+    multiDayGroupId : e.multi_day_group_id || null,
   };
 }
 

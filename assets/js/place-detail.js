@@ -1,5 +1,5 @@
 // ─── Place Detail Modal ─────────────────────────────
-import { $, fmt, posterGrad, dayName, ICONS } from './helpers.js';
+import { $, fmt, posterGrad, dayName, ICONS, formatEventDates } from './helpers.js';
 import { isAdmin } from './auth.js';
 import { state } from './state.js';
 import { getPlaceById, getEventsForPlace } from './places.js';
@@ -78,7 +78,7 @@ export function openPlaceDetail(id) {
     if (upcoming.length) {
       eventsSection.style.display = '';
       eventsList.innerHTML = upcoming.map(ev => {
-        const dateDisplay = ev.date === fmt(new Date()) ? 'Сегодня' : dayName(ev.date);
+        const dateDisplay = formatEventDates(ev);
         return `
           <div class="place-event-item" data-event-id="${ev.id}">
             <div class="place-event-dot"></div>

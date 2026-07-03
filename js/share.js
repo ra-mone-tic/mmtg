@@ -1,4 +1,4 @@
-import{TG as a}from"./helpers.js?v=bc7b79e2";import{CFG as i}from"./config.js?v=bc7b79e2";import{showToast as c}from"./toast.js?v=bc7b79e2";export function buildShareUrl(t){if(t.tg_message_id){const n=`https://t.me/meowafisha/${t.tg_message_id}`,r=encodeURIComponent(`${t.title}
+import{TG as a}from"./helpers.js?v=a5e7058f";import{CFG as i}from"./config.js?v=a5e7058f";import{showToast as c}from"./toast.js?v=a5e7058f";export function buildShareUrl(t){if(t.tg_message_id){const n=`https://t.me/meowafisha/${t.tg_message_id}`,r=encodeURIComponent(`${t.title}
 ${t.date}${t.time?" "+t.time:""}
 ${t.address}`);return`https://t.me/share/url?url=${encodeURIComponent(n)}&text=${r}`}const o=i.SHARE_BASE+t.id,e=encodeURIComponent(`${t.title}
 ${t.date}${t.time?" "+t.time:""}

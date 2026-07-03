@@ -248,20 +248,22 @@ function _bindEventActions(container) {
     });
   });
 
-  // Delete
+  // Delete (настоящее удаление строки, не скрытие)
   container.querySelectorAll('.btn-admin-sm.delete').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
       const id = btn.dataset.id;
-      if (!confirm('Скрыть событие из ленты?')) return;
+      if (!confirm('Удалить мероприятие навсегда? Это нельзя отменить.\n\nЕсли исходный пост всё ещё есть в Telegram-канале, при следующей синхронизации событие может быть создано заново (это разные механизмы).')) return;
       try {
         const { error } = await supabase
           .from('events')
-          .update({ manually_hidden: true })
+          .delete()
           .eq('id', id);
         if (error) throw error;
-        showToast('Скрыто из ленты');
+
+        showToast('Удалено');
         await loadAllEvents();
+        document.dispatchEvent(new CustomEvent('meow:events-changed'));
         _renderAdminList($('admin-panel'));
       } catch (err) {
         showToast('Ошибка: ' + (err.message || err));
@@ -775,6 +777,258 @@ async function _submitEvent(modal, isEdit) {
     _renderAdminList(modal);
   } catch (err) {
     console.error('[MEOW] Admin save error:', err);
+    showToast('Ошибка: ' + (err.message || 'Неизвестная'));
+  }
+}
+
+export async function openAdminEditPlace(placeId) {
+  const modal = $('admin-panel');
+  if (!modal) return;
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  history.pushState({ meowAdmin: true }, '');
+
+  const place = state.rawPlaces?.find(p => p.id === placeId);
+  if (place) {
+    _renderPlaceForm(modal, place);
+  } else {
+    try {
+      const { data } = await supabase.from('places').select('*').eq('id', placeId).single();
+      if (data) _renderPlaceForm(modal, data);
+      else {
+        showToast('Место не найдено');
+        closeAdminPanel();
+      }
+    } catch {
+      showToast('Ошибка загрузки');
+      closeAdminPanel();
+    }
+  }
+}
+
+function _renderPlaceForm(modal, place) {
+  const body = modal.querySelector('.admin-body');
+  if (!body) return;
+
+  const isEdit = !!place;
+  const name = place?.name || '';
+  const address = place?.address || '';
+  const description = place?.description || '';
+  const time = place?.time || '';
+  const lat = place?.lat ?? '';
+  const lng = place?.lng ?? place?.lon ?? '';
+  const imageUrl = place?.image_url || place?.imageUrl || '';
+  const keywords = Array.isArray(place?.keywords) ? place.keywords.join(', ') : (place?.keywords || '');
+  const isActive = place?.is_active !== undefined ? place.is_active : true;
+
+  const header = modal.querySelector('.admin-header');
+  if (header) {
+    header.innerHTML = `
+      <button class="admin-back" id="admin-panel-back-btn" aria-label="Назад">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+      <div class="admin-header-title">${isEdit ? '✏️ Редактировать место' : '➕ Создать место'}</div>
+    `;
+    header.querySelector('#admin-panel-back-btn')?.addEventListener('click', () => {
+      closeAdminPanel();
+    });
+  }
+
+  const idField = isEdit ? `<input type="hidden" id="admin-pf-id" value="${_esc(place.id)}">` : '';
+
+  body.innerHTML = `
+    <form id="admin-place-form" class="admin-form">
+      ${idField}
+      <div class="admin-field">
+        <label class="admin-label" for="admin-pf-name">Название *</label>
+        <input class="admin-input" id="admin-pf-name" value="${_esc(name)}" placeholder="Название места" required>
+      </div>
+      <div class="admin-field">
+        <label class="admin-label" for="admin-pf-address">Адрес</label>
+        <input class="admin-input" id="admin-pf-address" value="${_esc(address)}" placeholder="Каштановая аллея 1а">
+      </div>
+      <div class="admin-field">
+        <label class="admin-label" for="admin-pf-time">Часы работы</label>
+        <input class="admin-input" id="admin-pf-time" value="${_esc(time)}" placeholder="пн-чт 16:00-00:00...">
+      </div>
+      <div class="admin-field">
+        <label class="admin-label" for="admin-pf-desc">Описание</label>
+        <textarea class="admin-textarea" id="admin-pf-desc" rows="3" placeholder="Краткое описание места…">${_esc(description)}</textarea>
+      </div>
+      <div class="admin-field">
+        <label class="admin-label" for="admin-pf-keywords">Ключевые слова (через запятую, для сопоставления с событиями)</label>
+        <input class="admin-input" id="admin-pf-keywords" value="${_esc(keywords)}" placeholder="барн, barn">
+      </div>
+      <div class="admin-field">
+        <label class="admin-label">Изображение</label>
+        <div class="admin-image-row">
+          <input class="admin-input" id="admin-pf-image" value="${_esc(imageUrl)}" placeholder="URL изображения">
+          <div class="admin-file-upload-wrap">
+            <label class="admin-file-btn" for="admin-pf-file">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+              </svg>
+            </label>
+            <input type="file" id="admin-pf-file" accept="image/png,image/jpeg,image/webp" style="display:none">
+          </div>
+        </div>
+        <div id="admin-pf-image-preview" class="admin-image-preview" style="display:none">
+          <img id="admin-pf-preview-img" alt="Preview">
+          <button type="button" class="admin-preview-remove" id="admin-pf-preview-remove">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="admin-row-2">
+        <div class="admin-field">
+          <label class="admin-label" for="admin-pf-lat">Широта (lat) *</label>
+          <input class="admin-input" id="admin-pf-lat" type="number" step="any" value="${lat}" placeholder="54.710" required>
+        </div>
+        <div class="admin-field">
+          <label class="admin-label" for="admin-pf-lng">Долгота (lng) *</label>
+          <input class="admin-input" id="admin-pf-lng" type="number" step="any" value="${lng}" placeholder="20.467" required>
+        </div>
+      </div>
+      <div class="admin-field">
+        <label class="admin-toggle-row">
+          <span class="admin-label" style="margin-bottom:0">Активно</span>
+          <div class="toggle ${isActive ? 'active' : ''}" id="admin-pf-active"></div>
+        </label>
+      </div>
+      <div class="admin-actions">
+        <button type="button" class="btn-admin-cancel" id="admin-pf-cancel">Отмена</button>
+        <button type="submit" class="btn-admin-save">
+          ${isEdit ? '💾 Сохранить' : '➕ Создать'}
+        </button>
+      </div>
+    </form>
+  `;
+
+  body.querySelector('#admin-pf-active')?.addEventListener('click', (e) => {
+    e.currentTarget.classList.toggle('active');
+  });
+
+  const fileInput = body.querySelector('#admin-pf-file');
+  const imageUrlInput = body.querySelector('#admin-pf-image');
+  const previewWrap = body.querySelector('#admin-pf-image-preview');
+  const previewImg = body.querySelector('#admin-pf-preview-img');
+  const previewRemove = body.querySelector('#admin-pf-preview-remove');
+
+  fileInput?.addEventListener('change', async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (re) => {
+      const dataUrl = re.target.result;
+      if (previewImg && previewWrap) {
+        previewImg.src = dataUrl;
+        previewWrap.style.display = 'flex';
+      }
+      if (imageUrlInput) imageUrlInput.value = dataUrl;
+    };
+    reader.readAsDataURL(file);
+
+    try {
+      const fileName = `places/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+      const { error } = await supabase.storage
+        .from('event-images')
+        .upload(fileName, file, { upsert: true, contentType: file.type });
+      if (error) throw error;
+      const { data: urlData } = supabase.storage.from('event-images').getPublicUrl(fileName);
+      if (urlData?.publicUrl) {
+        if (imageUrlInput) imageUrlInput.value = urlData.publicUrl;
+        showToast('✅ Изображение загружено');
+      }
+    } catch (err) {
+      console.warn('[MEOW] Place image upload failed, keeping base64:', err.message);
+      showToast('⚠️ Изображение сохранено как base64');
+    }
+  });
+
+  previewRemove?.addEventListener('click', () => {
+    if (previewWrap) previewWrap.style.display = 'none';
+    if (previewImg) previewImg.src = '';
+    if (fileInput) fileInput.value = '';
+    if (imageUrlInput) imageUrlInput.value = '';
+  });
+
+  imageUrlInput?.addEventListener('input', () => {
+    const url = imageUrlInput.value.trim();
+    if (url && previewImg && previewWrap) {
+      previewImg.src = url;
+      previewWrap.style.display = 'flex';
+    } else if (previewWrap) {
+      previewWrap.style.display = 'none';
+    }
+  });
+  if (imageUrl && previewImg && previewWrap) {
+    previewImg.src = imageUrl;
+    previewWrap.style.display = 'flex';
+  }
+
+  body.querySelector('#admin-pf-cancel')?.addEventListener('click', () => {
+    closeAdminPanel();
+  });
+
+  body.querySelector('#admin-place-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    await _submitPlace(modal, isEdit);
+  });
+}
+
+async function _submitPlace(modal, isEdit) {
+  const body = modal.querySelector('.admin-body');
+  if (!body) return;
+
+  const name = body.querySelector('#admin-pf-name')?.value?.trim();
+  const lat = parseFloat(body.querySelector('#admin-pf-lat')?.value);
+  const lng = parseFloat(body.querySelector('#admin-pf-lng')?.value);
+  if (!name || Number.isNaN(lat) || Number.isNaN(lng)) {
+    showToast('Название, широта и долгота обязательны');
+    return;
+  }
+
+  const keywordsRaw = body.querySelector('#admin-pf-keywords')?.value || '';
+  const keywords = keywordsRaw.split(',').map(s => s.trim()).filter(Boolean);
+
+  const payload = {
+    name,
+    address: body.querySelector('#admin-pf-address')?.value?.trim() || '',
+    description: body.querySelector('#admin-pf-desc')?.value || '',
+    time: body.querySelector('#admin-pf-time')?.value?.trim() || '',
+    lat,
+    lng,
+    keywords,
+    image_url: body.querySelector('#admin-pf-image')?.value?.trim() || null,
+    is_active: body.querySelector('#admin-pf-active')?.classList.contains('active') ?? true,
+  };
+
+  if (!isEdit) payload.id = 'place-' + _generateId();
+  const elId = body.querySelector('#admin-pf-id')?.value;
+  const placeId = isEdit ? elId : payload.id;
+
+  try {
+    let result;
+    if (isEdit) {
+      result = await supabase.from('places').update(payload).eq('id', placeId);
+    } else {
+      result = await supabase.from('places').insert(payload);
+    }
+    if (result.error) throw result.error;
+
+    showToast(isEdit ? '✅ Сохранено' : '✅ Создано');
+    const { loadPlaces } = await import('./places.js');
+    await loadPlaces();
+    document.dispatchEvent(new CustomEvent('meow:places-changed'));
+    closeAdminPanel();
+  } catch (err) {
+    console.error('[MEOW] Place save error:', err);
     showToast('Ошибка: ' + (err.message || 'Неизвестная'));
   }
 }

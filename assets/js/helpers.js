@@ -37,10 +37,10 @@ export const ICONS = {
 
 /**
  * Форматирует даты для отображения с учётом многодневных событий.
- * Для multiDayGroupId собирает все даты группы и отображает компактно:
+ * Для multiDayGroupId собирает все даты группы и отображает:
  * - 1 дата: "Сегодня" / "01.06.2026"
- * - 2 даты: "01.06, 02.06"
- * - 3+ дат: "01.06 … 05.06"
+ * - Непрерывный период: "дд.мм–дд.мм" (напр. "01.06–05.06")
+ * - Разрозненные даты: "дд.мм, дд.мм, дд.мм" (через запятую)
  */
 export function formatEventDates(ev) {
   const single = ev.date === fmt(new Date()) ? 'Сегодня' : ev.date;
@@ -59,12 +59,26 @@ export function formatEventDates(ev) {
     return `${day}.${month}`;
   };
 
-  if (groupDates.length === 2) {
-    return `${fmtDate(groupDates[0])}, ${fmtDate(groupDates[1])}`;
+  // Проверяем, образуют ли даты непрерывный период
+  const _parse = (d) => {
+    const [day, month, year] = d.split('.').map(Number);
+    return new Date(year, month - 1, day);
+  };
+
+  const isContinuous = groupDates.every((d, i) => {
+    if (i === 0) return true;
+    const prev = _parse(groupDates[i - 1]);
+    const curr = _parse(d);
+    return (curr - prev) / (1000 * 60 * 60 * 24) === 1;
+  });
+
+  if (isContinuous) {
+    // Период: дд.мм–дд.мм
+    return `${fmtDate(groupDates[0])}–${fmtDate(groupDates[groupDates.length - 1])}`;
   }
 
-  // 3+ дат — компактно: первая … последняя
-  return `${fmtDate(groupDates[0])} … ${fmtDate(groupDates[groupDates.length - 1])}`;
+  // Разрозненные даты: дд.мм, дд.мм, дд.мм
+  return groupDates.map(d => fmtDate(d)).join(', ');
 }
 
 /**

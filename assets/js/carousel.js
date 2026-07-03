@@ -1,5 +1,5 @@
 // ─── Poster Carousel ────────────────────────────────
-import { $, fmt } from './helpers.js';
+import { $, fmt, formatEventDates } from './helpers.js';
 import { state } from './state.js';
 import { normalizeEvent, parseDate } from './data.js';
 import { flyTo } from './map-core.js';
@@ -80,7 +80,7 @@ function _buildCard(ev) {
   const ov = document.createElement('div');
   ov.className = 'poster-overlay';
   ov.innerHTML = `<div class="poster-title">${ev.title}</div>
-                  <div class="poster-date">${ev.date}</div>`;
+                  <div class="poster-date">${formatEventDates(ev)}</div>`;
   card.appendChild(ov);
 
   const go = async () => {

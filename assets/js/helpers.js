@@ -1,5 +1,6 @@
 // Helpers & UI utilities
 import { CFG } from './config.js';
+import { state } from './state.js';
 
 export const $  = id => document.getElementById(id);
 export const qs = s  => document.querySelector(s);
@@ -35,10 +36,42 @@ export const ICONS = {
 };
 
 /**
+ * Форматирует даты для отображения с учётом многодневных событий.
+ * Для multiDayGroupId собирает все даты группы и отображает компактно:
+ * - 1 дата: "Сегодня" / "01.06.2026"
+ * - 2 даты: "01.06, 02.06"
+ * - 3+ дат: "01.06 … 05.06"
+ */
+export function formatEventDates(ev) {
+  const single = ev.date === fmt(new Date()) ? 'Сегодня' : ev.date;
+  if (!ev.multiDayGroupId) return single;
+
+  const groupDates = state.rawAllEvents
+    .filter(e => e.multi_day_group_id === ev.multiDayGroupId && e.date)
+    .map(e => e.date)
+    .sort();
+
+  if (groupDates.length <= 1) return single;
+
+  // Убираем год из отображения для краткости
+  const fmtDate = (d) => {
+    const [day, month] = d.split('.');
+    return `${day}.${month}`;
+  };
+
+  if (groupDates.length === 2) {
+    return `${fmtDate(groupDates[0])}, ${fmtDate(groupDates[1])}`;
+  }
+
+  // 3+ дат — компактно: первая … последняя
+  return `${fmtDate(groupDates[0])} … ${fmtDate(groupDates[groupDates.length - 1])}`;
+}
+
+/**
  * Мета-строки. Скрывает адрес/время если пусты.
  */
 export function metaHTML(ev, showAddress = true) {
-  const dateDisplay = ev.date === fmt(new Date()) ? 'Сегодня' : ev.date;
+  const dateDisplay = formatEventDates(ev);
   const addrRow = showAddress && ev.address
     ? `<div class="meta-row">${ICONS.PIN}${ev.address}</div>`
     : '';

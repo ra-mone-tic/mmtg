@@ -74,7 +74,11 @@ export function blocksHTML(ev) {
       })
       .join('');
   }
-  return _escape(ev.desc || '').replace(/\n/g, "<br>");
+  // Fallback: делим сплошной текст на параграфы по \n\n
+  return _escape(ev.desc || '')
+    .split(/\n\n+/)
+    .map(p => `<p>${p.replace(/\n/g, "<br>")}</p>`)
+    .join('');
 }
 
 /**
@@ -91,7 +95,11 @@ export function cardDescHTML(ev) {
       })
       .join('<br><br>');
   }
-  return _escape(ev.desc || '').replace(/\n/g, "<br>");
+  // Fallback: делим сплошной текст на параграфы по \n\n
+  return _escape(ev.desc || '')
+    .split(/\n\n+/)
+    .map(p => p.replace(/\n/g, "<br>"))
+    .join('<br><br>');
 }
 
 // ─── Tags ────────────────────────────────────────────

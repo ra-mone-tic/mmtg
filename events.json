@@ -588,6 +588,45 @@
     "manually_hidden": false
   },
   {
+    "id": "0df2661d349d",
+    "date": "04.07.2026",
+    "title": "Arabian Day & Night",
+    "location": "Панорама лаунж, Сергеева 2",
+    "address": "Панорама лаунж, Сергеева 2",
+    "time": "15:00",
+    "tags": [
+      "Вечеринка",
+      "Бесплатно"
+    ],
+    "short_description": "Коллаборация проекта OBRAZ и Панорама Лаунж в двух частях.\n\n15:00 - 21:00 ARABIAN DAY\n\nТусовка на летней террасе с видом на Нижнее озеро. Анонсировали вэлком дринки, стритфуд от ресторана Moreca, барн",
+    "full_description": "Коллаборация проекта OBRAZ и Панорама Лаунж в двух частях.\n\n15:00 - 21:00 ARABIAN DAY\n\nТусовка на летней террасе с видом на Нижнее озеро. Анонсировали вэлком дринки, стритфуд от ресторана Moreca, барное меню от бара Онегин, снеки и паровые коктейли от Панорамы, музыку от команды Obraz.\n\nLine up:\nSOUL MOVE\nKIKI\nAMORE\n\nВход свободный\n\n22.00 - 03.00 ARABIAN NIGHT\n\nВечеринка в Панорама Лаунж. Вэлком дринки и файер-шоу.\n\nLine up:\nSOUL MOVE × живые инструменты\nKIKI\nAMORE\n\nДресс код - восточные аксессуары",
+    "description_blocks": [
+      "Коллаборация проекта OBRAZ и Панорама Лаунж в двух частях.",
+      "15:00 - 21:00 ARABIAN DAY",
+      "Тусовка на летней террасе с видом на Нижнее озеро. Анонсировали вэлком дринки, стритфуд от ресторана Moreca, барное меню от бара Онегин, снеки и паровые коктейли от Панорамы, музыку от команды Obraz.",
+      "Line up:",
+      "SOUL MOVE",
+      "KIKI",
+      "AMORE",
+      "Вход свободный",
+      "22.00 - 03.00 ARABIAN NIGHT",
+      "Вечеринка в Панорама Лаунж. Вэлком дринки и файер-шоу.",
+      "Line up:",
+      "SOUL MOVE × живые инструменты",
+      "KIKI",
+      "AMORE",
+      "Дресс код - восточные аксессуары"
+    ],
+    "contacts": "https://t.me/obraz_kld",
+    "lat": 54.7148706,
+    "lon": 20.5144899,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/0df2661d349d.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/0df2661d349d.jpg",
+    "tg_message_id": 7810,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "08c0c4db26f0",
     "date": "04.07.2026",
     "title": "VOSKRESNIK X ВИКИНГУД",
@@ -672,6 +711,33 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e0fbb9ac0a51.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e0fbb9ac0a51.jpg",
     "tg_message_id": 7808,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "9033d11a0940",
+    "date": "04.07.2026",
+    "title": "Йохан Ингер: Лебединое озеро",
+    "location": "Филиала Третьяковской галереи в Калининграде, Парадная набережная 3",
+    "address": "Филиала Третьяковской галереи в Калининграде, Парадная набережная 3",
+    "time": "17:00",
+    "tags": [
+      "Кинопоказ"
+    ],
+    "short_description": "Кинопоказ балета «Йохан Ингер: Лебединое озеро» (Германия, 2023).\n\nШведский хореограф Йохан Ингер, ставя свою версию «Лебединого озера», взял за основу не всем известное либретто, а сказку XVIII века ",
+    "full_description": "Кинопоказ балета «Йохан Ингер: Лебединое озеро» (Германия, 2023).\n\nШведский хореограф Йохан Ингер, ставя свою версию «Лебединого озера», взял за основу не всем известное либретто, а сказку XVIII века «Украденное покрывало» – ту самую, которая, на самом деле, и была отправной точкой для «Озера слёз».\n\nВзяв старинную сказку, Ингер вытащил из неё проходящую там красной нитью тему обмана и манипуляций. Получилась абсолютно своя, трагическая, местами очень неприятная, местами очень ироничная история.\n\nСтарт в 17.00",
+    "description_blocks": [
+      "Кинопоказ балета «Йохан Ингер: Лебединое озеро» (Германия, 2023).",
+      "Шведский хореограф Йохан Ингер, ставя свою версию «Лебединого озера», взял за основу не всем известное либретто, а сказку XVIII века «Украденное покрывало» – ту самую, которая, на самом деле, и была отправной точкой для «Озера слёз».",
+      "Взяв старинную сказку, Ингер вытащил из неё проходящую там красной нитью тему обмана и манипуляций. Получилась абсолютно своя, трагическая, местами очень неприятная, местами очень ироничная история.",
+      "Старт в 17.00"
+    ],
+    "contacts": "https://kaliningrad.tretyakovgallery.ru/events/654/",
+    "lat": 54.6997566,
+    "lon": 20.5232609,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/9033d11a0940.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/9033d11a0940.jpg",
+    "tg_message_id": 7816,
     "is_active": true,
     "manually_hidden": false
   },
@@ -792,6 +858,33 @@
     "manually_hidden": false
   },
   {
+    "id": "ca3f5bd1b6df",
+    "date": "04.07.2026",
+    "title": "Суббота в Дредноуте",
+    "location": "Дредноут, Генделя 5",
+    "address": "Дредноут, Генделя 5",
+    "time": "20:30",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Празднование Дня города в древнейшем баре города. Выступят группы «Делай громче», «Max stereo film night» и «Happy Juzz» с авторскими композициями.\n\nПосле концерта всех ждут в центральном зале - петь ",
+    "full_description": "Празднование Дня города в древнейшем баре города. Выступят группы «Делай громче», «Max stereo film night» и «Happy Juzz» с авторскими композициями.\n\nПосле концерта всех ждут в центральном зале - петь караоке и танцевать под хиты 90х.\n\nСтарт в 20.30\nВход свободный",
+    "description_blocks": [
+      "Празднование Дня города в древнейшем баре города. Выступят группы «Делай громче», «Max stereo film night» и «Happy Juzz» с авторскими композициями.",
+      "После концерта всех ждут в центральном зале - петь караоке и танцевать под хиты 90х.",
+      "Старт в 20.30",
+      "Вход свободный"
+    ],
+    "contacts": "https://vk.ru/dread39",
+    "lat": 54.7218613,
+    "lon": 20.495918,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/ca3f5bd1b6df.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/ca3f5bd1b6df.jpg",
+    "tg_message_id": 7809,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "9eb1eea33903",
     "date": "04.07.2026",
     "title": "Танцующий лес",
@@ -881,6 +974,36 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bc1fa2d1258e.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bc1fa2d1258e.jpg",
     "tg_message_id": 7804,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "c9ac0a952ecb",
+    "date": "10.07.2026",
+    "title": "Louisa Voice of the Soul",
+    "location": "12|55, Чкалова 1а",
+    "address": "12|55, Чкалова 1а",
+    "time": "20:00",
+    "tags": [
+      "Концерт"
+    ],
+    "short_description": "Тёплый вечер в творческом пространстве 12|55 с концертом и кинопоказом.\n\nСначала - выступление певицы Louisa с программой «Нежнее нежного». Она исполнит каверы на треки Whitney Houston, Lana del Ray, ",
+    "full_description": "Тёплый вечер в творческом пространстве 12|55 с концертом и кинопоказом.\n\nСначала - выступление певицы Louisa с программой «Нежнее нежного». Она исполнит каверы на треки Whitney Houston, Lana del Ray, Mariah Carey, John Legend и др. и авторские композиции.\n\nДалее - показ фильма «Амели» на атмосферной летней террасе.\n\n«Это не просто концерт и не просто кино. Это цельное переживание, которое хочется разделить с теми, кто чувствует так же»\n\nСтарт в 20.00\nКоличество мест ограничено\nБилеты",
+    "description_blocks": [
+      "Тёплый вечер в творческом пространстве 12|55 с концертом и кинопоказом.",
+      "Сначала - выступление певицы Louisa с программой «Нежнее нежного». Она исполнит каверы на треки Whitney Houston, Lana del Ray, Mariah Carey, John Legend и др. и авторские композиции.",
+      "Далее - показ фильма «Амели» на атмосферной летней террасе.",
+      "«Это не просто концерт и не просто кино. Это цельное переживание, которое хочется разделить с теми, кто чувствует так же»",
+      "Старт в 20.00",
+      "Количество мест ограничено",
+      "Билеты"
+    ],
+    "contacts": "https://t.me/art_studio1255",
+    "lat": 54.7232394,
+    "lon": 20.4593508,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c9ac0a952ecb.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c9ac0a952ecb.jpg",
+    "tg_message_id": 7811,
     "is_active": true,
     "manually_hidden": false
   }

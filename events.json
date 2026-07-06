@@ -1,31 +1,5 @@
 [
   {
-    "id": "16db79bc6985",
-    "date": "28.06.2026",
-    "title": "Пирс Гриль Пати",
-    "location": "ELEVATOR, Правая набережная 21",
-    "address": "ELEVATOR, Правая набережная 21",
-    "time": "14:00",
-    "tags": [
-      "Бесплатно"
-    ],
-    "short_description": "Пикник на набережной у кофейни ELEVATOR. Анонсированы авторские коктейли от бара Linch, диджеи, чилл-зона, хот-доги, морепродукты, закуски.\n\n14:00 - 20:00\nВход свободный",
-    "full_description": "Пикник на набережной у кофейни ELEVATOR. Анонсированы авторские коктейли от бара Linch, диджеи, чилл-зона, хот-доги, морепродукты, закуски.\n\n14:00 - 20:00\nВход свободный",
-    "description_blocks": [
-      "Пикник на набережной у кофейни ELEVATOR. Анонсированы авторские коктейли от бара Linch, диджеи, чилл-зона, хот-доги, морепродукты, закуски.",
-      "14:00 - 20:00",
-      "Вход свободный"
-    ],
-    "contacts": "https://www.instagram.com/reel/DZ45I7dt15J/?igsh=Y201bzMyeDU4eHM1",
-    "lat": 54.7053226,
-    "lon": 20.4757615,
-    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/16db79bc6985.jpg",
-    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/16db79bc6985.jpg",
-    "tg_message_id": 7774,
-    "is_active": true,
-    "manually_hidden": false
-  },
-  {
     "id": "mqttktfeyjinym",
     "date": "29.06.2026",
     "title": "Тест",

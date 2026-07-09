@@ -99,13 +99,31 @@ function renderMarkers(eventList) {
 
 function _setLoadingMsg(msg) {
   const el = document.querySelector('.loading-text');
-  if (el) {
+  if (!el) return;
+  el.classList.add('fade');
+  setTimeout(() => {
+    el.textContent = msg;
+    el.classList.remove('fade');
+  }, 350);
+}
+
+/**
+ * Плавно меняет текст загрузки и держит его минимум minMs (от момента вызова)
+ */
+function _showLoadingMsg(msg, minMs = 500) {
+  const started = Date.now();
+  return new Promise(resolve => {
+    const el = document.querySelector('.loading-text');
+    if (!el) { resolve(); return; }
     el.classList.add('fade');
     setTimeout(() => {
       el.textContent = msg;
       el.classList.remove('fade');
+      const elapsed = Date.now() - started;
+      const remaining = Math.max(0, minMs - elapsed);
+      setTimeout(resolve, remaining);
     }, 350);
-  }
+  });
 }
 
 export async function boot() {
@@ -140,8 +158,8 @@ export async function boot() {
   setTimeout(syncMainButton, 1000);
   setTimeout(syncMainButton, 3000);
 
-  // ── Этап 2: "Авторизуемся…" ────────────────────────────
-  _setLoadingMsg('Авторизуемся…');
+  // ── Этап 2: "Авторизуемся…" — минимум 600ms ────────────
+  _setLoadingMsg('Авторизуемся…'); // fire-and-forget, без задержки
 
   // Пока MapLibre загружает тайлы CARTO (~1-2 сек), получаем данные из Supabase.
   // webapp.ready() вызываем как только данные готовы — не ждём рендер тайлов.
@@ -173,20 +191,17 @@ export async function boot() {
     });
   });
 
-  // ── Этап 3: "Загружаем события…" ─────────────────────
-  _setLoadingMsg('Загружаем события…');
-
+  // ── Этап 3: "Загружаем события…" — минимум 700ms, параллельно с данными ──
   await Promise.all([
-    initAuth(),
-    loadAllEvents(),
-    loadPlaces(),
+    _showLoadingMsg('Загружаем события…', 700),
+    Promise.all([initAuth(), loadAllEvents(), loadPlaces()]),
   ]);
 
   // ── Если карта уже готова, а places загрузились позже — добавляем точки ──
   if (_mapReady) attachPlaceDotsOnce();
 
-  // ── Этап 4: "Ещё чуть-чуть…" ─────────────────────────
-  _setLoadingMsg('Ещё чуть-чуть…');
+  // ── Этап 4: "Ещё чуть-чуть…" — минимум 500ms ──────────
+  await _showLoadingMsg('Ещё чуть-чуть…', 500);
 
   // ── Данные готовы — показываем UI немедленно, карту не ждём ─────────────
   webapp?.ready();

@@ -97,7 +97,19 @@ function renderMarkers(eventList) {
 
 // ─── Boot ────────────────────────────────────────────
 
+function _setLoadingMsg(msg) {
+  const el = document.querySelector('.loading-text');
+  if (el) {
+    el.classList.add('fade');
+    setTimeout(() => {
+      el.textContent = msg;
+      el.classList.remove('fade');
+    }, 350);
+  }
+}
+
 export async function boot() {
+  // Этап 1: "Загружаем карту…" — начальный текст в HTML
   // Telegram WebApp — НЕ вызываем ready() сразу, ждём готовности UI
   const webapp = TG();
   webapp?.expand();
@@ -128,12 +140,9 @@ export async function boot() {
   setTimeout(syncMainButton, 1000);
   setTimeout(syncMainButton, 3000);
 
-  // ── Auth + Events + Places — параллельно ────────────
-  // Auth не зависит от событий, события не зависят от auth.
-  // Social и notifications загружаем ПОСЛЕ карты (fire & forget).
-  // initAvatar() перенесён внутрь onMapReady (см. ниже) — аватар после auth.
+  // ── Этап 2: "Авторизуемся…" ────────────────────────────
+  _setLoadingMsg('Авторизуемся…');
 
-  // ── Карта стартует ПАРАЛЛЕЛЬНО с auth/events/places ──────────────────────
   // Пока MapLibre загружает тайлы CARTO (~1-2 сек), получаем данные из Supabase.
   // webapp.ready() вызываем как только данные готовы — не ждём рендер тайлов.
   let _mapReady = false;
@@ -164,6 +173,9 @@ export async function boot() {
     });
   });
 
+  // ── Этап 3: "Загружаем события…" ─────────────────────
+  _setLoadingMsg('Загружаем события…');
+
   await Promise.all([
     initAuth(),
     loadAllEvents(),
@@ -172,6 +184,9 @@ export async function boot() {
 
   // ── Если карта уже готова, а places загрузились позже — добавляем точки ──
   if (_mapReady) attachPlaceDotsOnce();
+
+  // ── Этап 4: "Ещё чуть-чуть…" ─────────────────────────
+  _setLoadingMsg('Ещё чуть-чуть…');
 
   // ── Данные готовы — показываем UI немедленно, карту не ждём ─────────────
   webapp?.ready();

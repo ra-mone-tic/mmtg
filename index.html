@@ -14,9 +14,9 @@
 <link rel="apple-touch-icon" href="assets/Group%2027.png">
 <script src="https://telegram.org/js/telegram-web-app.js" defer></script>
 <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.css" integrity="sha384-m6tadjb5ohv1Fw3GJynIWn5c1scKfW7kxSXuDrhlq1gdXPn7I7UL0sSKDfCUErOb" crossorigin="anonymous">
-<link rel="stylesheet" href="assets/css/social.css?v=25c5e1a4">
-<link rel="stylesheet" href="assets/css/admin.css?v=25c5e1a4" media="print" onload="this.media='all'">
-<noscript><link rel="stylesheet" href="assets/css/admin.css?v=25c5e1a4"></noscript>
+<link rel="stylesheet" href="assets/css/social.css?v=47b4b3c0">
+<link rel="stylesheet" href="assets/css/admin.css?v=47b4b3c0" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="assets/css/admin.css?v=47b4b3c0"></noscript>
 <script src="https://unpkg.com/maplibre-gl@4.3.2/dist/maplibre-gl.js" defer integrity="sha384-tadmmhpxUhgmddNivAQUc2SdFDDOC4r7Ic5ULA6gpBezkqTK7abjgq3D/lHO+qfm" crossorigin="anonymous"></script>
 <style>
 @font-face{font-family:'NT Somic';src:url('assets/fonts/NTSomic-VF.ttf') format('truetype');font-weight:400 900;font-display:swap}
@@ -118,9 +118,10 @@ svg{display:block;flex-shrink:0}
   transition:opacity .4s ease,visibility .4s ease;
 }
 #loading.gone{opacity:0;visibility:hidden;pointer-events:none}
-#loading img{width:48px;height:48px;object-fit:contain;animation:spin-load .8s linear infinite}
+  #loading img{width:52px;height:52px;object-fit:contain;animation:spin-load .8s linear infinite}
 @keyframes spin-load{to{transform:rotate(360deg)}}
-.loading-text{font-size:13px;font-weight:600;color:var(--c-t2)}
+.loading-text{font-size:13px;font-weight:600;color:var(--c-t2);transition:opacity .35s ease;min-height:1.2em;text-align:center}
+.loading-text.fade{opacity:0}
 
 /* ══════════════════════════════════════════════════
    TOP BAR — logo | theme-btn | avatar
@@ -1000,7 +1001,7 @@ svg{display:block;flex-shrink:0}
 
 <!-- Main Application Script (Module) -->
 <script type="module">
-import { boot } from './dist/js/meow-core.js?v=25c5e1a4';
+import { boot } from './dist/js/meow-core.js?v=47b4b3c0';
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot);

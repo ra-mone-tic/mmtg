@@ -42,15 +42,20 @@ export const ICONS = {
  * - Непрерывный период: "дд.мм–дд.мм" (напр. "01.06–05.06")
  * - Разрозненные даты: "дд.мм, дд.мм, дд.мм" (через запятую)
  */
+function _collectGroupDates(ev) {
+  if (!ev.multiDayGroupId) return [ev.date];
+
+  return [...new Set(
+    state.rawAllEvents
+      .filter(e => e.multi_day_group_id === ev.multiDayGroupId && e.date)
+      .map(e => e.date)
+      .sort()
+  )];
+}
+
 export function formatEventDates(ev) {
   const single = ev.date === fmt(new Date()) ? 'Сегодня' : ev.date;
-  if (!ev.multiDayGroupId) return single;
-
-  const groupDates = state.rawAllEvents
-    .filter(e => e.multi_day_group_id === ev.multiDayGroupId && e.date)
-    .map(e => e.date)
-    .sort();
-
+  const groupDates = _collectGroupDates(ev);
   if (groupDates.length <= 1) return single;
 
   // Убираем год из отображения для краткости

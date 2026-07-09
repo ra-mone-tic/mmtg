@@ -351,10 +351,17 @@ def process_messages(
         if not ev:
             return
         extra_dates = ev.pop("extra_dates", [])
-        _upsert(ev)
-        for new_date in extra_dates:
-            clone = _clone_event_for_date(ev, new_date)
-            _upsert(clone)
+        if extra_dates:
+            # Генерируем общий group_id для всех дат
+            group_id = hashlib.md5(f"{ev['title']}|{ev['location']}".encode("utf-8")).hexdigest()[:12]
+            ev["multi_day_group_id"] = group_id
+            _upsert(ev)
+            for new_date in extra_dates:
+                clone = _clone_event_for_date(ev, new_date)
+                clone["multi_day_group_id"] = group_id
+                _upsert(clone)
+        else:
+            _upsert(ev)
 
     for msg in solo:
         _upsert_multi_day(process_single_message(msg, geocache, places))

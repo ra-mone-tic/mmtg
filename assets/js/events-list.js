@@ -47,9 +47,11 @@ export function renderList(eventList) {
         ? ' · ' + (Array.isArray(ev.tags) ? ev.tags : String(ev.tags).split(','))
             .map(s => s.trim()).filter(Boolean).slice(0, 2).join(', ')
         : '';
+      // Показываем время сегодняшнего события
+      const timeStr = ev.time ? ` · ${ev.time}` : '';
       item.innerHTML =
         `<div class="event-item-title">${ev.title}</div>
-         <div class="event-item-sub">${ev.venue}${tagStr}</div>`;
+         <div class="event-item-sub">${ev.venue}${timeStr}${tagStr}</div>`;
 
       const go = async () => {
         if (ev.date !== fmt(state.currentDate)) await _onDateChange?.(ev.date);

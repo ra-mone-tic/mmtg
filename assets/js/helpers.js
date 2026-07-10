@@ -17,7 +17,6 @@ export function dayName(str) {
   const date  = new Date(y, m - 1, d);
   const today = new Date(); today.setHours(0, 0, 0, 0);
   if (+date === +today) return 'Сегодня';
-  if (+date === +today) return 'Сегодня';
   const tomorrow = new Date(today); tomorrow.setDate(today.getDate() + 1);
   if (+date === +tomorrow) return 'Завтра';
   return DAY_NAMES[date.getDay()];
@@ -43,20 +42,36 @@ export const ICONS = {
  * - Разрозненные даты: "дд.мм, дд.мм, дд.мм" (через запятую)
  */
 function _collectGroupDates(ev) {
-  if (!ev.multiDayGroupId) return [ev.date];
+  const groupId = ev.multi_day_group_id;
+  if (!groupId) return [ev.date];
 
   return [...new Set(
     state.rawAllEvents
-      .filter(e => e.multi_day_group_id === ev.multiDayGroupId && e.date)
+      .filter(e => e.multi_day_group_id === groupId && e.date)
       .map(e => e.date)
       .sort()
   )];
 }
 
 export function formatEventDates(ev) {
-  const single = ev.date === fmt(new Date()) ? 'Сегодня' : ev.date;
+  const today = fmt(new Date());
+  const isToday = ev.date === today;
+  const groupId = ev.multi_day_group_id;
+
+  // Для одиночных дат
+  if (!groupId) {
+    if (isToday) return 'Сегодня';
+    // Убираем год: дд.мм
+    const [day, month] = ev.date.split('.');
+    return `${day}.${month}`;
+  }
+
+  // Мультидаты
   const groupDates = _collectGroupDates(ev);
-  if (groupDates.length <= 1) return single;
+  if (groupDates.length <= 1) {
+    const [day, month] = ev.date.split('.');
+    return `${day}.${month}`;
+  }
 
   // Убираем год из отображения для краткости
   const fmtDate = (d) => {

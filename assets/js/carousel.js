@@ -79,8 +79,9 @@ function _buildCard(ev) {
 
   const ov = document.createElement('div');
   ov.className = 'poster-overlay';
+  const timeStr = ev.time ? ` · ${ev.time}` : '';
   ov.innerHTML = `<div class="poster-title">${ev.title}</div>
-                  <div class="poster-date">${formatEventDates(ev)}</div>`;
+                  <div class="poster-date">${formatEventDates(ev)}${timeStr}</div>`;
   card.appendChild(ov);
 
   const go = async () => {

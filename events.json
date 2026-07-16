@@ -915,6 +915,61 @@
     "manually_hidden": false
   },
   {
+    "id": "37df2ed4edc8",
+    "date": "18.07.2026",
+    "title": "BDay МОЛОТОВ",
+    "location": "Бэкъярд, Бассейная 81",
+    "address": "Бэкъярд, Бассейная 81",
+    "time": "16:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Кажется, открытие было только вчера, а вот уже им 15 лет.\n\nПо этому случаю делаю праздник на полянке Бэкъярд. Еда - от кофейни Process. Напитки - от бара «Татьяна». За детскую зону в ответе Oxford Hou",
+    "full_description": "Кажется, открытие было только вчера, а вот уже им 15 лет.\n\nПо этому случаю делаю праздник на полянке Бэкъярд. Еда - от кофейни Process. Напитки - от бара «Татьяна». За детскую зону в ответе Oxford House.\n\nСтарт в 16.00\nВход свободный",
+    "description_blocks": [
+      "Кажется, открытие было только вчера, а вот уже им 15 лет.",
+      "По этому случаю делаю праздник на полянке Бэкъярд. Еда - от кофейни Process. Напитки - от бара «Татьяна». За детскую зону в ответе Oxford House.",
+      "Старт в 16.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://www.instagram.com/reel/DanPiqjChqw/?igsh=MWh0YXU1dnZuMDRocQ==",
+    "lat": 54.7291918,
+    "lon": 20.450601,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/37df2ed4edc8.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/37df2ed4edc8.jpg",
+    "tg_message_id": 7954,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "fdc6885f96a0",
+    "date": "18.07.2026",
+    "title": "BERLIN CALLING",
+    "location": "Видеосалон / Плохой охотник, Ленинский 18",
+    "address": "Видеосалон / Плохой охотник, Ленинский 18",
+    "time": "19:30",
+    "tags": [
+      "Вечеринка",
+      "Бесплатно"
+    ],
+    "short_description": "Даша Кабра вернулась из Берлина и в субботу будет транслировать его флюиды в Видеосалоне.\n\n19.30 Показ фильма «BERLIN CALLING» режиссёра Ханнеса Штера.\n\n21:30 Техно-вечеринка до утра.\n\nВход свободный",
+    "full_description": "Даша Кабра вернулась из Берлина и в субботу будет транслировать его флюиды в Видеосалоне.\n\n19.30 Показ фильма «BERLIN CALLING» режиссёра Ханнеса Штера.\n\n21:30 Техно-вечеринка до утра.\n\nВход свободный",
+    "description_blocks": [
+      "Даша Кабра вернулась из Берлина и в субботу будет транслировать его флюиды в Видеосалоне.",
+      "19.30 Показ фильма «BERLIN CALLING» режиссёра Ханнеса Штера.",
+      "21:30 Техно-вечеринка до утра.",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/ploxoioxotnik/2600",
+    "lat": 54.713760914613,
+    "lon": 20.504639512163,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/fdc6885f96a0.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/fdc6885f96a0.jpg",
+    "tg_message_id": 7951,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "47472830503f",
     "date": "18.07.2026",
     "title": "KOENIG SYNTH FEST 5.0",
@@ -966,6 +1021,37 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3b7a4fc19b8e.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3b7a4fc19b8e.jpg",
     "tg_message_id": 7931,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "76e97f9c990c",
+    "date": "18.07.2026",
+    "title": "Rock Im Pirs",
+    "location": "Yalta, Ялтинская 66",
+    "address": "Yalta, Ялтинская 66",
+    "time": "",
+    "tags": [
+      "Фестиваль"
+    ],
+    "short_description": "Из-за непогоды провести как обычно в речном клубе «Пирс» фестиваль не получится. Перенесли в клуб Yalta.\n\nВ программе трибьют-шоу групп:\n\nRammstein\nThirty Seconds To Mars\nRed Hot Chili Peppers\nThree D",
+    "full_description": "Из-за непогоды провести как обычно в речном клубе «Пирс» фестиваль не получится. Перенесли в клуб Yalta.\n\nВ программе трибьют-шоу групп:\n\nRammstein\nThirty Seconds To Mars\nRed Hot Chili Peppers\nThree Days Grace\nThe Offspring\nNickelback",
+    "description_blocks": [
+      "Из-за непогоды провести как обычно в речном клубе «Пирс» фестиваль не получится. Перенесли в клуб Yalta.",
+      "В программе трибьют-шоу групп:",
+      "Rammstein",
+      "Thirty Seconds To Mars",
+      "Red Hot Chili Peppers",
+      "Three Days Grace",
+      "The Offspring",
+      "Nickelback"
+    ],
+    "contacts": "https://vk.ru/rockimpirs2026",
+    "lat": 54.7045617,
+    "lon": 20.5531321,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/76e97f9c990c.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/76e97f9c990c.jpg",
+    "tg_message_id": 7950,
     "is_active": true,
     "manually_hidden": false
   },

@@ -742,6 +742,31 @@
     "manually_hidden": false
   },
   {
+    "id": "76bb653c00ea",
+    "date": "17.07.2026",
+    "title": "AGK",
+    "location": "IO, Ленинский 18",
+    "address": "IO, Ленинский 18",
+    "time": "23:00",
+    "tags": [],
+    "short_description": "Диджей, продюсер и постоянный концертный диджей артиста ICEGERGERT, резидент клуба\nTRAPGLADIATOR.\n\nСегодня будет играть как «свежие ньюскул треки, так и бессмертную хип-хоп классику».\n\nСтарт в 23.00",
+    "full_description": "Диджей, продюсер и постоянный концертный диджей артиста ICEGERGERT, резидент клуба\nTRAPGLADIATOR.\n\nСегодня будет играть как «свежие ньюскул треки, так и бессмертную хип-хоп классику».\n\nСтарт в 23.00",
+    "description_blocks": [
+      "Диджей, продюсер и постоянный концертный диджей артиста ICEGERGERT, резидент клуба",
+      "TRAPGLADIATOR.",
+      "Сегодня будет играть как «свежие ньюскул треки, так и бессмертную хип-хоп классику».",
+      "Старт в 23.00"
+    ],
+    "contacts": "https://t.me/iOnightclub/3735",
+    "lat": 54.7138345,
+    "lon": 20.5055102,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/76bb653c00ea.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/76bb653c00ea.jpg",
+    "tg_message_id": 7960,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "345d9568b816",
     "date": "17.07.2026",
     "title": "KOENIG SYNTH FEST 5.0",
@@ -788,6 +813,32 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/31c7108e0a36.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/31c7108e0a36.jpg",
     "tg_message_id": 7943,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "1ba8e09ededb",
+    "date": "17.07.2026",
+    "title": "Брит поп во Владивостоке",
+    "location": "Владивосток, Правая набережная 21",
+    "address": "Владивосток, Правая набережная 21",
+    "time": "20:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Сегодня на восьмой этаж небара на Правой набережной участники групп Max's Stereo Film Night и Madreed будут без лифта поднимать все свои музыкальные инструмента. Поддержите, чтобы это было не зря.\n\nСт",
+    "full_description": "Сегодня на восьмой этаж небара на Правой набережной участники групп Max's Stereo Film Night и Madreed будут без лифта поднимать все свои музыкальные инструмента. Поддержите, чтобы это было не зря.\n\nСтарт в 20.00\nВход свободный",
+    "description_blocks": [
+      "Сегодня на восьмой этаж небара на Правой набережной участники групп Max's Stereo Film Night и Madreed будут без лифта поднимать все свои музыкальные инструмента. Поддержите, чтобы это было не зря.",
+      "Старт в 20.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/c/2170753951/2905",
+    "lat": 54.7055912,
+    "lon": 20.4736068,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/1ba8e09ededb.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/1ba8e09ededb.jpg",
+    "tg_message_id": 7961,
     "is_active": true,
     "manually_hidden": false
   },
@@ -938,6 +989,32 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/fdc6885f96a0.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/fdc6885f96a0.jpg",
     "tg_message_id": 7951,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "14bf14710657",
+    "date": "18.07.2026",
+    "title": "In The Disco",
+    "location": "Бар Советов, Мира 118",
+    "address": "Бар Советов, Мира 118",
+    "time": "21:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Прохладные напитки и бодрящее диско от DJ Paul Nuance в Баре Советов.\n\nСтарт в 21.00\nВход свободный",
+    "full_description": "Прохладные напитки и бодрящее диско от DJ Paul Nuance в Баре Советов.\n\nСтарт в 21.00\nВход свободный",
+    "description_blocks": [
+      "Прохладные напитки и бодрящее диско от DJ Paul Nuance в Баре Советов.",
+      "Старт в 21.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/barsovetov/1599",
+    "lat": 54.722776573098,
+    "lon": 20.465626721732,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/14bf14710657.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/14bf14710657.jpg",
+    "tg_message_id": 7963,
     "is_active": true,
     "manually_hidden": false
   },

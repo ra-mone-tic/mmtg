@@ -736,7 +736,7 @@
       "Вечеринка"
     ],
     "short_description": "Hard Techno вечеринка от проекта BERLINKA. «Только тяжелый ритм, индустриальная атмосфера и настоящая энергия техно рейва под Hard, Schranz, Industrial»\n\nЗа пультом в эту ночь:\nRaving Mask (Trajectory",
-    "full_description": "Hard Techno вечеринка от проекта BERLINKA. «Только тяжелый ритм, индустриальная атмосфера и настоящая энергия техно рейва под Hard, Schranz, Industrial»\n\nЗа пультом в эту ночь:\nRaving Mask (Trajectory)\nArTech\nShogetta\nValter\n\nСтарт в 23.00\n\nВход:\n500р с репостом (мин за сутки, писать в ЛС заранее @Artur_ArTech)\n600р без репоста\n700р на входе\n\nБилеты онлайн",
+    "full_description": "Hard Techno вечеринка от проекта BERLINKA. «Только тяжелый ритм, индустриальная атмосфера и настоящая энергия техно рейва под Hard, Schranz, Industrial»\n\nЗа пультом в эту ночь:\nRaving Mask (Trajectory)\nArTech\nShogetta\nValter\n\nСтарт в 23.00",
     "description_blocks": [
       "Hard Techno вечеринка от проекта BERLINKA. «Только тяжелый ритм, индустриальная атмосфера и настоящая энергия техно рейва под Hard, Schranz, Industrial»",
       "За пультом в эту ночь:",
@@ -744,19 +744,14 @@
       "ArTech",
       "Shogetta",
       "Valter",
-      "Старт в 23.00",
-      "Вход:",
-      "500р с репостом (мин за сутки, писать в ЛС заранее @Artur_ArTech)",
-      "600р без репоста",
-      "700р на входе",
-      "Билеты онлайн"
+      "Старт в 23.00"
     ],
     "contacts": "https://t.me/berlinka_kld",
     "lat": 54.7053226,
     "lon": 20.4757615,
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/5acff5cd9934.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/5acff5cd9934.jpg",
-    "tg_message_id": 7932,
+    "tg_message_id": 8014,
     "is_active": true,
     "manually_hidden": false
   },
@@ -796,6 +791,62 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/0a077b59ab13.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/0a077b59ab13.jpg",
     "tg_message_id": 7995,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "3282eafca474",
+    "date": "25.07.2026",
+    "title": "VOSKRESNIK",
+    "location": "Grand hotel Royal Lions, Зеленоградски, Гагарина 12б",
+    "address": "Grand hotel Royal Lions, Зеленоградски, Гагарина 12б",
+    "time": "17:00",
+    "tags": [
+      "Вечеринка"
+    ],
+    "short_description": "Снова не в воскресенье, но снова красивая коллаба. Вечеринка пройдёт на крыше отеля Royal Lions в Зеленоградске. Вид на море, специальная летняя карта бара.\n\nLine up:\nSavvier / Honey\nDenis Ravilevich\n",
+    "full_description": "Снова не в воскресенье, но снова красивая коллаба. Вечеринка пройдёт на крыше отеля Royal Lions в Зеленоградске. Вид на море, специальная летняя карта бара.\n\nLine up:\nSavvier / Honey\nDenis Ravilevich\nLe Vin\n\nСтарт в 17.00",
+    "description_blocks": [
+      "Снова не в воскресенье, но снова красивая коллаба. Вечеринка пройдёт на крыше отеля Royal Lions в Зеленоградске. Вид на море, специальная летняя карта бара.",
+      "Line up:",
+      "Savvier / Honey",
+      "Denis Ravilevich",
+      "Le Vin",
+      "Старт в 17.00"
+    ],
+    "contacts": "https://t.me/bilalovx",
+    "lat": 54.9578695,
+    "lon": 20.4634728,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3282eafca474.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3282eafca474.jpg",
+    "tg_message_id": 8016,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "7d36a5bb1827",
+    "date": "25.07.2026",
+    "title": "Вязальная встреча",
+    "location": "Остров Канта",
+    "address": "Остров Канта",
+    "time": "15:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "У проекта «СО-дружество» новый формат. Делают совместные встречи с другими комьюнити. Вот, например, в субботу будут встречаться с местным вязальным клубом - знакомиться, вместе вязать, делиться опыто",
+    "full_description": "У проекта «СО-дружество» новый формат. Делают совместные встречи с другими комьюнити. Вот, например, в субботу будут встречаться с местным вязальным клубом - знакомиться, вместе вязать, делиться опытом по созданию комьюнити.\n\nВозьмите с собой вязание, плед для сидения, перекус.\n\nВход свободный, но нужно записаться.\nСтарт в 15.00",
+    "description_blocks": [
+      "У проекта «СО-дружество» новый формат. Делают совместные встречи с другими комьюнити. Вот, например, в субботу будут встречаться с местным вязальным клубом - знакомиться, вместе вязать, делиться опытом по созданию комьюнити.",
+      "Возьмите с собой вязание, плед для сидения, перекус.",
+      "Вход свободный, но нужно записаться.",
+      "Старт в 15.00"
+    ],
+    "contacts": "https://t.me/sodruzhestvokld/105",
+    "lat": 54.7068283,
+    "lon": 20.509844,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/7d36a5bb1827.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/7d36a5bb1827.jpg",
+    "tg_message_id": 8013,
     "is_active": true,
     "manually_hidden": false
   },

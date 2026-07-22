@@ -692,6 +692,62 @@
     "manually_hidden": false
   },
   {
+    "id": "402ff1f909be",
+    "date": "24.07.2026",
+    "title": "Выходные в Лесу",
+    "location": "Лес, Светлогорск, Ленина 27а-б",
+    "address": "Лес, Светлогорск, Ленина 27а-б",
+    "time": "19:00",
+    "tags": [
+      "Вечеринка",
+      "Бесплатно"
+    ],
+    "short_description": "Два разных по темпераменту музыкальных вечера в барчике на холме.\n\nВ пятницу - электронный вечер с DJ’s Musurchak Janaya и BeFun.\n\nСтарт в 19.00\n\nВ субботу - вечеринка «Пакет кассет». Два тиджея - Скв",
+    "full_description": "Два разных по темпераменту музыкальных вечера в барчике на холме.\n\nВ пятницу - электронный вечер с DJ’s Musurchak Janaya и BeFun.\n\nСтарт в 19.00\n\nВ субботу - вечеринка «Пакет кассет». Два тиджея - Скважин (leftfield, dub, ambient) из Санкт-Петербурга и Zoolooz (hip-hop 90’s), председатель König Boombap Tape Club.\n\nСтарт в 18.00\nВход свободный",
+    "description_blocks": [
+      "Два разных по темпераменту музыкальных вечера в барчике на холме.",
+      "В пятницу - электронный вечер с DJ’s Musurchak Janaya и BeFun.",
+      "Старт в 19.00",
+      "В субботу - вечеринка «Пакет кассет». Два тиджея - Скважин (leftfield, dub, ambient) из Санкт-Петербурга и Zoolooz (hip-hop 90’s), председатель König Boombap Tape Club.",
+      "Старт в 18.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/vlessbar",
+    "lat": 54.9442012,
+    "lon": 20.1496405,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/402ff1f909be.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/402ff1f909be.jpg",
+    "tg_message_id": 8024,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "1b1242a100d0",
+    "date": "24.07.2026",
+    "title": "ЛОТОС",
+    "location": "Yalta, Ялтинская 20п",
+    "address": "Yalta, Ялтинская 20п",
+    "time": "20:00",
+    "tags": [
+      "Концерт"
+    ],
+    "short_description": "Концерт калининградского металкор коллектива, приуроченный к дню рождения вокалиста.\n\nПри громкой поддержке ню-метал группы ПАРАНОЙЯ (ню-метал).\n\nСтарт в 20.00",
+    "full_description": "Концерт калининградского металкор коллектива, приуроченный к дню рождения вокалиста.\n\nПри громкой поддержке ню-метал группы ПАРАНОЙЯ (ню-метал).\n\nСтарт в 20.00",
+    "description_blocks": [
+      "Концерт калининградского металкор коллектива, приуроченный к дню рождения вокалиста.",
+      "При громкой поддержке ню-метал группы ПАРАНОЙЯ (ню-метал).",
+      "Старт в 20.00"
+    ],
+    "contacts": "https://vk.ru/lotoskgd2026",
+    "lat": 54.705610184328,
+    "lon": 20.544408541426,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/1b1242a100d0.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/1b1242a100d0.jpg",
+    "tg_message_id": 8026,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "e11335b18511",
     "date": "24.07.2026",
     "title": "ФАЗЕР ФЕСТ",
@@ -756,6 +812,30 @@
     "manually_hidden": false
   },
   {
+    "id": "fe3ff11b8efd",
+    "date": "25.07.2026",
+    "title": "Black Music",
+    "location": "Pure, Каштановая аллея 1а",
+    "address": "Pure, Каштановая аллея 1а",
+    "time": "19:00",
+    "tags": [],
+    "short_description": "Новый проект, в основе которого музыка африканских корней, замиксованная с современной электронной сценой и живыми инструментами.\n\nBlack Music включает в себя разнообразные стили - от афро хауса, совр",
+    "full_description": "Новый проект, в основе которого музыка африканских корней, замиксованная с современной электронной сценой и живыми инструментами.\n\nBlack Music включает в себя разнообразные стили - от афро хауса, современного хип-хопа, ямайской электронной музыки (Raga Jungle, Raga Base, Dub) до глубокого dub techno, chill trance.\n\nСтарт в 19:00",
+    "description_blocks": [
+      "Новый проект, в основе которого музыка африканских корней, замиксованная с современной электронной сценой и живыми инструментами.",
+      "Black Music включает в себя разнообразные стили - от афро хауса, современного хип-хопа, ямайской электронной музыки (Raga Jungle, Raga Base, Dub) до глубокого dub techno, chill trance.",
+      "Старт в 19:00"
+    ],
+    "contacts": "https://t.me/BlackMusicLive",
+    "lat": 54.710073212492,
+    "lon": 20.467264438266,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/fe3ff11b8efd.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/fe3ff11b8efd.jpg",
+    "tg_message_id": 8028,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "0e8977103f35",
     "date": "25.07.2026",
     "title": "Break Summer Fest 2026",
@@ -795,6 +875,38 @@
     "manually_hidden": false
   },
   {
+    "id": "767a06c42c83",
+    "date": "25.07.2026",
+    "title": "Come with us x Ельцин",
+    "location": "Ельцин, Гаражная 2а",
+    "address": "Ельцин, Гаражная 2а",
+    "time": "21:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "В этот раз делают Drum & Bass вечеринку. Приходите, если не боитесь тахикардии.\n\nLine up:\nDP/DT\np4_\nV.Kan\nArsenio\nAlice Wake\n\nСтарт в 21:00\nВход свободный",
+    "full_description": "В этот раз делают Drum & Bass вечеринку. Приходите, если не боитесь тахикардии.\n\nLine up:\nDP/DT\np4_\nV.Kan\nArsenio\nAlice Wake\n\nСтарт в 21:00\nВход свободный",
+    "description_blocks": [
+      "В этот раз делают Drum & Bass вечеринку. Приходите, если не боитесь тахикардии.",
+      "Line up:",
+      "DP/DT",
+      "p4_",
+      "V.Kan",
+      "Arsenio",
+      "Alice Wake",
+      "Старт в 21:00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/NGRxComeWithUs",
+    "lat": 54.7244567540289,
+    "lon": 20.5053160508956,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/767a06c42c83.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/767a06c42c83.jpg",
+    "tg_message_id": 8029,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "3282eafca474",
     "date": "25.07.2026",
     "title": "VOSKRESNIK",
@@ -820,6 +932,36 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3282eafca474.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3282eafca474.jpg",
     "tg_message_id": 8016,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "b4c40f20321d",
+    "date": "25.07.2026",
+    "title": "Выходные в Лесу",
+    "location": "Лес, Светлогорск, Ленина 27а-б",
+    "address": "Лес, Светлогорск, Ленина 27а-б",
+    "time": "19:00",
+    "tags": [
+      "Вечеринка",
+      "Бесплатно"
+    ],
+    "short_description": "Два разных по темпераменту музыкальных вечера в барчике на холме.\n\nВ пятницу - электронный вечер с DJ’s Musurchak Janaya и BeFun.\n\nСтарт в 19.00\n\nВ субботу - вечеринка «Пакет кассет». Два тиджея - Скв",
+    "full_description": "Два разных по темпераменту музыкальных вечера в барчике на холме.\n\nВ пятницу - электронный вечер с DJ’s Musurchak Janaya и BeFun.\n\nСтарт в 19.00\n\nВ субботу - вечеринка «Пакет кассет». Два тиджея - Скважин (leftfield, dub, ambient) из Санкт-Петербурга и Zoolooz (hip-hop 90’s), председатель König Boombap Tape Club.\n\nСтарт в 18.00\nВход свободный",
+    "description_blocks": [
+      "Два разных по темпераменту музыкальных вечера в барчике на холме.",
+      "В пятницу - электронный вечер с DJ’s Musurchak Janaya и BeFun.",
+      "Старт в 19.00",
+      "В субботу - вечеринка «Пакет кассет». Два тиджея - Скважин (leftfield, dub, ambient) из Санкт-Петербурга и Zoolooz (hip-hop 90’s), председатель König Boombap Tape Club.",
+      "Старт в 18.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/vlessbar",
+    "lat": 54.9442012,
+    "lon": 20.1496405,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/402ff1f909be.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/402ff1f909be.jpg",
+    "tg_message_id": 8024,
     "is_active": true,
     "manually_hidden": false
   },
@@ -851,6 +993,33 @@
     "manually_hidden": false
   },
   {
+    "id": "4bff2f0f64f9",
+    "date": "25.07.2026",
+    "title": "Дружба",
+    "location": "Прачечная, Рокоссовского 16-20",
+    "address": "Прачечная, Рокоссовского 16-20",
+    "time": "11:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Летняя сессия милейшего hand made фестиваля в новой локации - кофейне Прачечная.\n\nБольшой маркет (керамика, украшения, декор, одежда, цветы, игрушки, полиграфия и др.), мастер-классы, детская зона.\n\nС",
+    "full_description": "Летняя сессия милейшего hand made фестиваля в новой локации - кофейне Прачечная.\n\nБольшой маркет (керамика, украшения, декор, одежда, цветы, игрушки, полиграфия и др.), мастер-классы, детская зона.\n\nСтарт в 11.00\nВход свободный",
+    "description_blocks": [
+      "Летняя сессия милейшего hand made фестиваля в новой локации - кофейне Прачечная.",
+      "Большой маркет (керамика, украшения, декор, одежда, цветы, игрушки, полиграфия и др.), мастер-классы, детская зона.",
+      "Старт в 11.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://vk.ru/druzhba.fest",
+    "lat": 54.7184778,
+    "lon": 20.5089179,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4bff2f0f64f9.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4bff2f0f64f9.jpg",
+    "tg_message_id": 8027,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "728654675880",
     "date": "25.07.2026",
     "title": "Пикник Суспирии",
@@ -874,6 +1043,33 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/728654675880.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/728654675880.jpg",
     "tg_message_id": 7997,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "c6966ee0e1b3",
+    "date": "26.07.2026",
+    "title": "Дружба",
+    "location": "Прачечная, Рокоссовского 16-20",
+    "address": "Прачечная, Рокоссовского 16-20",
+    "time": "11:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Летняя сессия милейшего hand made фестиваля в новой локации - кофейне Прачечная.\n\nБольшой маркет (керамика, украшения, декор, одежда, цветы, игрушки, полиграфия и др.), мастер-классы, детская зона.\n\nС",
+    "full_description": "Летняя сессия милейшего hand made фестиваля в новой локации - кофейне Прачечная.\n\nБольшой маркет (керамика, украшения, декор, одежда, цветы, игрушки, полиграфия и др.), мастер-классы, детская зона.\n\nСтарт в 11.00\nВход свободный",
+    "description_blocks": [
+      "Летняя сессия милейшего hand made фестиваля в новой локации - кофейне Прачечная.",
+      "Большой маркет (керамика, украшения, декор, одежда, цветы, игрушки, полиграфия и др.), мастер-классы, детская зона.",
+      "Старт в 11.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://vk.ru/druzhba.fest",
+    "lat": 54.7184778,
+    "lon": 20.5089179,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4bff2f0f64f9.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4bff2f0f64f9.jpg",
+    "tg_message_id": 8027,
     "is_active": true,
     "manually_hidden": false
   },

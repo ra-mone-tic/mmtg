@@ -692,6 +692,33 @@
     "manually_hidden": false
   },
   {
+    "id": "e74d0a69ed22",
+    "date": "24.07.2026",
+    "title": "Decadance",
+    "location": "Душевный сад, Верхнеозерная 2а",
+    "address": "Душевный сад, Верхнеозерная 2а",
+    "time": "18:00",
+    "tags": [
+      "Вечеринка"
+    ],
+    "short_description": "Спонтанная вечеринка проекта (могут себе позволить). Возвращаются в город - «Душевный сад» на Верхнем озере.\n\nЗвук - Funktion One.\n\nБудет работать ресторан, кофейня, фуд-трак с хот-догами, зона с каль",
+    "full_description": "Спонтанная вечеринка проекта (могут себе позволить). Возвращаются в город - «Душевный сад» на Верхнем озере.\n\nЗвук - Funktion One.\n\nБудет работать ресторан, кофейня, фуд-трак с хот-догами, зона с кальянами.\n\nСтарт в 18.00",
+    "description_blocks": [
+      "Спонтанная вечеринка проекта (могут себе позволить). Возвращаются в город - «Душевный сад» на Верхнем озере.",
+      "Звук - Funktion One.",
+      "Будет работать ресторан, кофейня, фуд-трак с хот-догами, зона с кальянами.",
+      "Старт в 18.00"
+    ],
+    "contacts": "https://t.me/decadancekld",
+    "lat": 54.7300393,
+    "lon": 20.519091,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e74d0a69ed22.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e74d0a69ed22.jpg",
+    "tg_message_id": 8030,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "402ff1f909be",
     "date": "24.07.2026",
     "title": "Выходные в Лесу",
@@ -778,6 +805,30 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e11335b18511.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e11335b18511.jpg",
     "tg_message_id": 7996,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "adcf08205695",
+    "date": "25.07.2026",
+    "title": "AFRO TYPE PARTY",
+    "location": "Терапия, Мира 31",
+    "address": "Терапия, Мира 31",
+    "time": "22:00",
+    "tags": [],
+    "short_description": "«Своя жара» в баре «Терапия» в эту субботу. Хип-хоп и африканские ритмы. Live выступления DaveJu, Poly.po и диджеи Влад Дробышев и TEDOS.\n\nДресс-код - африканские мотивы, насыщенные цвета, необычная ф",
+    "full_description": "«Своя жара» в баре «Терапия» в эту субботу. Хип-хоп и африканские ритмы. Live выступления DaveJu, Poly.po и диджеи Влад Дробышев и TEDOS.\n\nДресс-код - африканские мотивы, насыщенные цвета, необычная фактура, украшения, яркие принты.\n\nСтарт в 22.00",
+    "description_blocks": [
+      "«Своя жара» в баре «Терапия» в эту субботу. Хип-хоп и африканские ритмы. Live выступления DaveJu, Poly.po и диджеи Влад Дробышев и TEDOS.",
+      "Дресс-код - африканские мотивы, насыщенные цвета, необычная фактура, украшения, яркие принты.",
+      "Старт в 22.00"
+    ],
+    "contacts": "https://t.me/neoterapia/36",
+    "lat": 54.7196919,
+    "lon": 20.485015,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/adcf08205695.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/adcf08205695.jpg",
+    "tg_message_id": 8031,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1016,6 +1067,60 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4bff2f0f64f9.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4bff2f0f64f9.jpg",
     "tg_message_id": 8027,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "cb8f54f82bd8",
+    "date": "25.07.2026",
+    "title": "Кассетный мальчик",
+    "location": "Бар Советов, Мира 118",
+    "address": "Бар Советов, Мира 118",
+    "time": "21:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Магнитофонный вечер в Баре Советов. На раздаче - Лёха Реут из Meow Records и его коллекция неразмагнитевшейся пленки. Будут танцы - «отмазки про хондрозы, больные суставы и давление не принимаются!»\n\n",
+    "full_description": "Магнитофонный вечер в Баре Советов. На раздаче - Лёха Реут из Meow Records и его коллекция неразмагнитевшейся пленки. Будут танцы - «отмазки про хондрозы, больные суставы и давление не принимаются!»\n\nСтарт в 21.00\nВход свободный",
+    "description_blocks": [
+      "Магнитофонный вечер в Баре Советов. На раздаче - Лёха Реут из Meow Records и его коллекция неразмагнитевшейся пленки. Будут танцы - «отмазки про хондрозы, больные суставы и давление не принимаются!»",
+      "Старт в 21.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/barsovetov/1605",
+    "lat": 54.722776573098,
+    "lon": 20.465626721732,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/cb8f54f82bd8.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/cb8f54f82bd8.jpg",
+    "tg_message_id": 8037,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "766694b608d5",
+    "date": "25.07.2026",
+    "title": "ПИКНИК-РЕТРИТ",
+    "location": "Побережье",
+    "address": "Побережье",
+    "time": "17:00",
+    "tags": [],
+    "short_description": "Расслабляющая встреча на побережье.\n\nВ программе:\n— Красивый пикник с лёгкими закусками/десертами, напитками\n— Саунд Хилинг: звукотерапия с чашами\n— Индивидуальный расклад таро\n— Расслабление и медита",
+    "full_description": "Расслабляющая встреча на побережье.\n\nВ программе:\n— Красивый пикник с лёгкими закусками/десертами, напитками\n— Саунд Хилинг: звукотерапия с чашами\n— Индивидуальный расклад таро\n— Расслабление и медитация\n\nСтарт в 17.00",
+    "description_blocks": [
+      "Расслабляющая встреча на побережье.",
+      "В программе:",
+      "— Красивый пикник с лёгкими закусками/десертами, напитками",
+      "— Саунд Хилинг: звукотерапия с чашами",
+      "— Индивидуальный расклад таро",
+      "— Расслабление и медитация",
+      "Старт в 17.00"
+    ],
+    "contacts": "https://t.me/konig_picnic/135",
+    "lat": 54.4726398,
+    "lon": 20.4282468,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/766694b608d5.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/766694b608d5.jpg",
+    "tg_message_id": 8036,
     "is_active": true,
     "manually_hidden": false
   },

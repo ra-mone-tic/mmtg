@@ -842,6 +842,34 @@
     "manually_hidden": false
   },
   {
+    "id": "7296009679b4",
+    "date": "25.07.2026",
+    "title": "COUNTRY ITALIANO",
+    "location": "Tutto Osteria, Генделя 3",
+    "address": "Tutto Osteria, Генделя 3",
+    "time": "20:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Tutto Osteria поглядели на соседей Bus Station и вместе со своей леткой решили ворваться в мир тусовок и дискотек.\n\nВ субботу зорвут на элегантный итальянский вечер.\n\nDress code - цветочные платья и с",
+    "full_description": "Tutto Osteria поглядели на соседей Bus Station и вместе со своей леткой решили ворваться в мир тусовок и дискотек.\n\nВ субботу зорвут на элегантный итальянский вечер.\n\nDress code - цветочные платья и соломенные шляпы.\n\nСтарт в 20.00\nВход свободный",
+    "description_blocks": [
+      "Tutto Osteria поглядели на соседей Bus Station и вместе со своей леткой решили ворваться в мир тусовок и дискотек.",
+      "В субботу зорвут на элегантный итальянский вечер.",
+      "Dress code - цветочные платья и соломенные шляпы.",
+      "Старт в 20.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://www.instagram.com/p/DbF7bKtDFsK/?igsh=MTd2eHMwM296a2o4ZA==",
+    "lat": 54.7216776,
+    "lon": 20.4965131,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/7296009679b4.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/7296009679b4.jpg",
+    "tg_message_id": 8041,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "767a06c42c83",
     "date": "25.07.2026",
     "title": "Come with us x Ельцин",
@@ -870,6 +898,38 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/767a06c42c83.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/767a06c42c83.jpg",
     "tg_message_id": 8029,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "1b3f957c7379",
+    "date": "25.07.2026",
+    "title": "MAXIMUM РОК ФЕСТ-2026",
+    "location": "Автодром «Экстрим 39», остров Октябрьский",
+    "address": "Автодром «Экстрим 39», остров Октябрьский",
+    "time": "13:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "В программе:\nВыступления рок-групп из Калининграда, Москвы и Санкт-Петербурга, хэдлайнер - «БЕZ Б»\nДискотека с рок-хитами от DJ Smolique;\nФудкорта;\nДетская зона с мастер-классами, анимацией и пенной д",
+    "full_description": "В программе:\nВыступления рок-групп из Калининграда, Москвы и Санкт-Петербурга, хэдлайнер - «БЕZ Б»\nДискотека с рок-хитами от DJ Smolique;\nФудкорта;\nДетская зона с мастер-классами, анимацией и пенной дискотекой;\nРозыгрыши-призы-подарки.\n\nСтарт в 13:00 - начало работы детской зоны,\n16:00 - концертная программа\n\nВход свободный",
+    "description_blocks": [
+      "В программе:",
+      "Выступления рок-групп из Калининграда, Москвы и Санкт-Петербурга, хэдлайнер - «БЕZ Б»",
+      "Дискотека с рок-хитами от DJ Smolique;",
+      "Фудкорта;",
+      "Детская зона с мастер-классами, анимацией и пенной дискотекой;",
+      "Розыгрыши-призы-подарки.",
+      "Старт в 13:00 - начало работы детской зоны,",
+      "16:00 - концертная программа",
+      "Вход свободный"
+    ],
+    "contacts": "https://vk.ru/maximum_kaliningrad",
+    "lat": 54.6964547,
+    "lon": 20.5419622,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/1b3f957c7379.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/1b3f957c7379.jpg",
+    "tg_message_id": 8039,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1091,6 +1151,35 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4bff2f0f64f9.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4bff2f0f64f9.jpg",
     "tg_message_id": 8027,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "a54bd19902e5",
+    "date": "26.07.2026",
+    "title": "Зелёный фестиваль",
+    "location": "Калининградский зоопарк",
+    "address": "Калининградский зоопарк",
+    "time": "12:00",
+    "tags": [
+      "Концерт",
+      "Фестиваль",
+      "Выставка"
+    ],
+    "short_description": "Большой ЭКО-праздник в Калининградском зоопарке.\n\nВ этом году посвятили фестиваль осознанному потреблению и вторичному использованию вещей. Заявлено 15 площадок с активностями для детей и взрослых.\n\nВ",
+    "full_description": "Большой ЭКО-праздник в Калининградском зоопарке.\n\nВ этом году посвятили фестиваль осознанному потреблению и вторичному использованию вещей. Заявлено 15 площадок с активностями для детей и взрослых.\n\nВ программе - разные тематические мастер-классы, викторина о микропластике, ярмарка мастеров, открытые занятия по йоге, бачате и капоэйре, выставка «Время разложения» и «След, который не тает», обмен вещами, игрушками, книгами, игры самого разного формата, квест «ЭКО-бродилка» и концерт.\n\nСтарт в 12.00",
+    "description_blocks": [
+      "Большой ЭКО-праздник в Калининградском зоопарке.",
+      "В этом году посвятили фестиваль осознанному потреблению и вторичному использованию вещей. Заявлено 15 площадок с активностями для детей и взрослых.",
+      "В программе - разные тематические мастер-классы, викторина о микропластике, ярмарка мастеров, открытые занятия по йоге, бачате и капоэйре, выставка «Время разложения» и «След, который не тает», обмен вещами, игрушками, книгами, игры самого разного формата, квест «ЭКО-бродилка» и концерт.",
+      "Старт в 12.00"
+    ],
+    "contacts": "https://vk.ru/kldzoo",
+    "lat": 54.7229933,
+    "lon": 20.4874153,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a54bd19902e5.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a54bd19902e5.jpg",
+    "tg_message_id": 8048,
     "is_active": true,
     "manually_hidden": false
   },

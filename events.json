@@ -988,6 +988,34 @@
     "manually_hidden": false
   },
   {
+    "id": "7d6cb11df7a3",
+    "date": "26.07.2026",
+    "title": "КАСТИНГ на показ мод",
+    "location": "Советский пр-т 12, 8 этаж, студия 809",
+    "address": "Советский пр-т 12, 8 этаж, студия 809",
+    "time": "19:00",
+    "tags": [],
+    "short_description": "Модельные агентства MICHAEL Model Management и SOFIT Model Agency объявляют набор новых лиц для участия в эксклюзивном модном показе.\n\nТребования:\n— Парни и девушки любого возраста;\n— Различные типажи",
+    "full_description": "Модельные агентства MICHAEL Model Management и SOFIT Model Agency объявляют набор новых лиц для участия в эксклюзивном модном показе.\n\nТребования:\n— Парни и девушки любого возраста;\n— Различные типажи (интересная, яркая или необычная внешность);\n— Опыт работы не обязателен (рассматриваем кандидатов без модельной подготовки).\n\nКонтакт для связи: @sssooofit\n\nНачало в 19.00",
+    "description_blocks": [
+      "Модельные агентства MICHAEL Model Management и SOFIT Model Agency объявляют набор новых лиц для участия в эксклюзивном модном показе.",
+      "Требования:",
+      "— Парни и девушки любого возраста;",
+      "— Различные типажи (интересная, яркая или необычная внешность);",
+      "— Опыт работы не обязателен (рассматриваем кандидатов без модельной подготовки).",
+      "Контакт для связи: @sssooofit",
+      "Начало в 19.00"
+    ],
+    "contacts": "https://t.me/mmodels_official",
+    "lat": 54.7085572,
+    "lon": 20.5401236,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/7d6cb11df7a3.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/7d6cb11df7a3.jpg",
+    "tg_message_id": 8049,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "7f8b03121dfd",
     "date": "31.07.2026",
     "title": "02.08 | Калининград Сити Джаз",

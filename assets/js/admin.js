@@ -248,16 +248,16 @@ function _bindEventActions(container) {
     });
   });
 
-  // Delete (настоящее удаление строки, не скрытие)
+  // Delete (soft-delete — ставим deleted_at, не удаляем строку)
   container.querySelectorAll('.btn-admin-sm.delete').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       e.stopPropagation();
       const id = btn.dataset.id;
-      if (!confirm('Удалить мероприятие навсегда? Это нельзя отменить.\n\nЕсли исходный пост всё ещё есть в Telegram-канале, при следующей синхронизации событие может быть создано заново (это разные механизмы).')) return;
+      if (!confirm('Удалить мероприятие? Оно перестанет отображаться у пользователей.\n\nЕсли исходный пост всё ещё есть в Telegram-канале, при следующей синхронизации событие НЕ восстановится (soft-delete).')) return;
       try {
         const { error } = await supabase
           .from('events')
-          .delete()
+          .update({ deleted_at: new Date().toISOString() })
           .eq('id', id);
         if (error) throw error;
 

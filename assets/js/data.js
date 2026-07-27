@@ -73,12 +73,15 @@ export function findNearestDate() {
 export async function loadAllEvents() {
   // ── Пробуем Supabase ──────────────────────────────
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('events')
       .select('*')
       .eq('is_active', true)
-      .eq('manually_hidden', false)
+      .is('manually_hidden', false)
+      .is('deleted_at', null)
       .order('id', { ascending: true });
+
+    const { data, error } = await query;
 
     if (error) throw error;
     if (data?.length) {

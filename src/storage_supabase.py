@@ -103,13 +103,47 @@ def delete_event_image(event_id: str) -> None:
 # ─── Events upsert ───────────────────────────────────
 
 
+def _is_soft_deleted(event_id: str) -> bool:
+    """
+    Проверяет, есть ли в БД строка с таким ID и deleted_at IS NOT NULL.
+    Возвращает True, если событие было мягко удалено.
+    """
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        return False
+
+    base = SUPABASE_URL.rstrip("/")
+    try:
+        resp = session.get(
+            f"{base}/rest/v1/events?id=eq.{event_id}&select=deleted_at",
+            headers=_headers(),
+            timeout=15,
+        )
+        if resp.status_code == 200:
+            rows = resp.json()
+            if rows and len(rows) > 0:
+                return rows[0].get("deleted_at") is not None
+    except Exception as e:
+        logger.warning(f"Не удалось проверить deleted_at для {event_id}: {e}")
+    return False
+
+
 def upsert_event(event: Dict[str, Any]) -> dict:
     """
     Вставляет или обновляет событие в таблицу events через REST API (service_role).
     Возвращает {"upserted": 1} или {"error": "..."}.
+
+    Если событие было мягко удалено (deleted_at IS NOT NULL) — upsert НЕ выполняется,
+    чтобы парсер из Telegram не восстановил удалённое событие.
     """
     if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
         return {"error": "Supabase не настроен"}
+
+    event_id = event.get("id", "")
+
+    # Проверяем, не было ли событие мягко удалено
+    if _is_soft_deleted(event_id):
+        logger.info(f"Событие {event_id} мягко удалено — пропускаем upsert")
+        return {"skipped": 1, "reason": "soft_deleted"}
 
     base = SUPABASE_URL.rstrip("/")
 
@@ -123,7 +157,7 @@ def upsert_event(event: Dict[str, Any]) -> dict:
         db = [item for sub in db if isinstance(sub, list) for item in sub]
 
     data = {
-        "id": event.get("id", ""),
+        "id": event_id,
         "date": event.get("date", ""),
         "title": event.get("title", ""),
         "location": event.get("location") or event.get("venue", ""),

@@ -78,17 +78,24 @@ def load_existing_events() -> List[dict]:
 def sync_to_supabase(events: List[dict]) -> dict:
     """
     UPSERT events into Supabase events table via storage_supabase.upsert_event().
-    Returns {"upserted": N} or {"error": "..."}.
+    Returns {"upserted": N, "skipped": N} or {"error": "..."}.
+
+    События с manually_hidden=True пропускаются — они были скрыты вручную через админку
+    и не должны восстанавливаться парсером из Telegram.
     """
     if not events:
         return {"upserted": 0}
 
     count = 0
+    skipped = 0
     for ev in events:
+        if ev.get("manually_hidden"):
+            skipped += 1
+            continue
         result = upsert_event(ev)
         if result.get("error"):
             return {"error": result["error"]}
         count += 1
 
-    logger.info(f"Supabase sync OK: {count} событий")
-    return {"upserted": count}
+    logger.info(f"Supabase sync OK: {count} событий, пропущено (manually_hidden): {skipped}")
+    return {"upserted": count, "skipped": skipped}

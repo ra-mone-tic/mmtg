@@ -643,6 +643,32 @@
     "manually_hidden": false
   },
   {
+    "id": "e6604b4f12f2",
+    "date": "30.07.2026",
+    "title": "Кино-Пикник",
+    "location": "Бэкъярд, Бассейная 81",
+    "address": "Бэкъярд, Бассейная 81",
+    "time": "19:00",
+    "tags": [],
+    "short_description": "Ещё один душевный летний вечерок на полянке Бэкъярда.\n\n19:00 DJ сет от Nilson.\n\n21:00 Кинотеатр под открытым небом, показ анимационного фильма Хаяо Миядзаки «Рыбка Поньо на утесе».\n\nВесь вечер на площ",
+    "full_description": "Ещё один душевный летний вечерок на полянке Бэкъярда.\n\n19:00 DJ сет от Nilson.\n\n21:00 Кинотеатр под открытым небом, показ анимационного фильма Хаяо Миядзаки «Рыбка Поньо на утесе».\n\nВесь вечер на площадке - кухня от «Плохого охотника», костровая чилл-зона, бадминтон.\n\nБерите с собой пледы, подушки и всё для комфортного отдыха на газоне.",
+    "description_blocks": [
+      "Ещё один душевный летний вечерок на полянке Бэкъярда.",
+      "19:00 DJ сет от Nilson.",
+      "21:00 Кинотеатр под открытым небом, показ анимационного фильма Хаяо Миядзаки «Рыбка Поньо на утесе».",
+      "Весь вечер на площадке - кухня от «Плохого охотника», костровая чилл-зона, бадминтон.",
+      "Берите с собой пледы, подушки и всё для комфортного отдыха на газоне."
+    ],
+    "contacts": "https://t.me/kinokloob/8494",
+    "lat": 54.7291918,
+    "lon": 20.450601,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e6604b4f12f2.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e6604b4f12f2.jpg",
+    "tg_message_id": 8082,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "7f8b03121dfd",
     "date": "31.07.2026",
     "title": "02.08 | Калининград Сити Джаз",
@@ -674,6 +700,34 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/7f8b03121dfd.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/7f8b03121dfd.jpg",
     "tg_message_id": 8081,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "fb32fc0df5e2",
+    "date": "31.07.2026",
+    "title": "Дачная вечеринка",
+    "location": "Домик, Комсомольская 41",
+    "address": "Домик, Комсомольская 41",
+    "time": "16:00",
+    "tags": [
+      "Вечеринка",
+      "Бесплатно"
+    ],
+    "short_description": "Коллаба проектов «Домик» и «Наполи» и первая официальная вечеринка на свежеиспеченной летке на Комсомольской 41 - «с нотками ностальгии по беззаботному лету и кабачкам с дачи».\n\nСпециальное меню, музы",
+    "full_description": "Коллаба проектов «Домик» и «Наполи» и первая официальная вечеринка на свежеиспеченной летке на Комсомольской 41 - «с нотками ностальгии по беззаботному лету и кабачкам с дачи».\n\nСпециальное меню, музыка на виниле и бесконечный сторитейлинг в вашей ленте нельзяграмма после.\n\nСтарт в 16.00\nВход свободный",
+    "description_blocks": [
+      "Коллаба проектов «Домик» и «Наполи» и первая официальная вечеринка на свежеиспеченной летке на Комсомольской 41 - «с нотками ностальгии по беззаботному лету и кабачкам с дачи».",
+      "Специальное меню, музыка на виниле и бесконечный сторитейлинг в вашей ленте нельзяграмма после.",
+      "Старт в 16.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://www.instagram.com/p/DbTeV_ACLSt/?img_index=2&igsh=ZDE2Ym9vYTl5cWZ0",
+    "lat": 54.7268815,
+    "lon": 20.4783874,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/fb32fc0df5e2.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/fb32fc0df5e2.jpg",
+    "tg_message_id": 8083,
     "is_active": true,
     "manually_hidden": false
   },
@@ -772,6 +826,33 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/d9a0a27c6ca6.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/d9a0a27c6ca6.jpg",
     "tg_message_id": 8078,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "c0a334404c8b",
+    "date": "01.08.2026",
+    "title": "День рождения Новичка",
+    "location": "Ельцин, Гаражная 2",
+    "address": "Ельцин, Гаражная 2",
+    "time": "21:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "День рождения той самой галереи у туалета в Ельцине. Откроют уже 50-ую (чтооо?!) по счёту выставку - «Merge». Совместное творчество Zheber Besson и Kostya Burton, где «где фотография становится полем ",
+    "full_description": "День рождения той самой галереи у туалета в Ельцине. Откроют уже 50-ую (чтооо?!) по счёту выставку - «Merge». Совместное творчество Zheber Besson и Kostya Burton, где «где фотография становится полем напряжённого синтеза: здесь сливаются орнаментальная абстракция и анатомия тела, видение фотографа и резкость движения».\n\nГастрономические спешлы - от Олега Пампухи. Аудио подарки - от DJ’s NAK, SELECTICA, Толстяка и 4:19.\n\nСтарт в 21.00\nВход свободный",
+    "description_blocks": [
+      "День рождения той самой галереи у туалета в Ельцине. Откроют уже 50-ую (чтооо?!) по счёту выставку - «Merge». Совместное творчество Zheber Besson и Kostya Burton, где «где фотография становится полем напряжённого синтеза: здесь сливаются орнаментальная абстракция и анатомия тела, видение фотографа и резкость движения».",
+      "Гастрономические спешлы - от Олега Пампухи. Аудио подарки - от DJ’s NAK, SELECTICA, Толстяка и 4:19.",
+      "Старт в 21.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/yeltsin_pub",
+    "lat": 54.7244567540289,
+    "lon": 20.5053160508956,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c0a334404c8b.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c0a334404c8b.jpg",
+    "tg_message_id": 8084,
     "is_active": true,
     "manually_hidden": false
   },

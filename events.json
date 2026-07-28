@@ -767,7 +767,7 @@
     "manually_hidden": false
   },
   {
-    "id": "bc2893c8c43c",
+    "id": "0000ba72ea6e",
     "date": "01.08.2026",
     "title": "MoshStation 2",
     "location": "PURE, Каштановая Аллея 1а",
@@ -775,23 +775,14 @@
     "time": "19:00",
     "tags": [],
     "short_description": "«Зубодробительный и беспечный, старый-добрый, самый бодрый мош»\n\nПриглашают «тряхнуть стариной под мощных местных завсегдатаев» - группы:\n\nAPE ON THE ROCKET\nMAYDIE\nДЖОННИ ВЗЯЛ РУЖЬЕ\nINCURABLE\nСТАЯ КОН",
-    "full_description": "«Зубодробительный и беспечный, старый-добрый, самый бодрый мош»\n\nПриглашают «тряхнуть стариной под мощных местных завсегдатаев» - группы:\n\nAPE ON THE ROCKET\nMAYDIE\nДЖОННИ ВЗЯЛ РУЖЬЕ\nINCURABLE\nСТАЯ КОНЕЙ\n\nСтарь в 19:00",
-    "description_blocks": [
-      "«Зубодробительный и беспечный, старый-добрый, самый бодрый мош»",
-      "Приглашают «тряхнуть стариной под мощных местных завсегдатаев» - группы:",
-      "APE ON THE ROCKET",
-      "MAYDIE",
-      "ДЖОННИ ВЗЯЛ РУЖЬЕ",
-      "INCURABLE",
-      "СТАЯ КОНЕЙ",
-      "Старь в 19:00"
-    ],
+    "full_description": "«Зубодробительный и беспечный, старый-добрый, самый бодрый мош»\n\nПриглашают «тряхнуть стариной под мощных местных завсегдатаев» - группы:\n\nAPE ON THE ROCKET\nMAYDIE\nДЖОННИ ВЗЯЛ РУЖЬЕ\nINCURABLE\nСТАЯ КОНЕЙ\n\nСтарт в 19:00",
+    "description_blocks": [],
     "contacts": "https://www.instagram.com/p/DbLl0haMaLV/?igsh=MXh3MTh0c3E2OXJmbw==",
     "lat": 54.710073212492,
     "lon": 20.467264438266,
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bc2893c8c43c.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bc2893c8c43c.jpg",
-    "tg_message_id": 8079,
+    "tg_message_id": null,
     "is_active": true,
     "manually_hidden": false
   },

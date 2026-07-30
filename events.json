@@ -839,6 +839,32 @@
     "manually_hidden": false
   },
   {
+    "id": "8d114ebe5f7e",
+    "date": "31.07.2026",
+    "title": "Практика",
+    "location": "Bus Station, Генделя 3а",
+    "address": "Bus Station, Генделя 3а",
+    "time": "22:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "В эту пятницу за пультом в Bus Station DJ’s Statkevich, Bella и Remarque. Раздают хаус «с берлинским оттенком».\n\nСтарт в 22.00\nВход свободный",
+    "full_description": "В эту пятницу за пультом в Bus Station DJ’s Statkevich, Bella и Remarque. Раздают хаус «с берлинским оттенком».\n\nСтарт в 22.00\nВход свободный",
+    "description_blocks": [
+      "В эту пятницу за пультом в Bus Station DJ’s Statkevich, Bella и Remarque. Раздают хаус «с берлинским оттенком».",
+      "Старт в 22.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://www.instagram.com/reel/DbX1kOxyjO3/?igsh=MTQ5ZXNwcndmbXQ0MA==",
+    "lat": 54.721737385132,
+    "lon": 20.496573271461,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/8d114ebe5f7e.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/8d114ebe5f7e.jpg",
+    "tg_message_id": 8101,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "b837eb20f94b",
     "date": "01.08.2026",
     "title": "02.08 | Калининград Сити Джаз",
@@ -890,6 +916,33 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bc2893c8c43c.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bc2893c8c43c.jpg",
     "tg_message_id": null,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "bfdac559ce2f",
+    "date": "01.08.2026",
+    "title": "Ведьмина служба доставки",
+    "location": "Остров Канта",
+    "address": "Остров Канта",
+    "time": "21:00",
+    "tags": [
+      "Кинопоказ"
+    ],
+    "short_description": "Выездной кинопоказ от westside movieclub. В парке под открытым небом классику студии Ghibli и Хаяо Миядзаки.\n\nСюжет:\nМолодая ведьма Кики по достижении 13 лет должна прожить среди людей определенное вр",
+    "full_description": "Выездной кинопоказ от westside movieclub. В парке под открытым небом классику студии Ghibli и Хаяо Миядзаки.\n\nСюжет:\nМолодая ведьма Кики по достижении 13 лет должна прожить среди людей определенное время. Вместе с котом Дзидзи она отправляется в город, где знакомится с добрым пекарем, который помогает ей начать собственное дело - «экстренную службу доставки».\n\nСтарт в 21.00",
+    "description_blocks": [
+      "Выездной кинопоказ от westside movieclub. В парке под открытым небом классику студии Ghibli и Хаяо Миядзаки.",
+      "Сюжет:",
+      "Молодая ведьма Кики по достижении 13 лет должна прожить среди людей определенное время. Вместе с котом Дзидзи она отправляется в город, где знакомится с добрым пекарем, который помогает ей начать собственное дело - «экстренную службу доставки».",
+      "Старт в 21.00"
+    ],
+    "contacts": "https://t.me/westside_movieclub/6308",
+    "lat": 54.7068283,
+    "lon": 20.509844,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bfdac559ce2f.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bfdac559ce2f.jpg",
+    "tg_message_id": 8100,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1009,6 +1062,33 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c0a334404c8b.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c0a334404c8b.jpg",
     "tg_message_id": 8084,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "3435ad4e4b46",
+    "date": "01.08.2026",
+    "title": "Пикник Суспирии. Афтепати",
+    "location": "Суспирия, Коперника 21",
+    "address": "Суспирия, Коперника 21",
+    "time": "21:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Желают продлить послевкусие славной встречи на прошлых выходных.\n\nВыступит Никита из группы «Загрех» со своими песнями в акустике. Продолжат программу Женя Mrrsn и Катя Bulochka - со своей вариацией и",
+    "full_description": "Желают продлить послевкусие славной встречи на прошлых выходных.\n\nВыступит Никита из группы «Загрех» со своими песнями в акустике. Продолжат программу Женя Mrrsn и Катя Bulochka - со своей вариацией инди-дискотеки.\n\nСтарт в 21:00\nВход свободный",
+    "description_blocks": [
+      "Желают продлить послевкусие славной встречи на прошлых выходных.",
+      "Выступит Никита из группы «Загрех» со своими песнями в акустике. Продолжат программу Женя Mrrsn и Катя Bulochka - со своей вариацией инди-дискотеки.",
+      "Старт в 21:00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/suspiriabar/1390",
+    "lat": 54.710566319856,
+    "lon": 20.504079014298,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3435ad4e4b46.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3435ad4e4b46.jpg",
+    "tg_message_id": 8099,
     "is_active": true,
     "manually_hidden": false
   },

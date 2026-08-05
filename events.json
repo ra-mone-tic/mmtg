@@ -670,6 +670,32 @@
     "manually_hidden": false
   },
   {
+    "id": "619506285bdd",
+    "date": "07.08.2026",
+    "title": "Авангардный джаз",
+    "location": "Закхаймские ворота, Литовский вал 61",
+    "address": "Закхаймские ворота, Литовский вал 61",
+    "time": "19:00",
+    "tags": [],
+    "short_description": "«Яркий и свободный джазовый вечер» в Закхаймских воротах.\n\nВ программе - джазовые стандарты, авангард и фри-джаз легендарных музыкантов: Clifford Brown, Miles Davis, Chick Corea, Ornette Coleman, Eric",
+    "full_description": "«Яркий и свободный джазовый вечер» в Закхаймских воротах.\n\nВ программе - джазовые стандарты, авангард и фри-джаз легендарных музыкантов: Clifford Brown, Miles Davis, Chick Corea, Ornette Coleman, Eric Dolphy.\n\nАлексей Коротков - альт-саксофон\nЕвгений Коробицын - клавишные\n\nСтарт в 19:00",
+    "description_blocks": [
+      "«Яркий и свободный джазовый вечер» в Закхаймских воротах.",
+      "В программе - джазовые стандарты, авангард и фри-джаз легендарных музыкантов: Clifford Brown, Miles Davis, Chick Corea, Ornette Coleman, Eric Dolphy.",
+      "Алексей Коротков - альт-саксофон",
+      "Евгений Коробицын - клавишные",
+      "Старт в 19:00"
+    ],
+    "contacts": "https://t.me/vorotagallery/587",
+    "lat": 54.709569,
+    "lon": 20.5382265,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/619506285bdd.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/619506285bdd.jpg",
+    "tg_message_id": 8177,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "0082c093c89a",
     "date": "07.08.2026",
     "title": "Балтийская Ухана",
@@ -760,6 +786,38 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/866fd414ba14.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/866fd414ba14.jpg",
     "tg_message_id": 8165,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "6e5c0007576f",
+    "date": "08.08.2026",
+    "title": "CULT",
+    "location": "Malina Glamping, Зеленоградск, Берлинская 43",
+    "address": "Malina Glamping, Зеленоградск, Берлинская 43",
+    "time": "14:00",
+    "tags": [
+      "Фестиваль"
+    ],
+    "short_description": "Фестиваль электронной музыки в Malina Glamping. Две сцены, ресторан, отдельная зона с видом на закат.\n\nСерьёзный лайн-ап:\nAIWASKA\nALEXEY ROMEO\nCATMOONK (live)\nDMITRY HOTLINE\nMODBIT\n\nЛокальная поддержк",
+    "full_description": "Фестиваль электронной музыки в Malina Glamping. Две сцены, ресторан, отдельная зона с видом на закат.\n\nСерьёзный лайн-ап:\nAIWASKA\nALEXEY ROMEO\nCATMOONK (live)\nDMITRY HOTLINE\nMODBIT\n\nЛокальная поддержка: Ado, Alex Merkush, Feel Me, Insaf Davidoff, Viktor S, Tony Werk, Downmix, Keyte Mur, Mlea & Bobby Sound (live), Monner (live), Gevsi.\n\nСтарт в 14:00",
+    "description_blocks": [
+      "Фестиваль электронной музыки в Malina Glamping. Две сцены, ресторан, отдельная зона с видом на закат.",
+      "Серьёзный лайн-ап:",
+      "AIWASKA",
+      "ALEXEY ROMEO",
+      "CATMOONK (live)",
+      "DMITRY HOTLINE",
+      "MODBIT",
+      "Локальная поддержка: Ado, Alex Merkush, Feel Me, Insaf Davidoff, Viktor S, Tony Werk, Downmix, Keyte Mur, Mlea & Bobby Sound (live), Monner (live), Gevsi.",
+      "Старт в 14:00"
+    ],
+    "contacts": "https://www.instagram.com/reel/DadlZtrMpgE/?igsh=ODZnenFtdWppbzRv",
+    "lat": 54.9495766,
+    "lon": 20.4372181,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/6e5c0007576f.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/6e5c0007576f.jpg",
+    "tg_message_id": 8184,
     "is_active": true,
     "manually_hidden": false
   },
@@ -858,6 +916,34 @@
     "manually_hidden": false
   },
   {
+    "id": "a68cdd460c99",
+    "date": "08.08.2026",
+    "title": "За минуту до заката",
+    "location": "Резаниум, Шиллера 3а",
+    "address": "Резаниум, Шиллера 3а",
+    "time": "13:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Изящный камерный маркет локальных брендов. Вы сможете «лично познакомиться с мастерами, посмотреть их работы и найти вещи с характером».\n\nБудут представлены авторские украшения, керамика ручной работы",
+    "full_description": "Изящный камерный маркет локальных брендов. Вы сможете «лично познакомиться с мастерами, посмотреть их работы и найти вещи с характером».\n\nБудут представлены авторские украшения, керамика ручной работы, одежда местных брендов, парфюм и ароматы для дома.\n\nТакже анонсировали DJ сет и фотовыставку.\n\nСтарт в 13.00\nВход свободный",
+    "description_blocks": [
+      "Изящный камерный маркет локальных брендов. Вы сможете «лично познакомиться с мастерами, посмотреть их работы и найти вещи с характером».",
+      "Будут представлены авторские украшения, керамика ручной работы, одежда местных брендов, парфюм и ароматы для дома.",
+      "Также анонсировали DJ сет и фотовыставку.",
+      "Старт в 13.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/za_minutu_do_prazdnika",
+    "lat": 54.7223353,
+    "lon": 20.4763883,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a68cdd460c99.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a68cdd460c99.jpg",
+    "tg_message_id": 8185,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "d5f40d66589d",
     "date": "08.08.2026",
     "title": "Летний архитектурный фестиваль",
@@ -888,6 +974,32 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/d5f40d66589d.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/d5f40d66589d.jpg",
     "tg_message_id": 8151,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "5947d0a7e131",
+    "date": "08.08.2026",
+    "title": "РУТС",
+    "location": "Калининград",
+    "address": "Калининград",
+    "time": "08:00",
+    "tags": [],
+    "short_description": "Тот самый «культурный забег» в Калининграде.\n\nВы будете бежать по красим локациям города - по паркам, набережным, через главные достопримечательности, музеи, театры, стадионы и рынки.\n\nМаршрут забега ",
+    "full_description": "Тот самый «культурный забег» в Калининграде.\n\nВы будете бежать по красим локациям города - по паркам, набережным, через главные достопримечательности, музеи, театры, стадионы и рынки.\n\nМаршрут забега построен в два круга: малый - около 5 км, большой - около 10 км.\n\nВ этом году организаторы подготовили и новый аудиогид (автор - Дина Лях) с рассказом о каждой достопримечательности. Его можно слушать прямо во время забега.\n\nСтарт в 8.00",
+    "description_blocks": [
+      "Тот самый «культурный забег» в Калининграде.",
+      "Вы будете бежать по красим локациям города - по паркам, набережным, через главные достопримечательности, музеи, театры, стадионы и рынки.",
+      "Маршрут забега построен в два круга: малый - около 5 км, большой - около 10 км.",
+      "В этом году организаторы подготовили и новый аудиогид (автор - Дина Лях) с рассказом о каждой достопримечательности. Его можно слушать прямо во время забега.",
+      "Старт в 8.00"
+    ],
+    "contacts": "https://t.me/ruts_run",
+    "lat": 54.710128,
+    "lon": 20.5105838,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/5947d0a7e131.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/5947d0a7e131.jpg",
+    "tg_message_id": 8179,
     "is_active": true,
     "manually_hidden": false
   },

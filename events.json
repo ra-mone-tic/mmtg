@@ -1163,6 +1163,33 @@
     "manually_hidden": false
   },
   {
+    "id": "67605c01cd49",
+    "date": "14.08.2026",
+    "title": "Любовь",
+    "location": "Форма, Гаражная 2б",
+    "address": "Форма, Гаражная 2б",
+    "time": "22:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "в баре «Форма». И газета и сладкая парочка Костя и Кристина за пультом. Ставят любимые треки. А для мастеров слова будет работать открытый микрофон.\n\nНапоминаем, что до 1 сентября редакция газеты «Люб",
+    "full_description": "в баре «Форма». И газета и сладкая парочка Костя и Кристина за пультом. Ставят любимые треки. А для мастеров слова будет работать открытый микрофон.\n\nНапоминаем, что до 1 сентября редакция газеты «Любовь» ждёт ваши письма с текстами для восьмого номера.\n\nСтарт в 22.00\nВход свободный",
+    "description_blocks": [
+      "в баре «Форма». И газета и сладкая парочка Костя и Кристина за пультом. Ставят любимые треки. А для мастеров слова будет работать открытый микрофон.",
+      "Напоминаем, что до 1 сентября редакция газеты «Любовь» ждёт ваши письма с текстами для восьмого номера.",
+      "Старт в 22.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://www.instagram.com/gazetalubov?igsh=eHhoc2JmYjdlbWFn",
+    "lat": 54.7244567540289,
+    "lon": 20.5053160508956,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/67605c01cd49.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/67605c01cd49.jpg",
+    "tg_message_id": 8265,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "b91ebb80ffc9",
     "date": "14.08.2026",
     "title": "Палимпфест",
@@ -1193,6 +1220,37 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b91ebb80ffc9.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b91ebb80ffc9.jpg",
     "tg_message_id": 8239,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "b3685fc9915e",
+    "date": "14.08.2026",
+    "title": "Препати Kēnig Craft Fest",
+    "location": "Суспирия, Коперника 21",
+    "address": "Суспирия, Коперника 21",
+    "time": "19:00",
+    "tags": [
+      "Фестиваль",
+      "Бесплатно"
+    ],
+    "short_description": "Сам фестиваль крафтовой культуры пройдёт на этих выходных. В пятницу же вместе с баром «Суспирия» делают презентацию/дегустацию.\n\nСтарт в 19.00\n\nПосле - танцы.Управляют вашими коленями с 22.00:\n\nRAVIN",
+    "full_description": "Сам фестиваль крафтовой культуры пройдёт на этих выходных. В пятницу же вместе с баром «Суспирия» делают презентацию/дегустацию.\n\nСтарт в 19.00\n\nПосле - танцы.Управляют вашими коленями с 22.00:\n\nRAVING MASK\nSUPAISKY\nA.REUT\n\nВход свободный",
+    "description_blocks": [
+      "Сам фестиваль крафтовой культуры пройдёт на этих выходных. В пятницу же вместе с баром «Суспирия» делают презентацию/дегустацию.",
+      "Старт в 19.00",
+      "После - танцы.Управляют вашими коленями с 22.00:",
+      "RAVING MASK",
+      "SUPAISKY",
+      "A.REUT",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/meowafisha/8231",
+    "lat": 54.710566319856,
+    "lon": 20.504079014298,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b3685fc9915e.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b3685fc9915e.jpg",
+    "tg_message_id": 8267,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1490,6 +1548,34 @@
     "manually_hidden": false
   },
   {
+    "id": "3e646a86f269",
+    "date": "15.08.2026",
+    "title": "Поп-ап пикник",
+    "location": "двор Дома китобоя / Областной библиотеки, Мира 9",
+    "address": "двор Дома китобоя / Областной библиотеки, Мира 9",
+    "time": "16:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Kaliningrad Street Food Уличная еда России запускает серию микро пикников в разных локациях - предвестников большого Городского Пикника в сентябре.\n\nВсего 2 часа и очень ограниченное количество блюд. ",
+    "full_description": "Kaliningrad Street Food Уличная еда России запускает серию микро пикников в разных локациях - предвестников большого Городского Пикника в сентябре.\n\nВсего 2 часа и очень ограниченное количество блюд. Постоянные участники проекта будут представлять новинки, которые скоро можно будет попробовать на самом фестивале.\n\nОткрывает серию Виктор Доронин и проект «Королевские колбаски». Игристое и вино в сопровождение к блюдам прилагается.\n\nСтарт в 16.00\nВход свободный",
+    "description_blocks": [
+      "Kaliningrad Street Food Уличная еда России запускает серию микро пикников в разных локациях - предвестников большого Городского Пикника в сентябре.",
+      "Всего 2 часа и очень ограниченное количество блюд. Постоянные участники проекта будут представлять новинки, которые скоро можно будет попробовать на самом фестивале.",
+      "Открывает серию Виктор Доронин и проект «Королевские колбаски». Игристое и вино в сопровождение к блюдам прилагается.",
+      "Старт в 16.00",
+      "Вход свободный"
+    ],
+    "contacts": "",
+    "lat": 54.7195734,
+    "lon": 20.4958826,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3e646a86f269.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3e646a86f269.jpg",
+    "tg_message_id": 8268,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "6793182d56c6",
     "date": "15.08.2026",
     "title": "Татьяна танцует по R’n’B",
@@ -1655,6 +1741,39 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b91ebb80ffc9.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b91ebb80ffc9.jpg",
     "tg_message_id": 8239,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "33364757a48d",
+    "date": "16.08.2026",
+    "title": "Чайный рейв для гедонистов",
+    "location": "Human Concept, Захарова 1",
+    "address": "Human Concept, Захарова 1",
+    "time": "15:00",
+    "tags": [
+      "Вечеринка"
+    ],
+    "short_description": "Дневная трезвая вечеринка в пространстве Human Concept.\n\nЗа чай отвечают сразу три команды - сами Human Concept, Золотой Жук и Tea Level. «У каждого мастера - свои любимые сорта, свой взгляд на чай и ",
+    "full_description": "Дневная трезвая вечеринка в пространстве Human Concept.\n\nЗа чай отвечают сразу три команды - сами Human Concept, Золотой Жук и Tea Level. «У каждого мастера - свои любимые сорта, свой взгляд на чай и своё состояние».\n\nЗа музыку - снова команда RED ROOM.\n\nLine up:\n15:00 KATSUKI\n16:00 LI'ANA\n17:00 DRAGONQUEEN\n18:00 SMOLIQUE\n19:00 OSHEV\n\nСтарт в 15.00",
+    "description_blocks": [
+      "Дневная трезвая вечеринка в пространстве Human Concept.",
+      "За чай отвечают сразу три команды - сами Human Concept, Золотой Жук и Tea Level. «У каждого мастера - свои любимые сорта, свой взгляд на чай и своё состояние».",
+      "За музыку - снова команда RED ROOM.",
+      "Line up:",
+      "15:00 KATSUKI",
+      "16:00 LI'ANA",
+      "17:00 DRAGONQUEEN",
+      "18:00 SMOLIQUE",
+      "19:00 OSHEV",
+      "Старт в 15.00"
+    ],
+    "contacts": "https://t.me/tearave/315",
+    "lat": 54.734743710018,
+    "lon": 20.472201965969,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/33364757a48d.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/33364757a48d.jpg",
+    "tg_message_id": 8269,
     "is_active": true,
     "manually_hidden": false
   },

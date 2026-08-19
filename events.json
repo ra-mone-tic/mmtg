@@ -1153,6 +1153,33 @@
     "manually_hidden": false
   },
   {
+    "id": "4b73b2170eba",
+    "date": "21.08.2026",
+    "title": "In The Disco",
+    "location": "Bus Station, Генделя 3а",
+    "address": "Bus Station, Генделя 3а",
+    "time": "22:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "«Посвящается всем ценителям джазового звучания, приправленного пёстрым транзитом в легендарное диско, наносящее ответный удар хаус-движением, породившим культ и навсегда сплотившим мир в танцах и любв",
+    "full_description": "«Посвящается всем ценителям джазового звучания, приправленного пёстрым транзитом в легендарное диско, наносящее ответный удар хаус-движением, породившим культ и навсегда сплотившим мир в танцах и любви на танцполе»\n\nDJ Paul Nuance вернулся и в эту пятницу раздаст диско «грув и максимум секса».\n\nСтарт в 22.00\nВход свободный",
+    "description_blocks": [
+      "«Посвящается всем ценителям джазового звучания, приправленного пёстрым транзитом в легендарное диско, наносящее ответный удар хаус-движением, породившим культ и навсегда сплотившим мир в танцах и любви на танцполе»",
+      "DJ Paul Nuance вернулся и в эту пятницу раздаст диско «грув и максимум секса».",
+      "Старт в 22.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/Bustation2",
+    "lat": 54.721737385132,
+    "lon": 20.496573271461,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4b73b2170eba.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4b73b2170eba.jpg",
+    "tg_message_id": 8338,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "1edbb8896e39",
     "date": "21.08.2026",
     "title": "Концерт артиста Вертинского",
@@ -1326,7 +1353,7 @@
     "lon": 20.4820959685065,
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a98bb95346e9.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a98bb95346e9.jpg",
-    "tg_message_id": 8289,
+    "tg_message_id": 8341,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1390,6 +1417,39 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/5539891912b6.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/5539891912b6.jpg",
     "tg_message_id": 8323,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "b42d1a577895",
+    "date": "22.08.2026",
+    "title": "Заглядывая",
+    "location": "Суспирия, Коперника 21",
+    "address": "Суспирия, Коперника 21",
+    "time": "18:00",
+    "tags": [
+      "Выставка",
+      "Бесплатно"
+    ],
+    "short_description": "Выставка проекта «Собачий вой», посвящённая «глубинный, острым или неочень переживаниям». «У каждого они разные: у кого-то - скорбь нераскрытого таланта, у кого-то собственная поверхностность, кто-то ",
+    "full_description": "Выставка проекта «Собачий вой», посвящённая «глубинный, острым или неочень переживаниям». «У каждого они разные: у кого-то - скорбь нераскрытого таланта, у кого-то собственная поверхностность, кто-то таким образом переживает будущие утраты, а кто-то наконец испытал покой».\n\nРаботы, вошедшие в экспозицию объединит наличие «не рисовальных» материалов, которые дополнят визуальную мысль.\n\nТакже на открытии выступят друзья-музыканты из разных городов:\n\nPAUKOWSKI\nCRIMERA\nYAADRINA\nSAIKUUNA\n\nСтарт с 18:00\nВход свободный",
+    "description_blocks": [
+      "Выставка проекта «Собачий вой», посвящённая «глубинный, острым или неочень переживаниям». «У каждого они разные: у кого-то - скорбь нераскрытого таланта, у кого-то собственная поверхностность, кто-то таким образом переживает будущие утраты, а кто-то наконец испытал покой».",
+      "Работы, вошедшие в экспозицию объединит наличие «не рисовальных» материалов, которые дополнят визуальную мысль.",
+      "Также на открытии выступят друзья-музыканты из разных городов:",
+      "PAUKOWSKI",
+      "CRIMERA",
+      "YAADRINA",
+      "SAIKUUNA",
+      "Старт с 18:00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/porchique/2527",
+    "lat": 54.710566319856,
+    "lon": 20.504079014298,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b42d1a577895.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b42d1a577895.jpg",
+    "tg_message_id": 8342,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1544,7 +1604,7 @@
     "lon": 20.544408541426,
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c98519c4e14f.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c98519c4e14f.jpg",
-    "tg_message_id": 8251,
+    "tg_message_id": 8339,
     "is_active": true,
     "manually_hidden": false
   },

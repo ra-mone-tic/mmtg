@@ -1237,6 +1237,33 @@
     "manually_hidden": false
   },
   {
+    "id": "033b9e6be164",
+    "date": "22.08.2026",
+    "title": "Chipi Clo 9 лет",
+    "location": "Барн, Каштановая аллея 1а",
+    "address": "Барн, Каштановая аллея 1а",
+    "time": "16:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Праздновать будут вместе с Барн и SOS, они тоже именинники. Полная программа здесь.\n\nПрикладываем в карточках анонсы от Chipi Clo. Будет пиршество, маркет, быстрые свадьбы, самогон, танцы, стрижки, ко",
+    "full_description": "Праздновать будут вместе с Барн и SOS, они тоже именинники. Полная программа здесь.\n\nПрикладываем в карточках анонсы от Chipi Clo. Будет пиршество, маркет, быстрые свадьбы, самогон, танцы, стрижки, конкурсы, татушки и др.\n\nСтарт маркета в 16.00\nВход свободный",
+    "description_blocks": [
+      "Праздновать будут вместе с Барн и SOS, они тоже именинники. Полная программа здесь.",
+      "Прикладываем в карточках анонсы от Chipi Clo. Будет пиршество, маркет, быстрые свадьбы, самогон, танцы, стрижки, конкурсы, татушки и др.",
+      "Старт маркета в 16.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/meowafisha/8323",
+    "lat": 54.710073212492,
+    "lon": 20.467264438266,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/033b9e6be164.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/033b9e6be164.jpg",
+    "tg_message_id": 8352,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "d1816448f9c7",
     "date": "22.08.2026",
     "title": "Gypsy Jazz",
@@ -1358,6 +1385,36 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b42d1a577895.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b42d1a577895.jpg",
     "tg_message_id": 8342,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "a73fa7466d04",
+    "date": "22.08.2026",
+    "title": "Кардиоргазм",
+    "location": "Видеосалон, Ленинский 18",
+    "address": "Видеосалон, Ленинский 18",
+    "time": "18:00",
+    "tags": [
+      "Концерт",
+      "Бесплатно"
+    ],
+    "short_description": "Спонтанный концерт экспериментальной электронной музыки.\n\nНа импровизированной сцене:\nАФОС - «сольный проект контрабасиста с подходом «всё сам». Живая электроника с бас-гитарой в жанрах indie-dance/el",
+    "full_description": "Спонтанный концерт экспериментальной электронной музыки.\n\nНа импровизированной сцене:\nАФОС - «сольный проект контрабасиста с подходом «всё сам». Живая электроника с бас-гитарой в жанрах indie-dance/electropunk».\n\n3слаймики - сюрприз.\n\nСтарт в 18:00\nВход свободный",
+    "description_blocks": [
+      "Спонтанный концерт экспериментальной электронной музыки.",
+      "На импровизированной сцене:",
+      "АФОС - «сольный проект контрабасиста с подходом «всё сам». Живая электроника с бас-гитарой в жанрах indie-dance/electropunk».",
+      "3слаймики - сюрприз.",
+      "Старт в 18:00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/AFOSmusic/670",
+    "lat": 54.7138345,
+    "lon": 20.5055102,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a73fa7466d04.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a73fa7466d04.jpg",
+    "tg_message_id": 8351,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1566,6 +1623,34 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c98519c4e14f.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c98519c4e14f.jpg",
     "tg_message_id": 8339,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "bc7d61fd0feb",
+    "date": "22.08.2026",
+    "title": "Текст, который никто не любит писать",
+    "location": "Фотобиблиотека, Вагоностроительная 1а",
+    "address": "Фотобиблиотека, Вагоностроительная 1а",
+    "time": "18:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Проект «Фотобиблиотека» проводит встречу с Анной Зекрией, куратором, редактором и сооснователем фотоагентства Salt Images.\n\nАнна сопровождает фотографов и художников в работе над проектами, помогая им",
+    "full_description": "Проект «Фотобиблиотека» проводит встречу с Анной Зекрией, куратором, редактором и сооснователем фотоагентства Salt Images.\n\nАнна сопровождает фотографов и художников в работе над проектами, помогая им формулировать авторскую позицию и находить точный язык для репрезентации своей практики.\n\nНа встрече разговор пойдёт о роли текста в работе фотографа. О том, как рассказать о себе, проекте и методе, что текст может добавить к изображениям и как найти форму, которая будет работать вместе с ними, а не вместо них.\n\nСтарт 18:00\nВход свободный, надо записаться у @pfrlv",
+    "description_blocks": [
+      "Проект «Фотобиблиотека» проводит встречу с Анной Зекрией, куратором, редактором и сооснователем фотоагентства Salt Images.",
+      "Анна сопровождает фотографов и художников в работе над проектами, помогая им формулировать авторскую позицию и находить точный язык для репрезентации своей практики.",
+      "На встрече разговор пойдёт о роли текста в работе фотографа. О том, как рассказать о себе, проекте и методе, что текст может добавить к изображениям и как найти форму, которая будет работать вместе с ними, а не вместо них.",
+      "Старт 18:00",
+      "Вход свободный, надо записаться у @pfrlv"
+    ],
+    "contacts": "https://t.me/photobiblioteka/99",
+    "lat": 54.7136178,
+    "lon": 20.4584222,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bc7d61fd0feb.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bc7d61fd0feb.jpg",
+    "tg_message_id": 8361,
     "is_active": true,
     "manually_hidden": false
   },

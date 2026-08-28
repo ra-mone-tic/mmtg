@@ -1394,6 +1394,31 @@
     "manually_hidden": false
   },
   {
+    "id": "909d13aaa42b",
+    "date": "29.08.2026",
+    "title": "NETUSA",
+    "location": "The Well, Судостроительная 4п",
+    "address": "The Well, Судостроительная 4п",
+    "time": "17:00",
+    "tags": [
+      "Вечеринка"
+    ],
+    "short_description": "Вечеринка по случаю Дней рождения студии звукозаписи «Культура Века» и Alex Pros. В рамках неё пройдут съёмки клипа, DJ сет Сет с живым вокалом ANEЧКА, маркет от проекта IKIMIZU-GAI, караоке, открытие",
+    "full_description": "Вечеринка по случаю Дней рождения студии звукозаписи «Культура Века» и Alex Pros. В рамках неё пройдут съёмки клипа, DJ сет Сет с живым вокалом ANEЧКА, маркет от проекта IKIMIZU-GAI, караоке, открытие ещё одного зала бара The Well - с историческим колодцем, розыгрыши.\n\nСтарт в 17.00",
+    "description_blocks": [
+      "Вечеринка по случаю Дней рождения студии звукозаписи «Культура Века» и Alex Pros. В рамках неё пройдут съёмки клипа, DJ сет Сет с живым вокалом ANEЧКА, маркет от проекта IKIMIZU-GAI, караоке, открытие ещё одного зала бара The Well - с историческим колодцем, розыгрыши.",
+      "Старт в 17.00"
+    ],
+    "contacts": "https://t.me/netusaevent/320",
+    "lat": 54.6807444,
+    "lon": 20.501824,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/909d13aaa42b.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/909d13aaa42b.jpg",
+    "tg_message_id": 8438,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "a54f2472c73f",
     "date": "29.08.2026",
     "title": "SOLIDNO",
@@ -1445,6 +1470,38 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a2d3cee7cd46.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a2d3cee7cd46.jpg",
     "tg_message_id": 8428,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "23e50e408151",
+    "date": "29.08.2026",
+    "title": "Бесконечное лето",
+    "location": "Место силы, Галицкого 18",
+    "address": "Место силы, Галицкого 18",
+    "time": "21:30",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "«Раз в год и палка стреляет». Это мы про электронные вечеринки в баре «Место силы» - редко, но иногда там случаются.\n\n«Благодарность уходящему сезону в жанре house music. От закатного soul house до ве",
+    "full_description": "«Раз в год и палка стреляет». Это мы про электронные вечеринки в баре «Место силы» - редко, но иногда там случаются.\n\n«Благодарность уходящему сезону в жанре house music. От закатного soul house до вечернего minimal, от сумеречного house до ночного deeptech»\n\nLine up:\nDP/DT (cmws) / vinyl / house\nDownmix / vinyl / minimal\nV.Kan / digital / soul, deep\nProgside (spb) / digital / deeptech\n\nСтарт в 21.30\nВход свободный",
+    "description_blocks": [
+      "«Раз в год и палка стреляет». Это мы про электронные вечеринки в баре «Место силы» - редко, но иногда там случаются.",
+      "«Благодарность уходящему сезону в жанре house music. От закатного soul house до вечернего minimal, от сумеречного house до ночного deeptech»",
+      "Line up:",
+      "DP/DT (cmws) / vinyl / house",
+      "Downmix / vinyl / minimal",
+      "V.Kan / digital / soul, deep",
+      "Progside (spb) / digital / deeptech",
+      "Старт в 21.30",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/mesto_sily_bar/1981",
+    "lat": 54.714207,
+    "lon": 20.4967406,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/23e50e408151.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/23e50e408151.jpg",
+    "tg_message_id": 8436,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1538,6 +1595,31 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/471c5ef382b7.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/471c5ef382b7.jpg",
     "tg_message_id": 8411,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "c71b4349e69e",
+    "date": "29.08.2026",
+    "title": "Приглашение",
+    "location": "Сигнал, Леонова 22",
+    "address": "Сигнал, Леонова 22",
+    "time": "21:00",
+    "tags": [],
+    "short_description": "Westside movieclub приглашают смотреть и обсуждать новую разговорную интерьерную и очень откровенную трагикомедию Оливии Уайлд - с ней, Сетом Рогеном, Пенелопой Крус и Эдвардом Нортаном в главных роля",
+    "full_description": "Westside movieclub приглашают смотреть и обсуждать новую разговорную интерьерную и очень откровенную трагикомедию Оливии Уайлд - с ней, Сетом Рогеном, Пенелопой Крус и Эдвардом Нортаном в главных ролях\n\nСюжет:\nДжо и Анджела, чей брак висит на волоске, приглашают своих загадочных сексуально раскрепощенных соседей сверху на званый ужин. Вечер принимает неожиданный оборот, когда вскрываются неожиданные подробности личной жизни двух пар.\n\nСтарт в 21:00",
+    "description_blocks": [
+      "Westside movieclub приглашают смотреть и обсуждать новую разговорную интерьерную и очень откровенную трагикомедию Оливии Уайлд - с ней, Сетом Рогеном, Пенелопой Крус и Эдвардом Нортаном в главных ролях",
+      "Сюжет:",
+      "Джо и Анджела, чей брак висит на волоске, приглашают своих загадочных сексуально раскрепощенных соседей сверху на званый ужин. Вечер принимает неожиданный оборот, когда вскрываются неожиданные подробности личной жизни двух пар.",
+      "Старт в 21:00"
+    ],
+    "contacts": "https://t.me/westside_movieclub/6420",
+    "lat": 54.7258082888072,
+    "lon": 20.4820959685065,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c71b4349e69e.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c71b4349e69e.jpg",
+    "tg_message_id": 8437,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1757,6 +1839,34 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/8dc2426c896d.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/8dc2426c896d.jpg",
     "tg_message_id": 8424,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "a9114d54a51c",
+    "date": "31.08.2026",
+    "title": "Ларион Дьяков в Башне Врангеля",
+    "location": "Башня Врангеля, Баранова 2а",
+    "address": "Башня Врангеля, Баранова 2а",
+    "time": "18:30",
+    "tags": [
+      "Концерт"
+    ],
+    "short_description": "В последний день лета в крепости XIX века прозвучит камерный концерт «Камень и голос». «Музыка станет проводником к внутреннему покою, чуткости и вниманию, а древние стены создадут особую неповторимую",
+    "full_description": "В последний день лета в крепости XIX века прозвучит камерный концерт «Камень и голос». «Музыка станет проводником к внутреннему покою, чуткости и вниманию, а древние стены создадут особую неповторимую атмосферу».\n\nЛарион Дьяков - альтист, композитор, импровизатор и педагог.\n\nКонцерт начнётся в 18:30.\n\nА перед выступлением гости смогут посетить экскурсию по Башне Врангеля. В скором времени её ждёт ремонт. И сейчас у вас есть возможность увидеть её «в тихом очаровании, поросшую диким виноградом и мхом», узнать её историю, подняться на крышу и полюбоваться панорамным видом.\n\nСтарт в 18:00",
+    "description_blocks": [
+      "В последний день лета в крепости XIX века прозвучит камерный концерт «Камень и голос». «Музыка станет проводником к внутреннему покою, чуткости и вниманию, а древние стены создадут особую неповторимую атмосферу».",
+      "Ларион Дьяков - альтист, композитор, импровизатор и педагог.",
+      "Концерт начнётся в 18:30.",
+      "А перед выступлением гости смогут посетить экскурсию по Башне Врангеля. В скором времени её ждёт ремонт. И сейчас у вас есть возможность увидеть её «в тихом очаровании, поросшую диким виноградом и мхом», узнать её историю, подняться на крышу и полюбоваться панорамным видом.",
+      "Старт в 18:00"
+    ],
+    "contacts": "https://t.me/Ambermuseum/5619",
+    "lat": 54.722525,
+    "lon": 20.5141937,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a9114d54a51c.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a9114d54a51c.jpg",
+    "tg_message_id": 8439,
     "is_active": true,
     "manually_hidden": false
   },

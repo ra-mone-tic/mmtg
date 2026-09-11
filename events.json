@@ -626,6 +626,32 @@
     "manually_hidden": false
   },
   {
+    "id": "79f58f39d686",
+    "date": "11.09.2026",
+    "title": "Выходные в Харт Рок Баре",
+    "location": "Харт Рок Бар, Советский 21а",
+    "address": "Харт Рок Бар, Советский 21а",
+    "time": "21:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Два вечера живой музыки. Сегодня там выступит группа «Шляпная борода» с рок хитами всех времён. Завтра - New Version, которые славятся каверами на Depeche Mood. После - дискотека с DJ Mamoru.\n\nСтарт в",
+    "full_description": "Два вечера живой музыки. Сегодня там выступит группа «Шляпная борода» с рок хитами всех времён. Завтра - New Version, которые славятся каверами на Depeche Mood. После - дискотека с DJ Mamoru.\n\nСтарт в 21.00\nВход свободный",
+    "description_blocks": [
+      "Два вечера живой музыки. Сегодня там выступит группа «Шляпная борода» с рок хитами всех времён. Завтра - New Version, которые славятся каверами на Depeche Mood. После - дискотека с DJ Mamoru.",
+      "Старт в 21.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/heartrockbar",
+    "lat": 54.727238009091,
+    "lon": 20.493202824375,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/79f58f39d686.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/79f58f39d686.jpg",
+    "tg_message_id": 8598,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "e38430998489",
     "date": "11.09.2026",
     "title": "КШФ",
@@ -744,6 +770,33 @@
     "manually_hidden": false
   },
   {
+    "id": "3b6b74d0f2e2",
+    "date": "12.09.2026",
+    "title": "Pra(Killa'Gramm)",
+    "location": "Лондон / Калининград Сити Джаз, Мира 33",
+    "address": "Лондон / Калининград Сити Джаз, Мира 33",
+    "time": "20:00",
+    "tags": [
+      "Концерт",
+      "PDVLFIRMA"
+    ],
+    "short_description": "Внезапный рэп-андеграунд на площадке клуба «Лондон / Калининград Сити Джаз». Основатель движения #PDVLFIRMA, многолетний участник баттлов.\n\nСольный концерт, хиты и новые треки.\n\nСтарт в 20.00",
+    "full_description": "Внезапный рэп-андеграунд на площадке клуба «Лондон / Калининград Сити Джаз». Основатель движения #PDVLFIRMA, многолетний участник баттлов.\n\nСольный концерт, хиты и новые треки.\n\nСтарт в 20.00",
+    "description_blocks": [
+      "Внезапный рэп-андеграунд на площадке клуба «Лондон / Калининград Сити Джаз». Основатель движения #PDVLFIRMA, многолетний участник баттлов.",
+      "Сольный концерт, хиты и новые треки.",
+      "Старт в 20.00"
+    ],
+    "contacts": "https://vk.ru/killagramm_one",
+    "lat": 54.7204123,
+    "lon": 20.4846946,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3b6b74d0f2e2.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3b6b74d0f2e2.jpg",
+    "tg_message_id": 8601,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "bfaf62565e98",
     "date": "12.09.2026",
     "title": "Велимир",
@@ -767,6 +820,32 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bfaf62565e98.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/bfaf62565e98.jpg",
     "tg_message_id": 8597,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "6340c39601f8",
+    "date": "12.09.2026",
+    "title": "Выходные в Харт Рок Баре",
+    "location": "Харт Рок Бар, Советский 21а",
+    "address": "Харт Рок Бар, Советский 21а",
+    "time": "21:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Два вечера живой музыки. Сегодня там выступит группа «Шляпная борода» с рок хитами всех времён. Завтра - New Version, которые славятся каверами на Depeche Mood. После - дискотека с DJ Mamoru.\n\nСтарт в",
+    "full_description": "Два вечера живой музыки. Сегодня там выступит группа «Шляпная борода» с рок хитами всех времён. Завтра - New Version, которые славятся каверами на Depeche Mood. После - дискотека с DJ Mamoru.\n\nСтарт в 21.00\nВход свободный",
+    "description_blocks": [
+      "Два вечера живой музыки. Сегодня там выступит группа «Шляпная борода» с рок хитами всех времён. Завтра - New Version, которые славятся каверами на Depeche Mood. После - дискотека с DJ Mamoru.",
+      "Старт в 21.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/heartrockbar",
+    "lat": 54.727238009091,
+    "lon": 20.493202824375,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/79f58f39d686.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/79f58f39d686.jpg",
+    "tg_message_id": 8598,
     "is_active": true,
     "manually_hidden": false
   },
@@ -847,6 +926,35 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/084742d56e2e.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/084742d56e2e.jpg",
     "tg_message_id": 8582,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "69419f87fba9",
+    "date": "12.09.2026",
+    "title": "Праздник сидра",
+    "location": "Суспирия, Коперника 21",
+    "address": "Суспирия, Коперника 21",
+    "time": "19:00",
+    "tags": [
+      "Концерт",
+      "Бесплатно"
+    ],
+    "short_description": "Главному популяризатору сидра в Калининграде - проекту «Сидрариум», исполняется 1 год. По этому случаю делают бесплатную дегустацию и лекцию о традиционном сидре и локальных особенностях напитка в раз",
+    "full_description": "Главному популяризатору сидра в Калининграде - проекту «Сидрариум», исполняется 1 год. По этому случаю делают бесплатную дегустацию и лекцию о традиционном сидре и локальных особенностях напитка в разных странах.\n\nТакже анонсировали сидровое казино и мастер-класс эскансиадора по высокому наливу испанского сидра.\n\nВ музыкальной программе - DJ сет от Jazz Designs и концерт живой музыки от Алексея Полищука. Джаз, блюз, фанк и немного эстрады - знакомые композиции в необычном исполнении под аккомпанемент контрабаса и барабанов.\n\nСтарт в 19:00\nВход свободный",
+    "description_blocks": [
+      "Главному популяризатору сидра в Калининграде - проекту «Сидрариум», исполняется 1 год. По этому случаю делают бесплатную дегустацию и лекцию о традиционном сидре и локальных особенностях напитка в разных странах.",
+      "Также анонсировали сидровое казино и мастер-класс эскансиадора по высокому наливу испанского сидра.",
+      "В музыкальной программе - DJ сет от Jazz Designs и концерт живой музыки от Алексея Полищука. Джаз, блюз, фанк и немного эстрады - знакомые композиции в необычном исполнении под аккомпанемент контрабаса и барабанов.",
+      "Старт в 19:00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/suspiriabar/1473",
+    "lat": 54.710566319856,
+    "lon": 20.504079014298,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/69419f87fba9.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/69419f87fba9.jpg",
+    "tg_message_id": 8600,
     "is_active": true,
     "manually_hidden": false
   },
@@ -964,6 +1072,35 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/07e1b2fe3ac5.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/07e1b2fe3ac5.jpg",
     "tg_message_id": 8587,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "77bbbfd1a6da",
+    "date": "13.09.2026",
+    "title": "Звуковая механика",
+    "location": "Лес, Светлогорск, Ленина 27а-б",
+    "address": "Лес, Светлогорск, Ленина 27а-б",
+    "time": "17:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "В это воскресенье на летней веранде бара «Лес» Стис Крабоусиков проведёт музыкальный гик-вечер, посвящённый пленочным кассетам в формате непринужденного живого подкаста с использованием диковинных япо",
+    "full_description": "В это воскресенье на летней веранде бара «Лес» Стис Крабоусиков проведёт музыкальный гик-вечер, посвящённый пленочным кассетам в формате непринужденного живого подкаста с использованием диковинных японских tj- проигрывателей. В этот раз в центре внимания – русский и западный инди во всех его проявлениях, с легким оттенком ностальгии к эстетике первой волны хипстеров, когда в тренде были рубашки в клетку и оккультные олени в треугольниках.\n\nВ программе вечера – записи из 90-х, начала нулевых и свежие релизы 2026 года: от гитарной музыки до экспериментальной электроники.\n\nЛокальный саппорт организуют: Konrad M и ActivePhaze.\n\nВ конце вечера – традиционный розыгрыш кассеты от Стиса.\n\nСтарт в 17.00\nВход свободный",
+    "description_blocks": [
+      "В это воскресенье на летней веранде бара «Лес» Стис Крабоусиков проведёт музыкальный гик-вечер, посвящённый пленочным кассетам в формате непринужденного живого подкаста с использованием диковинных японских tj- проигрывателей. В этот раз в центре внимания – русский и западный инди во всех его проявлениях, с легким оттенком ностальгии к эстетике первой волны хипстеров, когда в тренде были рубашки в клетку и оккультные олени в треугольниках.",
+      "В программе вечера – записи из 90-х, начала нулевых и свежие релизы 2026 года: от гитарной музыки до экспериментальной электроники.",
+      "Локальный саппорт организуют: Konrad M и ActivePhaze.",
+      "В конце вечера – традиционный розыгрыш кассеты от Стиса.",
+      "Старт в 17.00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/meowafisha/8597",
+    "lat": 54.9442012,
+    "lon": 20.1496405,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/77bbbfd1a6da.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/77bbbfd1a6da.jpg",
+    "tg_message_id": 8602,
     "is_active": true,
     "manually_hidden": false
   },

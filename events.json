@@ -609,6 +609,34 @@
     "manually_hidden": false
   },
   {
+    "id": "41ccce9b144a",
+    "date": "24.09.2026",
+    "title": "Тайная жизнь лис",
+    "location": "Заря, Мира 41-43",
+    "address": "Заря, Мира 41-43",
+    "time": "18:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Премьера фильма о калининградском стрит-арте.\n\n«Граффитист из Хабаровска приезжает в Калининград, чтобы найти стену для своего рисунка, но вместо этого оказывается втянут в мистическую игру в «кошки-м",
+    "full_description": "Премьера фильма о калининградском стрит-арте.\n\n«Граффитист из Хабаровска приезжает в Калининград, чтобы найти стену для своего рисунка, но вместо этого оказывается втянут в мистическую игру в «кошки-мышки» с неуловимым уличным художником по прозвищу Лис, чьи работы заполонили весь город. Пытаясь выследить анонима, он понимает, что охотится не за человеком, а за собственным отражением в мире, где стены умеют говорить, а город сам решает, кому остаться, а кому - уехать»\n\nТакже в день премьеры фильма можно будет посетить выставку «Код города». В экспозиции представлены работы художников местной стрит-арт сцены: FOX, Руслан Аванс, АртПо, NAK!, gra и Mаргарита Росчерк.\n\nСтарт в 18:00\nВход бесплатный, по регистрации.",
+    "description_blocks": [
+      "Премьера фильма о калининградском стрит-арте.",
+      "«Граффитист из Хабаровска приезжает в Калининград, чтобы найти стену для своего рисунка, но вместо этого оказывается втянут в мистическую игру в «кошки-мышки» с неуловимым уличным художником по прозвищу Лис, чьи работы заполонили весь город. Пытаясь выследить анонима, он понимает, что охотится не за человеком, а за собственным отражением в мире, где стены умеют говорить, а город сам решает, кому остаться, а кому - уехать»",
+      "Также в день премьеры фильма можно будет посетить выставку «Код города». В экспозиции представлены работы художников местной стрит-арт сцены: FOX, Руслан Аванс, АртПо, NAK!, gra и Mаргарита Росчерк.",
+      "Старт в 18:00",
+      "Вход бесплатный, по регистрации."
+    ],
+    "contacts": "https://b4rl.timepad.ru/event/4149041/#register",
+    "lat": 54.7206445,
+    "lon": 20.4829761,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/41ccce9b144a.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/41ccce9b144a.jpg",
+    "tg_message_id": 8665,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "dd8d3eedd309",
     "date": "25.09.2026",
     "title": "«Ночь её откровений»",
@@ -706,6 +734,41 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/f9f6a325d70c.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/f9f6a325d70c.jpg",
     "tg_message_id": 8616,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "110c273518d9",
+    "date": "26.09.2026",
+    "title": "РЕДРУМ",
+    "location": "Universal, Мира 41-43",
+    "address": "Universal, Мира 41-43",
+    "time": "22:00",
+    "tags": [
+      "Вечеринка"
+    ],
+    "short_description": "В этот раз вечеринка приурочена к дню рождения основателя проекта Артёма Smolique.\n\nАнонсированы deep house, progressive house, tech house и organic house.\n\nЗа пультом:\nSARAHH\nFADEEV SHOW\nLI’ANA\nSMOLI",
+    "full_description": "В этот раз вечеринка приурочена к дню рождения основателя проекта Артёма Smolique.\n\nАнонсированы deep house, progressive house, tech house и organic house.\n\nЗа пультом:\nSARAHH\nFADEEV SHOW\nLI’ANA\nSMOLIQUE\nSHIKTAROV\nDRAGONQUEEN\nPULAO\n\nЗа качество звука будет отвечать система Funktion one.\n\nСтарт в 22:00",
+    "description_blocks": [
+      "В этот раз вечеринка приурочена к дню рождения основателя проекта Артёма Smolique.",
+      "Анонсированы deep house, progressive house, tech house и organic house.",
+      "За пультом:",
+      "SARAHH",
+      "FADEEV SHOW",
+      "LI’ANA",
+      "SMOLIQUE",
+      "SHIKTAROV",
+      "DRAGONQUEEN",
+      "PULAO",
+      "За качество звука будет отвечать система Funktion one.",
+      "Старт в 22:00"
+    ],
+    "contacts": "https://t.me/redroomkld/1103",
+    "lat": 54.7206445,
+    "lon": 20.4829761,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/110c273518d9.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/110c273518d9.jpg",
+    "tg_message_id": 8666,
     "is_active": true,
     "manually_hidden": false
   },

@@ -612,6 +612,32 @@
     "manually_hidden": false
   },
   {
+    "id": "a14a29a4af15",
+    "date": "25.09.2026",
+    "title": "Vinyl Underground",
+    "location": "Сигнал, Леонова 22",
+    "address": "Сигнал, Леонова 22",
+    "time": "22:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Вечер нишевой электроники на виниле с DJ’s Robot r2, Le.vin, Joseph.\n\nСтарт в 22.00\nВход свободный",
+    "full_description": "Вечер нишевой электроники на виниле с DJ’s Robot r2, Le.vin, Joseph.\n\nСтарт в 22.00\nВход свободный",
+    "description_blocks": [
+      "Вечер нишевой электроники на виниле с DJ’s Robot r2, Le.vin, Joseph.",
+      "Старт в 22.00",
+      "Вход свободный"
+    ],
+    "contacts": "Le.vin",
+    "lat": 54.7258082888072,
+    "lon": 20.4820959685065,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a14a29a4af15.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/a14a29a4af15.jpg",
+    "tg_message_id": 8692,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "dd8d3eedd309",
     "date": "25.09.2026",
     "title": "«Ночь её откровений»",
@@ -765,6 +791,33 @@
     "manually_hidden": false
   },
   {
+    "id": "604deceaf625",
+    "date": "26.09.2026",
+    "title": "Английский разговорный клуб",
+    "location": "Остановка Театр, Мира 13",
+    "address": "Остановка Театр, Мира 13",
+    "time": "18:00",
+    "tags": [],
+    "short_description": "Часто ли вам бывает скучно? Скука для вас явление скорее плохое или всё же в ней есть и хорошее? Как вы проживаете период осенней хандры, и как получить от него максимум пользы?\n\nПрисоединяйтесь к Анг",
+    "full_description": "Часто ли вам бывает скучно? Скука для вас явление скорее плохое или всё же в ней есть и хорошее? Как вы проживаете период осенней хандры, и как получить от него максимум пользы?\n\nПрисоединяйтесь к Английскому разговорному клубу в эту субботу и делитесь своими мыслями.\n\nТема: Benefits of Boredom\n\nСтарт в 18:00\nДоступно 6 мест. Стоимость участия - 800 р.\n\nДля записи и по другим вопросам - @dianaguchigova",
+    "description_blocks": [
+      "Часто ли вам бывает скучно? Скука для вас явление скорее плохое или всё же в ней есть и хорошее? Как вы проживаете период осенней хандры, и как получить от него максимум пользы?",
+      "Присоединяйтесь к Английскому разговорному клубу в эту субботу и делитесь своими мыслями.",
+      "Тема: Benefits of Boredom",
+      "Старт в 18:00",
+      "Доступно 6 мест. Стоимость участия - 800 р.",
+      "Для записи и по другим вопросам - @dianaguchigova"
+    ],
+    "contacts": "https://t.me/speakinclubwithdiana",
+    "lat": 54.7739279,
+    "lon": 20.4492822,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/604deceaf625.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/604deceaf625.jpg",
+    "tg_message_id": 8695,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "2ca497deddc1",
     "date": "26.09.2026",
     "title": "Выходные в Харт Рок Баре",
@@ -792,6 +845,30 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/f0ccd86b0f50.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/f0ccd86b0f50.jpg",
     "tg_message_id": 8678,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "9c918ac502f5",
+    "date": "26.09.2026",
+    "title": "Джуманджи",
+    "location": "Сигнал, Леонова 22",
+    "address": "Сигнал, Леонова 22",
+    "time": "21:00",
+    "tags": [],
+    "short_description": "В преддверии Фестиваля настолько ролевых игр киноклуб westside movieclub проводит тематический показ.\n\nСмотрят и обсуждают ламповую классику детства из сегмента «Кино в 21:00» на СТС, напугавшую не од",
+    "full_description": "В преддверии Фестиваля настолько ролевых игр киноклуб westside movieclub проводит тематический показ.\n\nСмотрят и обсуждают ламповую классику детства из сегмента «Кино в 21:00» на СТС, напугавшую не одно поколение юных зрителей своей недружелюбной дикой природой, - «Джуманджи» (1995)\n\nСтарт в 20:00",
+    "description_blocks": [
+      "В преддверии Фестиваля настолько ролевых игр киноклуб westside movieclub проводит тематический показ.",
+      "Смотрят и обсуждают ламповую классику детства из сегмента «Кино в 21:00» на СТС, напугавшую не одно поколение юных зрителей своей недружелюбной дикой природой, - «Джуманджи» (1995)",
+      "Старт в 20:00"
+    ],
+    "contacts": "https://t.me/westside_movieclub/6601",
+    "lat": 54.7258082888072,
+    "lon": 20.4820959685065,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/9c918ac502f5.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/9c918ac502f5.jpg",
+    "tg_message_id": 8693,
     "is_active": true,
     "manually_hidden": false
   },
@@ -976,6 +1053,33 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c41e2e8f6431.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c41e2e8f6431.jpg",
     "tg_message_id": 8675,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "98e9e1175a8a",
+    "date": "27.09.2026",
+    "title": "Мелодии белой ночи",
+    "location": "Историко-художественный музей, 2 этаж, Клиническая 21",
+    "address": "Историко-художественный музей, 2 этаж, Клиническая 21",
+    "time": "15:00",
+    "tags": [
+      "Концерт"
+    ],
+    "short_description": "Концерт оркестра русских народных инструментов под управлением Антона Жукова, посвящённый российскому кино, рождённому в Петербурге.\n\nИсполнят знакомые мелодии в оригинальных аранжировках.\n\nСолисты - ",
+    "full_description": "Концерт оркестра русских народных инструментов под управлением Антона Жукова, посвящённый российскому кино, рождённому в Петербурге.\n\nИсполнят знакомые мелодии в оригинальных аранжировках.\n\nСолисты - Анаит Мкртчян и Олег Яковенко.\n\nСтарт в 15:00",
+    "description_blocks": [
+      "Концерт оркестра русских народных инструментов под управлением Антона Жукова, посвящённый российскому кино, рождённому в Петербурге.",
+      "Исполнят знакомые мелодии в оригинальных аранжировках.",
+      "Солисты - Анаит Мкртчян и Олег Яковенко.",
+      "Старт в 15:00"
+    ],
+    "contacts": "https://t.me/koihm/6180",
+    "lat": 54.7137742,
+    "lon": 20.5182015,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/98e9e1175a8a.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/98e9e1175a8a.jpg",
+    "tg_message_id": 8694,
     "is_active": true,
     "manually_hidden": false
   },

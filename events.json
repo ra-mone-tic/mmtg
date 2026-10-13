@@ -731,6 +731,33 @@
     "manually_hidden": false
   },
   {
+    "id": "33d9c933e7f6",
+    "date": "15.10.2026",
+    "title": "В гостях у Татьяны",
+    "location": "Татьяна, Маркса 41–43",
+    "address": "Татьяна, Маркса 41–43",
+    "time": "20:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Гостевая смена Дома китобоя в баре «Татьяна». Поиграют в 80-е, но без музейной чопорности - будут дискотека, тематические наряды, буфетчица, бутербродики, сифон, советские анекдоты.\n\nОбладатель самого",
+    "full_description": "Гостевая смена Дома китобоя в баре «Татьяна». Поиграют в 80-е, но без музейной чопорности - будут дискотека, тематические наряды, буфетчица, бутербродики, сифон, советские анекдоты.\n\nОбладатель самого «атмосферного» образа получит подарки.\n\n20:00–22:00\nВход свободный",
+    "description_blocks": [
+      "Гостевая смена Дома китобоя в баре «Татьяна». Поиграют в 80-е, но без музейной чопорности - будут дискотека, тематические наряды, буфетчица, бутербродики, сифон, советские анекдоты.",
+      "Обладатель самого «атмосферного» образа получит подарки.",
+      "20:00–22:00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/tatianaabar/637",
+    "lat": 54.725384518842,
+    "lon": 20.470662880908,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/33d9c933e7f6.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/33d9c933e7f6.jpg",
+    "tg_message_id": 8848,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "1a573d71f18d",
     "date": "15.10.2026",
     "title": "Плюс-минус восемь. Владивосток- Калининград",
@@ -865,6 +892,33 @@
     "manually_hidden": false
   },
   {
+    "id": "e625da7da27f",
+    "date": "17.10.2026",
+    "title": "JHONNY BOX",
+    "location": "Бастион Холл, Понарт, Судостроительная 6/2",
+    "address": "Бастион Холл, Понарт, Судостроительная 6/2",
+    "time": "19:30",
+    "tags": [
+      "Концерт"
+    ],
+    "short_description": "Большой сольный концерт под названием «КИНЕТИКА». Индустриальный рок, киберпанк эстетика, световое шоу, тематические перформансы.\n\nТакже выступит проект H.X.N. с электронным сетом.\n\n«Это история о чел",
+    "full_description": "Большой сольный концерт под названием «КИНЕТИКА». Индустриальный рок, киберпанк эстетика, световое шоу, тематические перформансы.\n\nТакже выступит проект H.X.N. с электронным сетом.\n\n«Это история о человеке среди машин. О голоде, который заставляет двигаться вперёд. О перерождении, после которого уже невозможно вернуться назад. И об объединении - когда множество отдельных импульсов превращаются в единую силу»\n\nСтарт в 19:30",
+    "description_blocks": [
+      "Большой сольный концерт под названием «КИНЕТИКА». Индустриальный рок, киберпанк эстетика, световое шоу, тематические перформансы.",
+      "Также выступит проект H.X.N. с электронным сетом.",
+      "«Это история о человеке среди машин. О голоде, который заставляет двигаться вперёд. О перерождении, после которого уже невозможно вернуться назад. И об объединении - когда множество отдельных импульсов превращаются в единую силу»",
+      "Старт в 19:30"
+    ],
+    "contacts": "https://vk.ru/jb_kinetika",
+    "lat": 54.6804703,
+    "lon": 20.4866178,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e625da7da27f.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e625da7da27f.jpg",
+    "tg_message_id": 8845,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "de3c2a97a5ae",
     "date": "17.10.2026",
     "title": "KAVKAZ PARTY",
@@ -897,6 +951,33 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/de3c2a97a5ae.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/de3c2a97a5ae.jpg",
     "tg_message_id": 8595,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "52fe299a7582",
+    "date": "17.10.2026",
+    "title": "Дружба",
+    "location": "Хюгге, Гаражная 2",
+    "address": "Хюгге, Гаражная 2",
+    "time": "11:00",
+    "tags": [
+      "Фестиваль",
+      "Бесплатно"
+    ],
+    "short_description": "Милейший фестиваль керамики и др. хэндмейда. Уютная атмосфера и десятки калининградских мастеров.\n\nСтарт в 11:00\nВход свободный",
+    "full_description": "Милейший фестиваль керамики и др. хэндмейда. Уютная атмосфера и десятки калининградских мастеров.\n\nСтарт в 11:00\nВход свободный",
+    "description_blocks": [
+      "Милейший фестиваль керамики и др. хэндмейда. Уютная атмосфера и десятки калининградских мастеров.",
+      "Старт в 11:00",
+      "Вход свободный"
+    ],
+    "contacts": "https://www.instagram.com/p/DdUZjfkxyNn/?stkn=MXMwdzNjcjM4cDgzeA==",
+    "lat": 54.7244567540289,
+    "lon": 20.5053160508956,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/52fe299a7582.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/52fe299a7582.jpg",
+    "tg_message_id": 8847,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1064,6 +1145,61 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/790ab8362f02.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/790ab8362f02.jpg",
     "tg_message_id": 8835,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "5771312ff852",
+    "date": "18.10.2026",
+    "title": "Дружба",
+    "location": "Хюгге, Гаражная 2",
+    "address": "Хюгге, Гаражная 2",
+    "time": "11:00",
+    "tags": [
+      "Фестиваль",
+      "Бесплатно"
+    ],
+    "short_description": "Милейший фестиваль керамики и др. хэндмейда. Уютная атмосфера и десятки калининградских мастеров.\n\nСтарт в 11:00\nВход свободный",
+    "full_description": "Милейший фестиваль керамики и др. хэндмейда. Уютная атмосфера и десятки калининградских мастеров.\n\nСтарт в 11:00\nВход свободный",
+    "description_blocks": [
+      "Милейший фестиваль керамики и др. хэндмейда. Уютная атмосфера и десятки калининградских мастеров.",
+      "Старт в 11:00",
+      "Вход свободный"
+    ],
+    "contacts": "https://www.instagram.com/p/DdUZjfkxyNn/?stkn=MXMwdzNjcjM4cDgzeA==",
+    "lat": 54.7244567540289,
+    "lon": 20.5053160508956,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/52fe299a7582.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/52fe299a7582.jpg",
+    "tg_message_id": 8847,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "f99f9453c9e2",
+    "date": "20.10.2026",
+    "title": "РАЗОБЛАЧЕНИЕ",
+    "location": "клуб «Локация», Юбилейная 18, 2 этаж",
+    "address": "клуб «Локация», Юбилейная 18, 2 этаж",
+    "time": "19:30",
+    "tags": [],
+    "short_description": "Fashion-перформанс от Michael Model Management, где нижнее бельё калининградских дизайнеров станет инструментом театрального искусства. «Разоблачение» - это эстетическое путешествие по граням женской ",
+    "full_description": "Fashion-перформанс от Michael Model Management, где нижнее бельё калининградских дизайнеров станет инструментом театрального искусства. «Разоблачение» - это эстетическое путешествие по граням женской натуры: от хрупкости до дерзкой силы.\n\nВас ждёт вечер красоты, эмоций, и настоящего сценического магнетизма. «Один вечер. Десятки образов. Все грани женщины»\n\nСобытие для тех, кто любит стильные события, атмосферу искусства и красивые шоу.\n\n18+\nFC/DC\n\nСтарт в 19:30\nРегистрация",
+    "description_blocks": [
+      "Fashion-перформанс от Michael Model Management, где нижнее бельё калининградских дизайнеров станет инструментом театрального искусства. «Разоблачение» - это эстетическое путешествие по граням женской натуры: от хрупкости до дерзкой силы.",
+      "Вас ждёт вечер красоты, эмоций, и настоящего сценического магнетизма. «Один вечер. Десятки образов. Все грани женщины»",
+      "Событие для тех, кто любит стильные события, атмосферу искусства и красивые шоу.",
+      "18+",
+      "FC/DC",
+      "Старт в 19:30",
+      "Регистрация"
+    ],
+    "contacts": "https://t.me/mmodels_official/642",
+    "lat": 54.7182737,
+    "lon": 20.4991105,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/f99f9453c9e2.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/f99f9453c9e2.jpg",
+    "tg_message_id": 8846,
     "is_active": true,
     "manually_hidden": false
   },

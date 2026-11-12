@@ -1095,6 +1095,34 @@
     "manually_hidden": false
   },
   {
+    "id": "e56f660c1693",
+    "date": "13.11.2026",
+    "title": "ПЛАЧ Я",
+    "location": "Видеосалон / Плохой охотник, Ленинский 18 к1",
+    "address": "Видеосалон / Плохой охотник, Ленинский 18 к1",
+    "time": "20:00",
+    "tags": [
+      "Концерт",
+      "Бесплатно"
+    ],
+    "short_description": "Группа даст концерт и презентует новый сингл «Аутист». Это песня о «переживании героем его отличности от окружающих людей и о сложности принятия этих отличий как со стороны, так и со стороны себя само",
+    "full_description": "Группа даст концерт и презентует новый сингл «Аутист». Это песня о «переживании героем его отличности от окружающих людей и о сложности принятия этих отличий как со стороны, так и со стороны себя самого».\n\nПоддержать релиз и сделать пресейв\n\nСтарт в 20:00\nВход свободный",
+    "description_blocks": [
+      "Группа даст концерт и презентует новый сингл «Аутист». Это песня о «переживании героем его отличности от окружающих людей и о сложности принятия этих отличий как со стороны, так и со стороны себя самого».",
+      "Поддержать релиз и сделать пресейв",
+      "Старт в 20:00",
+      "Вход свободный"
+    ],
+    "contacts": "https://band.link/PlachYAAutist",
+    "lat": 54.713760914613,
+    "lon": 20.504639512163,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e56f660c1693.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e56f660c1693.jpg",
+    "tg_message_id": 9143,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "895f142ec06e",
     "date": "13.11.2026",
     "title": "Трибьют шоу Depeche Mode",
@@ -1211,6 +1239,34 @@
     "manually_hidden": false
   },
   {
+    "id": "e2d3ac1edec2",
+    "date": "14.11.2026",
+    "title": "Не мода, а стиль!",
+    "location": "Лондон, Мира 33",
+    "address": "Лондон, Мира 33",
+    "time": "21:00",
+    "tags": [
+      "Фестиваль"
+    ],
+    "short_description": "На последнем «Калининград Сити Джаз» Владимир Кацман обещал Калининграду ещё один фестиваль - посвящённый моде. Но сначала - новое тематическое пространство в комплексе «Лондон».\n\nАнонсированы DJ, бар",
+    "full_description": "На последнем «Калининград Сити Джаз» Владимир Кацман обещал Калининграду ещё один фестиваль - посвящённый моде. Но сначала - новое тематическое пространство в комплексе «Лондон».\n\nАнонсированы DJ, бар, стильные конкурсы и призы от партнёров.\n\nВход платный, но для тех, кто на «джазе» купил значок «Не мода, а стиль» - бесплатный.\n\nСтарт в 21:00\n\nНу, просто песня🔥",
+    "description_blocks": [
+      "На последнем «Калининград Сити Джаз» Владимир Кацман обещал Калининграду ещё один фестиваль - посвящённый моде. Но сначала - новое тематическое пространство в комплексе «Лондон».",
+      "Анонсированы DJ, бар, стильные конкурсы и призы от партнёров.",
+      "Вход платный, но для тех, кто на «джазе» купил значок «Не мода, а стиль» - бесплатный.",
+      "Старт в 21:00",
+      "Ну, просто песня🔥"
+    ],
+    "contacts": "https://www.instagram.com/p/DfUXkvboKzu/?obrf=MWUyNHB2cjBndzVmbA==",
+    "lat": 54.720326,
+    "lon": 20.4847952,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e2d3ac1edec2.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e2d3ac1edec2.jpg",
+    "tg_message_id": 9144,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "2cfef06855f9",
     "date": "14.11.2026",
     "title": "Пир во время чумы",
@@ -1235,6 +1291,38 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c265e862788e.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c265e862788e.jpg",
     "tg_message_id": 9141,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "b486f6f70a7f",
+    "date": "15.11.2026",
+    "title": "День «Сумерек»",
+    "location": "Сигнал, Леонова 22",
+    "address": "Сигнал, Леонова 22",
+    "time": "13:00",
+    "tags": [
+      "Вечеринка"
+    ],
+    "short_description": "От сообщества и фонда игр GameVibes. Первая вечеринка на тему вампиров-романтиков этой осенью прошла удачно - решили развить успех.\n\nВ программе:\n• Тематические настолки;\n• Сбор LEGO «Дом Калленов»;\n•",
+    "full_description": "От сообщества и фонда игр GameVibes. Первая вечеринка на тему вампиров-романтиков этой осенью прошла удачно - решили развить успех.\n\nВ программе:\n• Тематические настолки;\n• Сбор LEGO «Дом Калленов»;\n• Мастер-классы;\n• Просмотр саги нон-стопом (начинаем с 3й части);\n• Викторина;\n• Специальное меню на баре.\n\nСтарт в 13:00",
+    "description_blocks": [
+      "От сообщества и фонда игр GameVibes. Первая вечеринка на тему вампиров-романтиков этой осенью прошла удачно - решили развить успех.",
+      "В программе:",
+      "• Тематические настолки;",
+      "• Сбор LEGO «Дом Калленов»;",
+      "• Мастер-классы;",
+      "• Просмотр саги нон-стопом (начинаем с 3й части);",
+      "• Викторина;",
+      "• Специальное меню на баре.",
+      "Старт в 13:00"
+    ],
+    "contacts": "https://t.me/gamevibes_kld/1756",
+    "lat": 54.7258082888072,
+    "lon": 20.4820959685065,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b486f6f70a7f.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b486f6f70a7f.jpg",
+    "tg_message_id": 9147,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1292,6 +1380,36 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c265e862788e.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/c265e862788e.jpg",
     "tg_message_id": 9141,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "e14cf7482a18",
+    "date": "15.11.2026",
+    "title": "ЧАЙНЫЙ РЕЙВ: ЗИМА БЛИЗКО",
+    "location": "HUMAN CONCEPT, Захарова 1",
+    "address": "HUMAN CONCEPT, Захарова 1",
+    "time": "15:00",
+    "tags": [
+      "Вечеринка"
+    ],
+    "short_description": "Безалкогольная воскресная вечеринка от Human Concept в это раз будет по мотивам «Игры престолов».\n\nТематические наряды (по желанию) и декорации, несколько чайных баров, диджеи проекта Red Room:\n\nLIZA ",
+    "full_description": "Безалкогольная воскресная вечеринка от Human Concept в это раз будет по мотивам «Игры престолов».\n\nТематические наряды (по желанию) и декорации, несколько чайных баров, диджеи проекта Red Room:\n\nLIZA PAVLOVSKAYA\nDRAGONQUEEN\nFADEEV SHOW\nSMOLIQUE\n\nСтарт в 15:00",
+    "description_blocks": [
+      "Безалкогольная воскресная вечеринка от Human Concept в это раз будет по мотивам «Игры престолов».",
+      "Тематические наряды (по желанию) и декорации, несколько чайных баров, диджеи проекта Red Room:",
+      "LIZA PAVLOVSKAYA",
+      "DRAGONQUEEN",
+      "FADEEV SHOW",
+      "SMOLIQUE",
+      "Старт в 15:00"
+    ],
+    "contacts": "https://t.me/tearave/415",
+    "lat": 54.734743710018,
+    "lon": 20.472201965969,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e14cf7482a18.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e14cf7482a18.jpg",
+    "tg_message_id": 9148,
     "is_active": true,
     "manually_hidden": false
   },

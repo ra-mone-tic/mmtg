@@ -809,6 +809,33 @@
     "manually_hidden": false
   },
   {
+    "id": "e1beb23cb2fd",
+    "date": "27.11.2026",
+    "title": "dp/dt",
+    "location": "Бар Советов, Мира 118",
+    "address": "Бар Советов, Мира 118",
+    "time": "21:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Провожают осень «достойно: с чувством, с толком, с расстановкой и с музыкой».\n\nСегодня dp/dt покрутит в Баре Советов свои новые пластинки: disco, habibi funk, italo disco, rare groove, etnic groove, h",
+    "full_description": "Провожают осень «достойно: с чувством, с толком, с расстановкой и с музыкой».\n\nСегодня dp/dt покрутит в Баре Советов свои новые пластинки: disco, habibi funk, italo disco, rare groove, etnic groove, house.\n\nСтарт 21:00\nВход свободный",
+    "description_blocks": [
+      "Провожают осень «достойно: с чувством, с толком, с расстановкой и с музыкой».",
+      "Сегодня dp/dt покрутит в Баре Советов свои новые пластинки: disco, habibi funk, italo disco, rare groove, etnic groove, house.",
+      "Старт 21:00",
+      "Вход свободный"
+    ],
+    "contacts": "https://t.me/barsovetov/1688",
+    "lat": 54.722776573098,
+    "lon": 20.465626721732,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e1beb23cb2fd.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/e1beb23cb2fd.jpg",
+    "tg_message_id": 9294,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
     "id": "c4261efb54aa",
     "date": "27.11.2026",
     "title": "westside movieclub",
@@ -1064,6 +1091,30 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/175bb2e0a3a0.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/175bb2e0a3a0.jpg",
     "tg_message_id": 9260,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "3a6413ca6dc3",
+    "date": "28.11.2026",
+    "title": "Знакомство с кофе",
+    "location": "Башня, Горького 116, 2 этаж",
+    "address": "Башня, Горького 116, 2 этаж",
+    "time": "11:30",
+    "tags": [],
+    "short_description": "Каппинг (профессиональная дегустация кофе) с Настей Ткач. Приглашает узнать этот напиток лучше, а также прокачать свои вкусовые навыки.\n\nВ эту субботу у вас будет возможность сравнить, чем отличается ",
+    "full_description": "Каппинг (профессиональная дегустация кофе) с Настей Ткач. Приглашает узнать этот напиток лучше, а также прокачать свои вкусовые навыки.\n\nВ эту субботу у вас будет возможность сравнить, чем отличается кофе из кофейни и из магазина, попробовать разную обжарку и разбираться, стоит ли пить декаф и ароматизированный кофе. Идеально для тех, кто хочет начать понимать, что пить и зачем.\n\nСтарт в 11:30",
+    "description_blocks": [
+      "Каппинг (профессиональная дегустация кофе) с Настей Ткач. Приглашает узнать этот напиток лучше, а также прокачать свои вкусовые навыки.",
+      "В эту субботу у вас будет возможность сравнить, чем отличается кофе из кофейни и из магазина, попробовать разную обжарку и разбираться, стоит ли пить декаф и ароматизированный кофе. Идеально для тех, кто хочет начать понимать, что пить и зачем.",
+      "Старт в 11:30"
+    ],
+    "contacts": "https://t.me/tkachikalachi/1311",
+    "lat": 54.7185781,
+    "lon": 20.4987102,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3a6413ca6dc3.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/3a6413ca6dc3.jpg",
+    "tg_message_id": 9296,
     "is_active": true,
     "manually_hidden": false
   },
@@ -1396,6 +1447,38 @@
     "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4d26a8f41dd3.jpg",
     "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/4d26a8f41dd3.jpg",
     "tg_message_id": 8922,
+    "is_active": true,
+    "manually_hidden": false
+  },
+  {
+    "id": "b8dbacc0ce8e",
+    "date": "30.11.2026",
+    "title": "Молодёжь 39: Итоги года",
+    "location": "Дом молодёжи, Октябрьская 76",
+    "address": "Дом молодёжи, Октябрьская 76",
+    "time": "17:00",
+    "tags": [
+      "Бесплатно"
+    ],
+    "short_description": "Вечер, посвящённый молодым брендам, идеям и людям, которые создают и развивают бизнес в Калининградской области.\n\nВ программе:\n\n• Маркет молодых брендов - локальные бренды, авторские изделия и товары ",
+    "full_description": "Вечер, посвящённый молодым брендам, идеям и людям, которые создают и развивают бизнес в Калининградской области.\n\nВ программе:\n\n• Маркет молодых брендов - локальные бренды, авторские изделия и товары собственного производства.\n• Модный показ - коллекции молодых дизайнеров в коллаборации с известными художниками.\n• Бизнес-стендап - реальные истории предпринимателей, неожиданные повороты и бизнес-факапы с юмором.\n• Менторская гостиная - живое общение с экспертами, консультации.\n• Интерактивы, розыгрыши, подарки от партнёров мероприятия.\n\nСтарт в 17:00\nВход бесплатный, по регистрации",
+    "description_blocks": [
+      "Вечер, посвящённый молодым брендам, идеям и людям, которые создают и развивают бизнес в Калининградской области.",
+      "В программе:",
+      "• Маркет молодых брендов - локальные бренды, авторские изделия и товары собственного производства.",
+      "• Модный показ - коллекции молодых дизайнеров в коллаборации с известными художниками.",
+      "• Бизнес-стендап - реальные истории предпринимателей, неожиданные повороты и бизнес-факапы с юмором.",
+      "• Менторская гостиная - живое общение с экспертами, консультации.",
+      "• Интерактивы, розыгрыши, подарки от партнёров мероприятия.",
+      "Старт в 17:00",
+      "Вход бесплатный, по регистрации"
+    ],
+    "contacts": "https://molodez39.timepad.ru/event/4307593/",
+    "lat": 54.6964389,
+    "lon": 20.5163352,
+    "imageUrl": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b8dbacc0ce8e.jpg",
+    "image_url": "https://mefppvaqkzldnljsmqrd.supabase.co/storage/v1/object/public/event-images/b8dbacc0ce8e.jpg",
+    "tg_message_id": 9301,
     "is_active": true,
     "manually_hidden": false
   },
